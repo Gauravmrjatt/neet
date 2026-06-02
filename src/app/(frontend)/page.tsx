@@ -1,59 +1,49 @@
-import { headers as getHeaders } from 'next/headers.js'
-import Image from 'next/image'
-import { getPayload } from 'payload'
-import React from 'react'
-import { fileURLToPath } from 'url'
+import { Metadata } from 'next'
+import { getPayloadClient } from '@/lib/payload'
+import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { generateOrganizationSchema } from '@/lib/structured-data'
+import { JsonLd } from '@/components/shared/JsonLd'
+import { NewsTicker } from '@/components/layout/NewsTicker'
+import { HeroSection } from '@/components/shared/HeroSection'
+import { BlogUpdateStrip } from '@/components/shared/BlogUpdateStrip'
+import { TrustBadges } from '@/components/shared/TrustBadge'
+import { PlansCoverflow } from '@/components/shared/PlansCoverflow'
+import { WhyChooseUs } from '@/components/shared/WhyChooseUs'
+import { TestimonialMarquee } from '@/components/shared/TestimonialMarquee'
 
-import config from '@/payload.config'
-import './styles.css'
+export async function generateMetadata(): Promise<Metadata> {
+  const payload = await getPayloadClient()
+  let seo: any = {}
+  try {
+    seo = await payload.findGlobal({ slug: 'home-page-seo' })
+  } catch {}
+  return generateSEOMetadata({
+    title: seo?.metaTitle || 'Home',
+    description: seo?.metaDescription || 'Expert NEET and JOSAA counselling services',
+    ogImage: seo?.ogImage,
+    keywords: seo?.keywords,
+  })
+}
 
 export default async function HomePage() {
-  const headers = await getHeaders()
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const { user } = await payload.auth({ headers })
+  const payload = await getPayloadClient()
 
-  const fileURL = `vscode://file/${fileURLToPath(import.meta.url)}`
+  let newsTickerItems: any[] = []
+  try {
+    const ticker = await payload.findGlobal({ slug: 'news-ticker' })
+    newsTickerItems = ticker?.items?.filter((i: any) => i.isActive) || []
+  } catch {}
 
   return (
-    <div className="home">
-      <div className="content">
-        <picture>
-          <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/3.x/packages/ui/src/assets/payload-favicon.svg" />
-          <Image
-            alt="Payload Logo"
-            height={65}
-            src="https://raw.githubusercontent.com/payloadcms/payload/3.x/packages/ui/src/assets/payload-favicon.svg"
-            width={65}
-          />
-        </picture>
-        {!user && <h1>Welcome to your new project.</h1>}
-        {user && <h1>Welcome back, {user.email}</h1>}
-        <div className="links">
-          <a
-            className="admin"
-            href={payloadConfig.routes.admin}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Go to admin panel
-          </a>
-          <a
-            className="docs"
-            href="https://payloadcms.com/docs"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Documentation
-          </a>
-        </div>
-      </div>
-      <div className="footer">
-        <p>Update this page by editing</p>
-        <a className="codeLink" href={fileURL}>
-          <code>app/(frontend)/page.tsx</code>
-        </a>
-      </div>
-    </div>
+    <>
+      <JsonLd data={generateOrganizationSchema()} />
+      <NewsTicker items={newsTickerItems} />
+      <HeroSection />
+      <BlogUpdateStrip />
+      <TrustBadges />
+      <PlansCoverflow />
+      <WhyChooseUs />
+      <TestimonialMarquee />
+    </>
   )
 }

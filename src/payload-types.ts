@@ -69,6 +69,13 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    blogs: Blog;
+    'pricing-cards': PricingCard;
+    videos: Video;
+    counselors: Counselor;
+    helpdesk: Helpdesk;
+    'live-counselling': LiveCounselling;
+    pages: Page;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +85,13 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    blogs: BlogsSelect<false> | BlogsSelect<true>;
+    'pricing-cards': PricingCardsSelect<false> | PricingCardsSelect<true>;
+    videos: VideosSelect<false> | VideosSelect<true>;
+    counselors: CounselorsSelect<false> | CounselorsSelect<true>;
+    helpdesk: HelpdeskSelect<false> | HelpdeskSelect<true>;
+    'live-counselling': LiveCounsellingSelect<false> | LiveCounsellingSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,8 +101,20 @@ export interface Config {
     defaultIDType: string;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    header: Header;
+    footer: Footer;
+    'site-settings': SiteSetting;
+    'home-page-seo': HomePageSeo;
+    'news-ticker': NewsTicker;
+  };
+  globalsSelect: {
+    header: HeaderSelect<false> | HeaderSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'home-page-seo': HomePageSeoSelect<false> | HomePageSeoSelect<true>;
+    'news-ticker': NewsTickerSelect<false> | NewsTickerSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -123,6 +149,9 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
+  name?: string | null;
+  role: 'admin' | 'editor' | 'user';
+  avatar?: (string | null) | Media;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -149,6 +178,14 @@ export interface User {
 export interface Media {
   id: string;
   alt: string;
+  caption?: string | null;
+  /**
+   * Select the focal point of the image for cropping
+   */
+  focalPoint?: {
+    x?: number | null;
+    y?: number | null;
+  };
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -160,6 +197,374 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blogs".
+ */
+export interface Blog {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  featuredImage?: (string | null) | Media;
+  author?: (string | null) | User;
+  categories?:
+    | {
+        category?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  publishedAt?: string | null;
+  status: 'draft' | 'published';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing-cards".
+ */
+export interface PricingCard {
+  id: string;
+  /**
+   * Internal name (e.g., "JOSAA Plan")
+   */
+  planName: string;
+  /**
+   * Card heading (e.g., "Complete JOSAA & CSAB Counselling Plan")
+   */
+  subtitle?: string | null;
+  /**
+   * Display price (e.g., "₹2399")
+   */
+  price: string;
+  /**
+   * Strikethrough price (e.g., "₹2999"). Leave empty for no strikethrough.
+   */
+  originalPrice?: string | null;
+  /**
+   * Discount badge (e.g., "20% OFF"). Leave empty for no badge.
+   */
+  discount?: string | null;
+  /**
+   * Badge text (e.g., "Premium", "NEW"). Shows if no discount.
+   */
+  badge?: string | null;
+  /**
+   * Card color scheme — all use brown family shades
+   */
+  colorScheme?: ('popular' | 'premium' | 'standard' | 'basic') | null;
+  /**
+   * College list (e.g., "DTU · NSUT · IIIT-D · IGDTUW · DSEU")
+   */
+  colleges?: string | null;
+  description?: string | null;
+  features?:
+    | {
+        feature?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Mark as most popular plan
+   */
+  popular?: boolean | null;
+  ctaText?: string | null;
+  ctaLink?: string | null;
+  /**
+   * Lower numbers appear first
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos".
+ */
+export interface Video {
+  id: string;
+  title: string;
+  slug: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * YouTube or Vimeo URL
+   */
+  videoUrl: string;
+  thumbnail?: (string | null) | Media;
+  /**
+   * e.g. 12:34
+   */
+  duration?: string | null;
+  category?: ('lecture' | 'tips' | 'interview' | 'other') | null;
+  publishedAt?: string | null;
+  status: 'draft' | 'published';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "counselors".
+ */
+export interface Counselor {
+  id: string;
+  name: string;
+  slug: string;
+  designation: string;
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  image?: (string | null) | Media;
+  specializations?:
+    | {
+        specialization?: ('jee' | 'neet' | 'josaa' | 'general') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Years of experience
+   */
+  experience?: number | null;
+  email?: string | null;
+  phone?: string | null;
+  /**
+   * Lower numbers appear first
+   */
+  order?: number | null;
+  status: 'active' | 'inactive';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "helpdesk".
+ */
+export interface Helpdesk {
+  id: string;
+  question: string;
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  category?: ('admission' | 'exam' | 'counselling' | 'technical' | 'other') | null;
+  /**
+   * Lower numbers appear first
+   */
+  order?: number | null;
+  status: 'active' | 'inactive';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "live-counselling".
+ */
+export interface LiveCounselling {
+  id: string;
+  title: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  scheduledAt: string;
+  counsellor?: (string | null) | Counselor;
+  meetingUrl?: string | null;
+  /**
+   * e.g. 1 hour, 30 minutes
+   */
+  duration?: string | null;
+  status: 'scheduled' | 'live' | 'completed' | 'cancelled';
+  maxParticipants?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: string;
+  title: string;
+  slug: string;
+  content?:
+    | (
+        | {
+            heading: string;
+            subheading?: string | null;
+            backgroundImage?: (string | null) | Media;
+            ctaText?: string | null;
+            ctaLink?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            heading?: string | null;
+            body?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentBlock';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  title: string;
+                  description?: string | null;
+                  icon?: (string | null) | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'features';
+          }
+        | {
+            heading?: string | null;
+            testimonials?:
+              | {
+                  name: string;
+                  quote: string;
+                  image?: (string | null) | Media;
+                  designation?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testimonials';
+          }
+        | {
+            heading: string;
+            description?: string | null;
+            buttonText: string;
+            buttonLink: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta';
+          }
+      )[]
+    | null;
+  status: 'draft' | 'published';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Prevent search engines from indexing this page
+     */
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -192,6 +597,34 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'blogs';
+        value: string | Blog;
+      } | null)
+    | ({
+        relationTo: 'pricing-cards';
+        value: string | PricingCard;
+      } | null)
+    | ({
+        relationTo: 'videos';
+        value: string | Video;
+      } | null)
+    | ({
+        relationTo: 'counselors';
+        value: string | Counselor;
+      } | null)
+    | ({
+        relationTo: 'helpdesk';
+        value: string | Helpdesk;
+      } | null)
+    | ({
+        relationTo: 'live-counselling';
+        value: string | LiveCounselling;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: string | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -240,6 +673,9 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  avatar?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -263,6 +699,13 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  caption?: T;
+  focalPoint?:
+    | T
+    | {
+        x?: T;
+        y?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -274,6 +717,243 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blogs_select".
+ */
+export interface BlogsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  content?: T;
+  featuredImage?: T;
+  author?: T;
+  categories?:
+    | T
+    | {
+        category?: T;
+        id?: T;
+      };
+  publishedAt?: T;
+  status?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing-cards_select".
+ */
+export interface PricingCardsSelect<T extends boolean = true> {
+  planName?: T;
+  subtitle?: T;
+  price?: T;
+  originalPrice?: T;
+  discount?: T;
+  badge?: T;
+  colorScheme?: T;
+  colleges?: T;
+  description?: T;
+  features?:
+    | T
+    | {
+        feature?: T;
+        id?: T;
+      };
+  popular?: T;
+  ctaText?: T;
+  ctaLink?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos_select".
+ */
+export interface VideosSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  videoUrl?: T;
+  thumbnail?: T;
+  duration?: T;
+  category?: T;
+  publishedAt?: T;
+  status?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "counselors_select".
+ */
+export interface CounselorsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  designation?: T;
+  bio?: T;
+  image?: T;
+  specializations?:
+    | T
+    | {
+        specialization?: T;
+        id?: T;
+      };
+  experience?: T;
+  email?: T;
+  phone?: T;
+  order?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "helpdesk_select".
+ */
+export interface HelpdeskSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  category?: T;
+  order?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "live-counselling_select".
+ */
+export interface LiveCounsellingSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  scheduledAt?: T;
+  counsellor?: T;
+  meetingUrl?: T;
+  duration?: T;
+  status?: T;
+  maxParticipants?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  content?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              heading?: T;
+              subheading?: T;
+              backgroundImage?: T;
+              ctaText?: T;
+              ctaLink?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contentBlock?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              id?: T;
+              blockName?: T;
+            };
+        features?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    icon?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        testimonials?:
+          | T
+          | {
+              heading?: T;
+              testimonials?:
+                | T
+                | {
+                    name?: T;
+                    quote?: T;
+                    image?: T;
+                    designation?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              heading?: T;
+              description?: T;
+              buttonText?: T;
+              buttonLink?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  status?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        noIndex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -314,6 +994,339 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header".
+ */
+export interface Header {
+  id: string;
+  /**
+   * Left-side logo (e.g., Ministry of Education emblem)
+   */
+  logo?: (string | null) | Media;
+  /**
+   * Right-side emblem/logo (e.g., NTA or organization logo)
+   */
+  emblem?: (string | null) | Media;
+  hindiTitle?: string | null;
+  englishTitle?: string | null;
+  tagline?: string | null;
+  navigation?:
+    | {
+        label: string;
+        link: string;
+        children?:
+          | {
+              label: string;
+              link: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  ctaButton?: {
+    text?: string | null;
+    link?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: string;
+  logo?: (string | null) | Media;
+  description?: string | null;
+  columns?:
+    | {
+        title: string;
+        links?:
+          | {
+              label: string;
+              url: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  policyLinks?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  socialLinks?:
+    | {
+        platform: 'facebook' | 'twitter' | 'instagram' | 'youtube' | 'linkedin';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  copyright?: string | null;
+  creditsText?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: string;
+  siteName?: string | null;
+  siteNameHindi?: string | null;
+  siteDescription?: string | null;
+  contactEmail?: string | null;
+  /**
+   * Phone number for call button (e.g., +91-9876543210)
+   */
+  phone?: string | null;
+  /**
+   * WhatsApp number
+   */
+  whatsapp?: string | null;
+  address?: string | null;
+  socialMedia?: {
+    facebook?: string | null;
+    twitter?: string | null;
+    instagram?: string | null;
+    youtube?: string | null;
+    linkedin?: string | null;
+  };
+  /**
+   * Trust badge statistics displayed on homepage
+   */
+  stats?: {
+    students?: string | null;
+    support?: string | null;
+    personalized?: string | null;
+    counselors?: string | null;
+  };
+  /**
+   * Homepage hero section content
+   */
+  hero?: {
+    badge?: string | null;
+    heading?: string | null;
+    priceText?: string | null;
+    description?: string | null;
+    hindiDescription?: string | null;
+    primaryCtaText?: string | null;
+    primaryCtaLink?: string | null;
+    secondaryCtaText?: string | null;
+    secondaryCtaLink?: string | null;
+  };
+  /**
+   * Top government branding bar
+   */
+  topBar?: {
+    leftText?: string | null;
+    rightText?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page-seo".
+ */
+export interface HomePageSeo {
+  id: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  ogImage?: (string | null) | Media;
+  keywords?:
+    | {
+        keyword?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news-ticker".
+ */
+export interface NewsTicker {
+  id: string;
+  items?:
+    | {
+        title: string;
+        link?: string | null;
+        isActive?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  logo?: T;
+  emblem?: T;
+  hindiTitle?: T;
+  englishTitle?: T;
+  tagline?: T;
+  navigation?:
+    | T
+    | {
+        label?: T;
+        link?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  ctaButton?:
+    | T
+    | {
+        text?: T;
+        link?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  logo?: T;
+  description?: T;
+  columns?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  policyLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  copyright?: T;
+  creditsText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  siteName?: T;
+  siteNameHindi?: T;
+  siteDescription?: T;
+  contactEmail?: T;
+  phone?: T;
+  whatsapp?: T;
+  address?: T;
+  socialMedia?:
+    | T
+    | {
+        facebook?: T;
+        twitter?: T;
+        instagram?: T;
+        youtube?: T;
+        linkedin?: T;
+      };
+  stats?:
+    | T
+    | {
+        students?: T;
+        support?: T;
+        personalized?: T;
+        counselors?: T;
+      };
+  hero?:
+    | T
+    | {
+        badge?: T;
+        heading?: T;
+        priceText?: T;
+        description?: T;
+        hindiDescription?: T;
+        primaryCtaText?: T;
+        primaryCtaLink?: T;
+        secondaryCtaText?: T;
+        secondaryCtaLink?: T;
+      };
+  topBar?:
+    | T
+    | {
+        leftText?: T;
+        rightText?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page-seo_select".
+ */
+export interface HomePageSeoSelect<T extends boolean = true> {
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
+  keywords?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news-ticker_select".
+ */
+export interface NewsTickerSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        title?: T;
+        link?: T;
+        isActive?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -1,18 +1,31 @@
 import React from 'react'
-import './styles.css'
+import { TopBar } from '@/components/layout/TopBar'
+import { Header } from '@/components/layout/Header'
+import { Navbar } from '@/components/layout/Navbar'
+import { Footer } from '@/components/layout/Footer'
+import './globals.css'
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+  description: 'Expert NEET and JOSAA counselling services',
+  title: {
+    default: 'NEET Counselling',
+    template: '%s | NEET Counselling',
+  },
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
 
   return (
-    <html lang="en">
-      <body>
-        <main>{children}</main>
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen bg-background font-sans antialiased gov-dots">
+        <div className="relative flex min-h-screen flex-col">
+          <TopBar />
+          <Header />
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   )

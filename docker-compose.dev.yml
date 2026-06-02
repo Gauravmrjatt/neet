@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: deps
+    volumes:
+      - .:/home/node/app
+      - node_modules:/home/node/app/node_modules
+    working_dir: /home/node/app
+    command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URI=mongodb://mongo:27017/neet-dev
+      - PAYLOAD_SECRET=dev-secret-change-in-production
+      - NEXT_PUBLIC_SITE_URL=http://localhost:3000
+    ports:
+      - '3000:3000'
+      - '9229:9229'  # Node debugger
+
+  mongo:
+    image: mongo:7
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-dev-data:/data/db
+    command: --storageEngine=wiredTiger
+    logging:
+      driver: none
+
+volumes:
+  mongo-dev-data:
+  node_modules:

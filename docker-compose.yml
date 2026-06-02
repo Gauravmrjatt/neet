@@ -1,43 +1,39 @@
-version: '3'
+version: '3.8'
 
 services:
-  payload:
-    image: node:20-alpine
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - '3000:3000'
-    volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URI=mongodb://mongo:27017/neet
+      - PAYLOAD_SECRET=${PAYLOAD_SECRET:-your-secret-here}
+      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
     depends_on:
-      - mongo
-      # - postgres
-    env_file:
-      - .env
+      mongo:
+        condition: service_started
+    restart: unless-stopped
+    volumes:
+      - ./public:/app/public
+      - media:/app/public/media
 
-  # Ensure your DATABASE_URL uses 'mongo' as the hostname ie. mongodb://mongo/my-db-name
   mongo:
-    image: mongo:latest
+    image: mongo:7
     ports:
       - '27017:27017'
-    command:
-      - --storageEngine=wiredTiger
     volumes:
-      - data:/data/db
+      - mongo-data:/data/db
+    command: --storageEngine=wiredTiger
+    restart: unless-stopped
     logging:
       driver: none
 
-  # Uncomment the following to use postgres
-  # postgres:
-  #   restart: always
-  #   image: postgres:latest
-  #   volumes:
-  #     - pgdata:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
+  # Development override - use docker-compose.dev.yml for local dev
+  # Run: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
 volumes:
-  data:
-  # pgdata:
-  node_modules:
+  mongo-data:
+  media:

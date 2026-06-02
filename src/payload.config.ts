@@ -7,6 +7,19 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Blogs } from './collections/Blogs'
+import { PricingCards } from './collections/PricingCards'
+import { Videos } from './collections/Videos'
+import { Counselors } from './collections/Counselors'
+import { Helpdesk } from './collections/Helpdesk'
+import { LiveCounselling } from './collections/LiveCounselling'
+import { Pages } from './collections/Pages'
+
+import { Header } from './globals/Header'
+import { Footer } from './globals/Footer'
+import { SiteSettings } from './globals/SiteSettings'
+import { HomePageSEO } from './globals/HomePageSEO'
+import { NewsTicker } from './globals/NewsTicker'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -18,7 +31,18 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections: [
+    Users,
+    Media,
+    Blogs,
+    PricingCards,
+    Videos,
+    Counselors,
+    Helpdesk,
+    LiveCounselling,
+    Pages,
+  ],
+  globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
