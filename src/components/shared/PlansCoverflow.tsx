@@ -5,19 +5,22 @@ import { PlansCarousel } from './PlansCarousel'
 export async function PlansCoverflow() {
   const cards = await getPricingCards()
 
-  const plans = cards.map((card: any) => ({
-    id: String(typeof card.id === 'object' ? card.id?.id || card.planName : (card.id || card.planName)),
-    subtitle: String(card.subtitle || card.planName || ''),
-    price: String(card.price || '').startsWith('₹') ? String(card.price) : `₹${card.price}`,
-    originalPrice: card.originalPrice || undefined,
-    discount: card.discount || undefined,
-    badge: card.badge || undefined,
-    colorScheme: card.colorScheme || 'standard',
-    colleges: card.colleges || undefined,
-    features: (card.features || []).map((f: any) => String(f?.feature || f || '')),
-    ctaText: card.ctaText || 'Get Started',
-    ctaLink: card.ctaLink || '#',
-  }))
+  const plans = cards.map((card: any) => {
+    const planId = String(typeof card.id === 'object' ? card.id?.id || card.planName : (card.id || card.planName))
+    return {
+      id: planId,
+      subtitle: String(card.subtitle || card.planName || ''),
+      price: String(card.price || '').startsWith('₹') ? String(card.price) : `₹${card.price}`,
+      originalPrice: card.originalPrice || undefined,
+      discount: card.discount || undefined,
+      badge: card.badge || undefined,
+      colorScheme: card.colorScheme || 'standard',
+      colleges: card.colleges || undefined,
+      features: (card.features || []).map((f: any) => String(f?.feature || f || '')),
+      ctaText: card.ctaText || 'Get Started',
+      ctaLink: `/checkout/${planId}`,
+    }
+  })
 
   return (
     <section className="plans-coverflow-section py-8 sm:py-12 px-3 sm:px-4 overflow-hidden">

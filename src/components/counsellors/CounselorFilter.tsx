@@ -44,8 +44,8 @@ export function CounselorFilter({ counselors }: CounselorFilterProps) {
             onClick={() => setSelected(opt.value)}
             className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition ${
               opt.value === selected
-                ? 'bg-primary text-primary-foreground'
-                : 'border hover:bg-accent'
+                ? 'bg-[#062963] text-white'
+                : 'border border-gray-300 bg-white text-[#062963] hover:bg-[#062963] hover:text-white'
             }`}
           >
             {opt.label}
@@ -54,31 +54,41 @@ export function CounselorFilter({ counselors }: CounselorFilterProps) {
       </div>
 
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((counselor) => {
             const imageUrl = typeof counselor.image === 'object' ? counselor.image?.url : null
             return (
-              <div key={counselor.id} className="rounded-lg border p-6 text-center transition hover:shadow-lg">
+              <div
+                key={counselor.id}
+                className="rounded-xl border border-gray-200 bg-white p-6 text-center transition hover:shadow-lg hover:-translate-y-0.5"
+              >
                 {imageUrl ? (
-                  <img
-                    src={imageUrl}
-                    alt={counselor.name}
-                    className="mx-auto h-24 w-24 rounded-full object-cover"
-                  />
+                  <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-2 border-[#062963]/20">
+                    <img
+                      src={imageUrl}
+                      alt={counselor.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 ) : (
-                  <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-muted text-2xl font-bold">
+                  <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#062963] text-2xl font-bold text-white">
                     {counselor.name.charAt(0)}
                   </div>
                 )}
-                <h3 className="mt-4 text-lg font-semibold">{counselor.name}</h3>
-                <p className="text-sm text-muted-foreground">{counselor.designation}</p>
+                <h3 className="mt-4 text-lg font-bold text-[#062963]">{counselor.name}</h3>
+                <p className="text-sm text-gray-600">{counselor.designation}</p>
                 {counselor.experience && (
-                  <p className="mt-1 text-xs text-muted-foreground">{counselor.experience} years experience</p>
+                  <p className="mt-1 text-xs text-[#062963]/70 font-medium">
+                    {counselor.experience} years experience
+                  </p>
                 )}
                 {counselor.specializations && counselor.specializations.length > 0 && (
-                  <div className="mt-3 flex flex-wrap justify-center gap-2">
+                  <div className="mt-3 flex flex-wrap justify-center gap-1.5">
                     {counselor.specializations.map((s, i) => (
-                      <span key={i} className="rounded-full bg-muted px-2 py-1 text-xs capitalize">
+                      <span
+                        key={i}
+                        className="rounded-full bg-[#062963]/10 text-[#062963] px-2.5 py-0.5 text-xs font-medium capitalize"
+                      >
                         {s.specialization}
                       </span>
                     ))}
@@ -89,7 +99,7 @@ export function CounselorFilter({ counselors }: CounselorFilterProps) {
           })}
         </div>
       ) : (
-        <p className="text-center text-muted-foreground">No counsellors found for this specialization.</p>
+        <p className="text-center text-gray-500 py-8">No counsellors found for this specialization.</p>
       )}
     </div>
   )

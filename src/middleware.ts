@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const protectedRoutes = ['/live-counselling']
+const protectedRoutes = ['/live-counselling', '/my-plan', '/checkout']
 const adminRoutes = ['/admin/custom']
 
 export function middleware(request: NextRequest) {

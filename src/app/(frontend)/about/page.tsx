@@ -5,6 +5,7 @@ import { generatePageMetadata } from '@/lib/seo'
 import { BlockRenderer } from '@/components/blocks'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
+import { PageHero } from '@/components/shared/PageHero'
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageBySlug('about')
@@ -30,18 +31,14 @@ export async function generateMetadata(): Promise<Metadata> {
 function DefaultAboutPage() {
   return (
     <>
-      <section className="bg-gradient-to-br from-blue-600 to-indigo-900 py-20 text-white">
-        <Container className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">About Us</h1>
-          <p className="mx-auto mt-6 max-w-3xl text-lg text-white/80">
-            Our mission is to help NEET aspirants achieve their dreams through expert guidance and personalized counselling.
-          </p>
-        </Container>
-      </section>
+      <PageHero
+        title="About Us"
+        subtitle="Our mission is to help NEET aspirants achieve their dreams through expert guidance and personalized counselling."
+      />
 
-      <Section>
+      <Section className="bg-white">
         <Container className="max-w-4xl">
-          <div className="prose prose-lg max-w-none">
+          <div className="prose prose-lg max-w-none prose-headings:text-[#062963] prose-a:text-[#062963]">
             <h2>Our Mission</h2>
             <p>
               We are dedicated to providing expert guidance and support to NEET aspirants.

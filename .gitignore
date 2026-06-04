@@ -48,3 +48,12 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# OpenCode CodeGraph (sockets cause Turbopack to panic)
+/.codegraph/
+
+/.vscode/
+/.codegraph/
+/.claude/
+AGENTS.md
+CLAUDE.md

@@ -4,6 +4,7 @@ import { getCounselors } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
+import { PageHero } from '@/components/shared/PageHero'
 import { CounselorFilter } from '@/components/counsellors/CounselorFilter'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -28,16 +29,16 @@ export default async function CounsellorsPage() {
   }))
 
   return (
-    <Section>
-      <Container>
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Our Counsellors</h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Find experienced NEET counsellors to guide your journey
-          </p>
-        </div>
-        <CounselorFilter counselors={counselorData} />
-      </Container>
-    </Section>
+    <>
+      <PageHero
+        title="Our Counsellors"
+        subtitle="Find experienced NEET counsellors to guide your journey to a top medical college."
+      />
+      <Section className="bg-[#F6F3EE]/30">
+        <Container>
+          <CounselorFilter counselors={counselorData} />
+        </Container>
+      </Section>
+    </>
   )
 }

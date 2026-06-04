@@ -1,9 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Loader2 } from 'lucide-react'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') || '/'
@@ -42,66 +47,27 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: 400, padding: 24 }}>
-      <div
-        style={{
-          background: 'rgb(20, 20, 20)',
-          border: '1px solid rgb(60, 60, 60)',
-          borderRadius: 8,
-          padding: 32,
-        }}
-      >
-        <h1
-          style={{
-            margin: '0 0 8px',
-            fontSize: 24,
-            fontWeight: 600,
-            textAlign: 'center',
-          }}
-        >
-          Sign In
-        </h1>
-        <p
-          style={{
-            margin: '0 0 24px',
-            fontSize: 14,
-            color: 'rgb(160, 160, 160)',
-            textAlign: 'center',
-          }}
-        >
-          Enter your credentials to continue
-        </p>
+    <div className="w-full max-w-md">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-[#062963]">Welcome Back</h1>
+          <p className="text-sm text-gray-500 mt-2">
+            Sign in to access your counselling dashboard
+          </p>
+        </div>
 
         {error && (
-          <div
-            style={{
-              padding: '10px 14px',
-              marginBottom: 16,
-              background: 'rgb(60, 20, 20)',
-              border: '1px solid rgb(120, 40, 40)',
-              borderRadius: 4,
-              color: 'rgb(255, 100, 100)',
-              fontSize: 14,
-            }}
-          >
+          <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 16 }}>
-            <label
-              htmlFor="email"
-              style={{
-                display: 'block',
-                marginBottom: 6,
-                fontSize: 14,
-                fontWeight: 500,
-              }}
-            >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-[#062963]">
               Email
-            </label>
-            <input
+            </Label>
+            <Input
               id="email"
               type="email"
               value={email}
@@ -109,33 +75,23 @@ export default function LoginPage() {
               required
               autoComplete="email"
               placeholder="you@example.com"
-              style={{
-                width: '100%',
-                padding: '10px 12px',
-                background: 'rgb(0, 0, 0)',
-                border: '1px solid rgb(60, 60, 60)',
-                borderRadius: 4,
-                color: 'rgb(255, 255, 255)',
-                fontSize: 14,
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
+              className="border-gray-300 focus-visible:ring-[#062963]"
             />
           </div>
 
-          <div style={{ marginBottom: 24 }}>
-            <label
-              htmlFor="password"
-              style={{
-                display: 'block',
-                marginBottom: 6,
-                fontSize: 14,
-                fontWeight: 500,
-              }}
-            >
-              Password
-            </label>
-            <input
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="text-[#062963]">
+                Password
+              </Label>
+              <Link
+                href="/forgot-password"
+                className="text-xs text-[#062963] hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+            <Input
               id="password"
               type="password"
               value={password}
@@ -143,40 +99,50 @@ export default function LoginPage() {
               required
               autoComplete="current-password"
               placeholder="••••••••"
-              style={{
-                width: '100%',
-                padding: '10px 12px',
-                background: 'rgb(0, 0, 0)',
-                border: '1px solid rgb(60, 60, 60)',
-                borderRadius: 4,
-                color: 'rgb(255, 255, 255)',
-                fontSize: 14,
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
+              className="border-gray-300 focus-visible:ring-[#062963]"
             />
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            style={{
-              width: '100%',
-              padding: '10px 0',
-              background: loading ? 'rgb(80, 80, 80)' : 'rgb(255, 255, 255)',
-              color: 'rgb(0, 0, 0)',
-              border: 'none',
-              borderRadius: 4,
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'opacity 0.15s',
-            }}
+            className="w-full bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963] font-semibold"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              'Sign In'
+            )}
+          </Button>
         </form>
+
+        <div className="mt-6 text-center text-sm text-gray-500">
+          Don&apos;t have an account?{' '}
+          <Link
+            href="/signup"
+            className="text-[#062963] font-semibold hover:underline"
+          >
+            Sign up
+          </Link>
+        </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center p-12">
+          <Loader2 className="h-8 w-8 animate-spin text-[#062963]" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   )
 }

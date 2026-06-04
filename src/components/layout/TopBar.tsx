@@ -12,7 +12,7 @@ export async function TopBar() {
   const rightText = topBar.rightText || 'शिक्षा मंत्रालय / Ministry of Education'
 
   return (
-    <div className="w-full bg-white text-xs sm:text-sm border-b border-gray-200">
+    <div className="w-full bg-[#F6F3EE] text-xs sm:text-sm border-b border-gray-200">
       <div className="max-w-6xl mx-auto flex justify-between items-center py-2 px-4">
         <div className="text-left">
           <div className="text-gray-600">{leftText}</div>

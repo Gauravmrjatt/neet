@@ -17,7 +17,7 @@ export function NavLink({ href, label }: NavLinkProps) {
       href={href}
       className={`flex items-center px-3 py-2 text-xs sm:text-sm transition-colors ${
         isActive
-          ? 'text-white font-bold'
+          ? 'text-black font-bold'
           : 'hover:bg-[#e8e4de]'
       }`}
       style={isActive ? { backgroundColor: 'rgb(251, 172, 26)' } : undefined}

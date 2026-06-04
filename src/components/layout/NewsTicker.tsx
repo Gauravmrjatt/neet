@@ -27,9 +27,9 @@ export function NewsTicker({ items }: NewsTickerProps) {
   const duplicated = [...tickerItems, ...tickerItems]
 
   return (
-    <div className="bg-[#062963] text-white py-3 overflow-hidden relative">
+    <div style={{height : "60px"}} className="bg-[#062963] text-white py-3 flex overflow-hidden relative ">
       <div className="max-w-6xl mx-auto flex items-center">
-        <div className="bg-[#041d45] px-3 py-1 text-xs font-bold uppercase tracking-wider z-10 flex-shrink-0">
+        <div style={{paddingRight : "50px"}} className="py-1 text-2xl  uppercase">
           Latest News
         </div>
         <div className="overflow-hidden flex-1">

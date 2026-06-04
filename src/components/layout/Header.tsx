@@ -29,19 +29,19 @@ export async function Header() {
   const emblem = headerData?.emblem
 
   return (
-    <header className="sticky top-0 z-50 shadow-md bg-white border-b border-gray-100">
+    <header className="sticky top-0 z-50 shadow-none border-2 border-t border-[#f3b24a] bg-white border border-gray-100">
       <div className="flex items-center justify-between px-4 py-3 max-w-6xl mx-auto overflow-hidden">
         <div className="w-12 sm:w-16 h-12 sm:h-16 flex-shrink-0 flex items-center justify-center">
           {logo ? (
             <MediaImage media={logo} width={64} height={64} className="w-12 sm:w-16 h-auto" />
           ) : (
             <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[#062963] rounded-full flex items-center justify-center">
-              <span className="text-white text-xs sm:text-sm font-bold">MOE</span>
+              <span className="text-white text-xs sm:text-sm font-bold">Neet</span>
             </div>
           )}
         </div>
         <div className="text-center flex-1 px-1">
-          <h1 className="text-sm sm:text-lg font-bold text-[#062963]">
+          <h1 className="text-sm sm:text-lg font-bold text-black">
             {hindiTitle} | {englishTitle}
           </h1>
           <p className="text-xs sm:text-base text-gray-600">

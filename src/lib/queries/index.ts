@@ -9,6 +9,11 @@ export {
   getUpcomingSessions,
   getSessionById,
 } from './live-counselling'
-export { getPricingCards } from './pricing'
+export { getPricingCards, getPricingCardById } from './pricing'
 export { getPageBySlug } from './pages'
+export {
+  getUserSubscription,
+  getActiveSubscription,
+  hasActiveOrPendingSubscription,
+} from './subscriptions'
 export { getHeader, getFooter, getSiteSettings, getHomePageSEO } from './globals'

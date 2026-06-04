@@ -6,6 +6,7 @@ import { generateFAQSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
+import { PageHero } from '@/components/shared/PageHero'
 import { HelpdeskSearch } from '@/components/helpdesk/HelpdeskSearch'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -45,17 +46,19 @@ export default async function HelpdeskPage() {
   return (
     <>
       {faqItems.length > 0 && <JsonLd data={generateFAQSchema(faqItems)} />}
-      <Section>
+      <PageHero
+        title="Helpdesk"
+        subtitle="Find answers to common questions about NEET counselling, plans, and services."
+      />
+      <Section className="bg-white">
         <Container className="max-w-3xl">
-          <div className="mb-12 text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Helpdesk</h1>
-            <p className="mt-4 text-lg text-muted-foreground">Frequently asked questions and support</p>
-          </div>
-
           {items.length > 0 ? (
             <HelpdeskSearch items={helpdeskItems} />
           ) : (
-            <p className="text-center text-muted-foreground">No help articles available yet.</p>
+            <div className="mx-auto max-w-md rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center">
+              <p className="text-lg font-semibold text-[#062963]">No help articles available yet</p>
+              <p className="mt-2 text-sm text-gray-500">Check back soon for new articles.</p>
+            </div>
           )}
         </Container>
       </Section>

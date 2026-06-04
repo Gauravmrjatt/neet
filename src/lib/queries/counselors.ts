@@ -10,7 +10,7 @@ export async function getCounselors({
 } = {}) {
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: status } }
-  if (specialization) where.specializations = { contains: specialization }
+  if (specialization) where['specializations.specialization'] = { equals: specialization }
 
   return payload.find({
     collection: 'counselors',

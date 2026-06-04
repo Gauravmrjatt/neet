@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin, isAdminOrSelf } from '../access/roles'
+import { isAdmin, isAdminOrSelf, anyone } from '../access/roles'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -9,13 +9,28 @@ export const Users: CollectionConfig = {
   auth: true,
   access: {
     read: isAdminOrSelf,
-    create: isAdmin,
+    create: anyone,
     update: isAdminOrSelf,
     delete: isAdmin,
+  },
+  hooks: {
+    beforeValidate: [
+      ({ data, operation }) => {
+        if (operation === 'create' && data) {
+          // Force role to 'user' on self-registration to prevent privilege escalation
+          data.role = 'user'
+        }
+        return data
+      },
+    ],
   },
   fields: [
     {
       name: 'name',
+      type: 'text',
+    },
+    {
+      name: 'phone',
       type: 'text',
     },
     {

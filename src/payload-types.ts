@@ -76,6 +76,7 @@ export interface Config {
     helpdesk: Helpdesk;
     'live-counselling': LiveCounselling;
     pages: Page;
+    subscriptions: Subscription;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -92,6 +93,7 @@ export interface Config {
     helpdesk: HelpdeskSelect<false> | HelpdeskSelect<true>;
     'live-counselling': LiveCounsellingSelect<false> | LiveCounsellingSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    subscriptions: SubscriptionsSelect<false> | SubscriptionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -150,6 +152,7 @@ export interface UserAuthOperations {
 export interface User {
   id: string;
   name?: string | null;
+  phone?: string | null;
   role: 'admin' | 'editor' | 'user';
   avatar?: (string | null) | Media;
   updatedAt: string;
@@ -567,6 +570,45 @@ export interface Page {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Tracks user plan purchases and admin assignments
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscriptions".
+ */
+export interface Subscription {
+  id: string;
+  /**
+   * The user who purchased this plan
+   */
+  user: string | User;
+  /**
+   * Which plan was purchased
+   */
+  plan: string | PricingCard;
+  /**
+   * Set to "active" once both counselor and page are assigned
+   */
+  status: 'pending' | 'active' | 'cancelled' | 'expired';
+  /**
+   * Counselor assigned to this user (set by admin)
+   */
+  assignedCounselor?: (string | null) | Counselor;
+  /**
+   * CMS page the user will see on /my-plan (set by admin)
+   */
+  assignedPage?: (string | null) | Page;
+  /**
+   * Auto-set on creation
+   */
+  purchasedAt?: string | null;
+  /**
+   * Auto-set when status becomes active
+   */
+  assignedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -625,6 +667,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'subscriptions';
+        value: string | Subscription;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -674,6 +720,7 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  phone?: T;
   role?: T;
   avatar?: T;
   updatedAt?: T;
@@ -954,6 +1001,21 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscriptions_select".
+ */
+export interface SubscriptionsSelect<T extends boolean = true> {
+  user?: T;
+  plan?: T;
+  status?: T;
+  assignedCounselor?: T;
+  assignedPage?: T;
+  purchasedAt?: T;
+  assignedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

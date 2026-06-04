@@ -10,3 +10,16 @@ export async function getPricingCards(): Promise<PricingCard[]> {
   })
   return result.docs
 }
+
+export async function getPricingCardById(id: string): Promise<PricingCard | null> {
+  try {
+    const payload = await getPayloadClient()
+    const result = await payload.findByID({
+      collection: 'pricing-cards',
+      id,
+    })
+    return result as PricingCard
+  } catch {
+    return null
+  }
+}

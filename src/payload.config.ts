@@ -14,6 +14,7 @@ import { Counselors } from './collections/Counselors'
 import { Helpdesk } from './collections/Helpdesk'
 import { LiveCounselling } from './collections/LiveCounselling'
 import { Pages } from './collections/Pages'
+import { Subscriptions } from './collections/Subscriptions'
 
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
@@ -41,6 +42,7 @@ export default buildConfig({
     Helpdesk,
     LiveCounselling,
     Pages,
+    Subscriptions,
   ],
   globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker],
   editor: lexicalEditor(),
