@@ -5,7 +5,6 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
-import { seedDefaultGlobals } from './lib/seed/defaults'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Blogs } from './collections/Blogs'
@@ -22,6 +21,7 @@ import { Footer } from './globals/Footer'
 import { SiteSettings } from './globals/SiteSettings'
 import { HomePageSEO } from './globals/HomePageSEO'
 import { NewsTicker } from './globals/NewsTicker'
+import { AboutPage } from './globals/AboutPage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -45,22 +45,15 @@ export default buildConfig({
     Pages,
     Subscriptions,
   ],
-  globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker],
+  globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker, AboutPage],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || (() => {
-    throw new Error('PAYLOAD_SECRET environment variable is required')
-  })(),
+  secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: mongooseAdapter({
-    url: process.env.DATABASE_URL || (() => {
-      throw new Error('DATABASE_URL environment variable is required')
-    })(),
+    url: process.env.DATABASE_URL || '',
   }),
   sharp,
   plugins: [],
-  onInit: async (payload) => {
-    await seedDefaultGlobals(payload)
-  },
 })
