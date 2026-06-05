@@ -5,6 +5,22 @@ interface RichTextProps {
   className?: string
 }
 
+function isSafeUrl(url: string | null | undefined): boolean {
+  if (!url) return false
+  const trimmed = url.trim()
+  if (trimmed.startsWith('#') || trimmed.startsWith('/')) return true
+  try {
+    const parsed = new URL(trimmed)
+    return ['http:', 'https:', 'mailto:', 'tel:'].includes(parsed.protocol)
+  } catch {
+    return false
+  }
+}
+
+function safeHref(url: string | null | undefined): string {
+  return isSafeUrl(url) ? (url as string) : '#'
+}
+
 function serializeLexical(node: any): React.ReactNode {
   if (!node) return null
 
@@ -45,7 +61,7 @@ function serializeLexical(node: any): React.ReactNode {
     case 'quote':
       return <blockquote>{children}</blockquote>
     case 'link':
-      return <a href={node.fields?.url} className="text-primary underline">{children}</a>
+      return <a href={safeHref(node.fields?.url)} className="text-primary underline">{children}</a>
     case 'linebreak':
       return <br />
     case 'upload':

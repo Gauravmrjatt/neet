@@ -32,10 +32,27 @@ export const Subscriptions: CollectionConfig = {
   },
   hooks: {
     beforeChange: [
-      ({ data, req, operation, originalDoc }) => {
+      async ({ data, req, operation, originalDoc }) => {
         // Force user to be the logged-in user on create
         if (operation === 'create' && req.user) {
           data.user = req.user.id
+        }
+
+        // Check for existing active/pending subscription on create
+        if (operation === 'create' && req.user) {
+          const existing = await req.payload.find({
+            collection: 'subscriptions',
+            where: {
+              and: [
+                { user: { equals: req.user.id } },
+                { status: { in: ['pending', 'active'] } },
+              ],
+            },
+            limit: 1,
+          })
+          if (existing.docs.length > 0) {
+            throw new Error('You already have an active or pending subscription')
+          }
         }
 
         // Set purchasedAt on create
