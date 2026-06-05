@@ -1,9 +1,10 @@
-import Link from 'next/link'
 import { headers as getHeaders } from 'next/headers.js'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { getHeader, getSiteSettings } from '@/lib/queries/globals'
 import { MediaImage } from '@/components/shared/MediaImage'
 import { CallButton } from '@/components/shared/CallButton'
+import { MobileMenu } from './MobileMenu'
 
 export async function Header() {
   const headers = await getHeaders()
@@ -11,22 +12,17 @@ export async function Header() {
   const payload = await getPayload({ config: payloadConfig })
   const { user } = await payload.auth({ headers })
 
-  let settings: any = {}
-  try {
-    settings = await payload.findGlobal({ slug: 'site-settings' })
-  } catch {}
+  const settings = await getSiteSettings()
+  const headerData = await getHeader()
 
-  let headerData: any = {}
-  try {
-    headerData = await payload.findGlobal({ slug: 'header' })
-  } catch {}
-
-  const phone = settings?.phone || ''
+  const phone = (settings as any)?.phone || ''
   const hindiTitle = headerData?.hindiTitle || 'नीट काउंसलिंग'
   const englishTitle = headerData?.englishTitle || 'NEET Counselling'
   const tagline = headerData?.tagline || 'Expert NEET and JOSAA Counselling Services'
   const logo = headerData?.logo
   const emblem = headerData?.emblem
+  const navigation = headerData?.navigation || []
+  const ctaButton = headerData?.ctaButton
 
   return (
     <header className="sticky top-0 z-50 shadow-none border-2 border-t border-[#f3b24a] bg-white border border-gray-100">
@@ -58,6 +54,7 @@ export async function Header() {
             </div>
           )}
         </div>
+        <MobileMenu user={user} navigation={navigation} ctaButton={ctaButton} />
       </div>
     </header>
   )

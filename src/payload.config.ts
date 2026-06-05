@@ -5,6 +5,7 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
+import { seedDefaultGlobals } from './lib/seed/defaults'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Blogs } from './collections/Blogs'
@@ -55,4 +56,7 @@ export default buildConfig({
   }),
   sharp,
   plugins: [],
+  onInit: async (payload) => {
+    await seedDefaultGlobals(payload)
+  },
 })
