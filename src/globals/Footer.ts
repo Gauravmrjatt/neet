@@ -1,6 +1,15 @@
 import type { GlobalConfig } from 'payload'
 import { isAdmin, anyone } from '../access/roles'
 
+function validateUrl(value: string | null | undefined) {
+  if (!value || typeof value !== 'string') return true
+  const trimmed = value.trim()
+  if (trimmed.startsWith('/') || trimmed.startsWith('#')) return true
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return true
+  if (trimmed.startsWith('mailto:') || trimmed.startsWith('tel:')) return true
+  return 'URL must start with /, #, http://, https://, mailto:, or tel:'
+}
+
 export const Footer: GlobalConfig = {
   slug: 'footer',
   access: {
@@ -40,6 +49,7 @@ export const Footer: GlobalConfig = {
               name: 'url',
               type: 'text',
               required: true,
+              validate: validateUrl,
             },
           ],
         },
@@ -58,6 +68,7 @@ export const Footer: GlobalConfig = {
           name: 'url',
           type: 'text',
           required: true,
+          validate: validateUrl,
         },
       ],
     },
@@ -81,6 +92,7 @@ export const Footer: GlobalConfig = {
           name: 'url',
           type: 'text',
           required: true,
+          validate: validateUrl,
         },
       ],
     },

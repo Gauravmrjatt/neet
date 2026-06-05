@@ -46,12 +46,16 @@ export default buildConfig({
   ],
   globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET || (() => {
+    throw new Error('PAYLOAD_SECRET environment variable is required')
+  })(),
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: mongooseAdapter({
-    url: process.env.DATABASE_URL || '',
+    url: process.env.DATABASE_URL || (() => {
+      throw new Error('DATABASE_URL environment variable is required')
+    })(),
   }),
   sharp,
   plugins: [],

@@ -11,7 +11,8 @@ import { Loader2 } from 'lucide-react'
 function SignupForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirect = searchParams.get('redirect') || '/my-plan'
+  const rawRedirect = searchParams.get('redirect') || '/my-plan'
+  const redirect = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/my-plan'
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
