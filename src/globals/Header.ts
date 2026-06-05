@@ -64,6 +64,19 @@ export const Header: GlobalConfig = {
           validate: validateUrl,
         },
         {
+          name: 'showWhen',
+          type: 'select',
+          defaultValue: 'always',
+          options: [
+            { label: 'Always Show', value: 'always' },
+            { label: 'Authenticated Users Only', value: 'authenticated' },
+            { label: 'Unauthenticated Users Only', value: 'unauthenticated' },
+          ],
+          admin: {
+            description: 'Controls when this nav item is visible based on authentication state',
+          },
+        },
+        {
           name: 'children',
           type: 'array',
           fields: [

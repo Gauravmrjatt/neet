@@ -14,15 +14,34 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
-import { NAV_ITEMS, SITE_NAME } from '@/lib/constants'
+import { SITE_NAME } from '@/lib/constants'
 
 interface MobileMenuProps {
   user?: { email?: string | null } | null
+  navigation: Array<{
+    label: string
+    link: string
+    showWhen?: string | null
+  }>
+  ctaButton?: {
+    text?: string | null
+    link?: string | null
+  } | null
 }
 
-export function MobileMenu({ user }: MobileMenuProps) {
+function shouldShow(showWhen: string | null | undefined, user: any): boolean {
+  const value = showWhen || 'always'
+  if (value === 'always') return true
+  if (value === 'authenticated') return !!user
+  if (value === 'unauthenticated') return !user
+  return true
+}
+
+export function MobileMenu({ user, navigation, ctaButton }: MobileMenuProps) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
+
+  const visibleItems = navigation.filter((item) => shouldShow(item.showWhen, user))
 
   async function handleLogout() {
     try {
@@ -51,40 +70,34 @@ export function MobileMenu({ user }: MobileMenuProps) {
           <SheetTitle className="text-left">{SITE_NAME}</SheetTitle>
         </SheetHeader>
         <nav className="mt-6 flex flex-col gap-1">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              className="rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {visibleItems.map((item) => {
+            if (item.link === '/logout') {
+              return (
+                <button
+                  key="logout"
+                  onClick={handleLogout}
+                  className="rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors text-left"
+                >
+                  {item.label}
+                </button>
+              )
+            }
+            return (
+              <Link
+                key={item.link}
+                href={item.link}
+                onClick={() => setOpen(false)}
+                className="rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                {item.label}
+              </Link>
+            )
+          })}
         </nav>
         <Separator className="my-4" />
         <div className="flex flex-col gap-2">
           {user ? (
-            <>
-              <p className="px-3 text-sm text-muted-foreground">{user.email}</p>
-              <Button variant="outline" asChild className="w-full">
-                <Link href="/my-plan" onClick={() => setOpen(false)}>
-                  My Plan
-                </Link>
-              </Button>
-              <Button variant="outline" asChild className="w-full">
-                <Link href="/admin" onClick={() => setOpen(false)}>
-                  Dashboard
-                </Link>
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
-                onClick={handleLogout}
-              >
-                Logout
-              </Button>
-            </>
+            <p className="px-3 text-sm text-muted-foreground">{user.email}</p>
           ) : (
             <>
               <Button variant="outline" asChild className="w-full">
