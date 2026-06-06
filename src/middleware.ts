@@ -19,9 +19,6 @@ function authLog(scope: string, data: Record<string, unknown>) {
  * Logs every step of the verification so the root cause of a failure
  * (short secret, wrong secret, missing role, expired token, etc.) is
  * visible in the server logs.
- *
- * NOTE: currently not wired into any access control — kept here so the
- * role check can be re-enabled later with full diagnostic logging.
  */
 export async function getRoleFromToken(token: string): Promise<string | null> {
   const secret = process.env.PAYLOAD_SECRET
@@ -69,26 +66,33 @@ export async function getRoleFromToken(token: string): Promise<string | null> {
   }
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get('payload-token')?.value
 
-  // Observability: log every /admin request's auth state. This is the
-  // signal we need to debug why an admin was being redirected to /my-plan
-  // when the role check was active. Fire-and-forget so the response is
-  // never blocked by verification work.
-  if (pathname.startsWith('/admin')) {
+  // Admin routes — require admin role. Exclude /admin/login (Payload's
+  // own login page) so unauthenticated visitors are sent there.
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     authLog('request', {
       pathname,
       hasToken: !!token,
       tokenLength: token?.length ?? 0,
     })
-    if (token) {
-      void getRoleFromToken(token)
+
+    if (!token) {
+      authLog('decision', { pathname, action: 'redirect', to: '/admin/login', reason: 'no-token' })
+      return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+
+    const role = await getRoleFromToken(token)
+    authLog('decision', { pathname, role, action: role === 'admin' ? 'allow' : 'redirect', to: role === 'admin' ? null : '/my-plan' })
+
+    if (role !== 'admin') {
+      return NextResponse.redirect(new URL('/my-plan', request.url))
     }
   }
 
-  // Cheap cookie-existence gate for the routes the AGENTS.md documents.
+  // Cheap cookie-existence gate for the routes AGENTS.md documents.
   if (cookieProtectedRoutes.some((route) => pathname.startsWith(route)) && !token) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)
