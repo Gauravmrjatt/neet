@@ -48,6 +48,7 @@ export const Users: CollectionConfig = {
       ],
       defaultValue: 'user',
       required: true,
+      saveToJWT: true,
       admin: {
         position: 'sidebar',
       },
