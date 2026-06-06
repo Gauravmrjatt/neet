@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@config "../../../tailwind.config.ts";
 @import "./animations.css";
 
 @theme inline {
@@ -33,6 +32,19 @@
   --color-navbar-bg: #F6F3EE;
   --color-navbar-hover: #e8e4de;
   --radius: 0.75rem;
+  --radius-4xl: 2rem;
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
 }
 
 @layer base {
