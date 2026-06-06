@@ -1,4 +1,4 @@
-import { jwtVerify } from 'jose'
+import { jwtVerify, SignJWT } from 'jose'
 import { NextRequest, NextResponse } from 'next/server'
 
 const cookieProtectedRoutes = ['/live-counselling', '/admin/custom']
@@ -28,53 +28,87 @@ export async function getRoleFromToken(token: string): Promise<string | null> {
   }
 
   const secretBytes = new TextEncoder().encode(secret)
+  // Short fingerprint of the secret to compare with what Payload sees
+  // (Payload's source: payload/dist/auth/jwt.js uses new TextEncoder().encode(secret)
+  //  directly — no hashing). If the two fingerprints differ, the env var
+  // loaded in the edge runtime is not the same as in the Node.js runtime.
+  const secretFingerprint = Array.from(
+    new Uint8Array(await crypto.subtle.digest('SHA-256', secretBytes)).slice(0, 6),
+  )
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+
   authLog('jwt', {
     step: 'input',
     secretLength: secret.length,
     secretByteLength: secretBytes.byteLength,
+    secretFingerprint,
+    secretHeadTail: `${JSON.stringify(secret.slice(0, 4))}…${JSON.stringify(secret.slice(-4))}`,
     tokenLength: token.length,
     tokenPreview: `${token.slice(0, 24)}…`,
   })
 
-  try {
-    // Payload hashes the secret with SHA-256 internally to meet HS256's
-    // 32-byte minimum key length. We must do the same or the signature
-    // will never match — that was the bug producing
-    // JWSSignatureVerificationFailed.
-    const hashed = new Uint8Array(await crypto.subtle.digest('SHA-256', secretBytes))
-    const key = await crypto.subtle.importKey(
-      'raw',
-      hashed,
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['verify'],
-    )
-    authLog('jwt', {
-      step: 'key',
-      ok: true,
-      alg: 'HS256',
-      keyByteLength: hashed.byteLength,
-      keyDerivation: 'sha256(secret)',
-    })
+  // Try multiple key strategies in order, logging which one succeeds.
+  // Payload's jwtSign uses: new TextEncoder().encode(secret) — raw bytes.
+  // We mirror that exactly as the first candidate.
+  const candidates: Array<{ name: string; bytes: Uint8Array }> = [
+    { name: 'raw', bytes: secretBytes },
+    { name: 'sha256', bytes: new Uint8Array(await crypto.subtle.digest('SHA-256', secretBytes)) },
+  ]
 
-    const { payload } = await jwtVerify(token, key, { algorithms: ['HS256'] })
-    authLog('jwt', {
-      step: 'verify',
-      ok: true,
-      role: (payload as { role?: string })?.role ?? null,
-      payloadKeys: payload ? Object.keys(payload) : [],
-      exp: (payload as { exp?: number })?.exp ?? null,
-    })
-    return ((payload as { role?: string })?.role as string) || null
-  } catch (err) {
-    authLog('jwt', {
-      step: 'verify',
-      ok: false,
-      error: err instanceof Error ? err.message : String(err),
-      errorName: err instanceof Error ? err.name : 'Unknown',
-    })
-    return null
+  for (const cand of candidates) {
+    try {
+      const key = await crypto.subtle.importKey(
+        'raw',
+        cand.bytes,
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['verify'],
+      )
+
+      // Self-test: sign a test JWT with the same key and immediately verify it.
+      // If this round-trip fails, the key derivation is wrong for this candidate.
+      const iat = Math.floor(Date.now() / 1000)
+      const testToken = await new SignJWT({ selftest: true })
+        .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
+        .setIssuedAt(iat)
+        .setExpirationTime(iat + 60)
+        .sign(cand.bytes)
+      const selfCheck = await jwtVerify(testToken, key, { algorithms: ['HS256'] }).catch(
+        (e: unknown) => ({ error: e instanceof Error ? e.message : String(e) }),
+      )
+
+      authLog('jwt', {
+        step: 'selftest',
+        candidate: cand.name,
+        keyByteLength: cand.bytes.byteLength,
+        selfTestOk: !('error' in selfCheck),
+        selfTestError: 'error' in selfCheck ? selfCheck.error : undefined,
+      })
+
+      const { payload } = await jwtVerify(token, key, { algorithms: ['HS256'] })
+      authLog('jwt', {
+        step: 'verify',
+        ok: true,
+        candidate: cand.name,
+        role: (payload as { role?: string })?.role ?? null,
+        payloadKeys: payload ? Object.keys(payload) : [],
+        exp: (payload as { exp?: number })?.exp ?? null,
+      })
+      return ((payload as { role?: string })?.role as string) || null
+    } catch (err) {
+      authLog('jwt', {
+        step: 'verify',
+        ok: false,
+        candidate: cand.name,
+        error: err instanceof Error ? err.message : String(err),
+        errorName: err instanceof Error ? err.name : 'Unknown',
+      })
+    }
   }
+
+  authLog('jwt', { step: 'verify', ok: false, summary: 'all candidates failed' })
+  return null
 }
 
 export async function middleware(request: NextRequest) {
