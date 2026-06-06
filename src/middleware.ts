@@ -37,14 +37,25 @@ export async function getRoleFromToken(token: string): Promise<string | null> {
   })
 
   try {
+    // Payload hashes the secret with SHA-256 internally to meet HS256's
+    // 32-byte minimum key length. We must do the same or the signature
+    // will never match — that was the bug producing
+    // JWSSignatureVerificationFailed.
+    const hashed = new Uint8Array(await crypto.subtle.digest('SHA-256', secretBytes))
     const key = await crypto.subtle.importKey(
       'raw',
-      secretBytes,
+      hashed,
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['verify'],
     )
-    authLog('jwt', { step: 'key', ok: true, alg: 'HS256' })
+    authLog('jwt', {
+      step: 'key',
+      ok: true,
+      alg: 'HS256',
+      keyByteLength: hashed.byteLength,
+      keyDerivation: 'sha256(secret)',
+    })
 
     const { payload } = await jwtVerify(token, key, { algorithms: ['HS256'] })
     authLog('jwt', {
