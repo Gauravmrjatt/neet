@@ -15,10 +15,15 @@ export const Users: CollectionConfig = {
   },
   hooks: {
     beforeValidate: [
-      ({ data, operation }) => {
-        if (operation === 'create' && data) {
+      ({ data, operation, req, originalDoc }) => {
+        if (!data) return data
+        if (operation === 'create') {
           // Force role to 'user' on self-registration to prevent privilege escalation
           data.role = 'user'
+        }
+        if (operation === 'update' && req?.user?.role !== 'admin' && originalDoc) {
+          // Non-admin users cannot change their own role
+          data.role = originalDoc.role
         }
         return data
       },

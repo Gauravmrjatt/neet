@@ -1,10 +1,9 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin, isAdminOrSelf } from '../access/roles'
+import { isAdmin } from '../access/roles'
 
 const canRead = ({ req: { user } }: { req: { user: any } }) => {
   if (!user) return false
   if (user.role === 'admin' || user.role === 'editor') return true
-  // Users can read their own subscriptions
   return {
     user: {
       equals: user.id,
@@ -13,7 +12,6 @@ const canRead = ({ req: { user } }: { req: { user: any } }) => {
 }
 
 const canCreate = ({ req: { user } }: { req: { user: any } }) => {
-  // Any authenticated user can create a subscription (for themselves)
   return !!user
 }
 
@@ -21,7 +19,7 @@ export const Subscriptions: CollectionConfig = {
   slug: 'subscriptions',
   admin: {
     useAsTitle: 'id',
-    defaultColumns: ['user', 'plan', 'status', 'assignedCounselor', 'assignedPage'],
+    defaultColumns: ['user', 'plan', 'status', 'transaction', 'assignedCounselor', 'assignedPage'],
     description: 'Tracks user plan purchases and admin assignments',
   },
   access: {
@@ -33,31 +31,33 @@ export const Subscriptions: CollectionConfig = {
   hooks: {
     beforeChange: [
       async ({ data, req, operation, originalDoc }) => {
-        // Force user to be the logged-in user on create
-        if (operation === 'create' && req.user) {
-          data.user = req.user.id
-        }
-
-        // Check for existing active/pending subscription on create
-        if (operation === 'create' && req.user) {
-          const existing = await req.payload.find({
-            collection: 'subscriptions',
-            where: {
-              and: [
-                { user: { equals: req.user.id } },
-                { status: { in: ['pending', 'active'] } },
-              ],
-            },
-            limit: 1,
-          })
-          if (existing.docs.length > 0) {
-            throw new Error('You already have an active or pending subscription')
+        // On create: set user from context if not already set (webhook sets it explicitly)
+        if (operation === 'create') {
+          if (!data.user && req.user) {
+            data.user = req.user.id
           }
-        }
 
-        // Set purchasedAt on create
-        if (operation === 'create' && !data.purchasedAt) {
-          data.purchasedAt = new Date().toISOString()
+          // Check for existing active/pending subscription
+          if (data.user) {
+            const existing = await req.payload.find({
+              collection: 'subscriptions',
+              where: {
+                and: [
+                  { user: { equals: data.user } },
+                  { status: { in: ['pending', 'active'] } },
+                ],
+              },
+              limit: 1,
+            })
+            if (existing.docs.length > 0) {
+              throw new Error('You already have an active or pending subscription')
+            }
+          }
+
+          // Set purchasedAt
+          if (!data.purchasedAt) {
+            data.purchasedAt = new Date().toISOString()
+          }
         }
 
         // Set assignedAt when status changes to 'active'
@@ -91,6 +91,15 @@ export const Subscriptions: CollectionConfig = {
       required: true,
       admin: {
         description: 'Which plan was purchased',
+      },
+    },
+    {
+      name: 'transaction',
+      type: 'relationship',
+      relationTo: 'transactions',
+      admin: {
+        description: 'The payment transaction for this subscription',
+        readOnly: true,
       },
     },
     {

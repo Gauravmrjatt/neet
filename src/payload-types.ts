@@ -77,6 +77,7 @@ export interface Config {
     'live-counselling': LiveCounselling;
     pages: Page;
     subscriptions: Subscription;
+    transactions: Transaction;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -94,6 +95,7 @@ export interface Config {
     'live-counselling': LiveCounsellingSelect<false> | LiveCounsellingSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     subscriptions: SubscriptionsSelect<false> | SubscriptionsSelect<true>;
+    transactions: TransactionsSelect<false> | TransactionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -270,6 +272,10 @@ export interface PricingCard {
    * Display price (e.g., "₹2399")
    */
   price: string;
+  /**
+   * Numeric price in paise for Razorpay (e.g., 239900 for ₹2399). 100 paise = ₹1.
+   */
+  priceInPaise: number;
   /**
    * Strikethrough price (e.g., "₹2999"). Leave empty for no strikethrough.
    */
@@ -588,6 +594,10 @@ export interface Subscription {
    */
   plan: string | PricingCard;
   /**
+   * The payment transaction for this subscription
+   */
+  transaction?: (string | null) | Transaction;
+  /**
    * Set to "active" once both counselor and page are assigned
    */
   status: 'pending' | 'active' | 'cancelled' | 'expired';
@@ -607,6 +617,66 @@ export interface Subscription {
    * Auto-set when status becomes active
    */
   assignedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Tracks Razorpay payment transactions
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transactions".
+ */
+export interface Transaction {
+  id: string;
+  user: string | User;
+  plan: string | PricingCard;
+  /**
+   * Subscription created after successful payment
+   */
+  subscription?: (string | null) | Subscription;
+  /**
+   * Razorpay order ID
+   */
+  razorpayOrderId?: string | null;
+  /**
+   * Razorpay payment ID (set after successful payment)
+   */
+  razorpayPaymentId?: string | null;
+  /**
+   * Razorpay payment signature (for verification)
+   */
+  razorpaySignature?: string | null;
+  /**
+   * Amount in paise (e.g., 239900 for ₹2399)
+   */
+  amount: number;
+  currency: string;
+  status: 'created' | 'attempted' | 'paid' | 'failed' | 'refunded';
+  /**
+   * Prevents duplicate order creation
+   */
+  idempotencyKey?: string | null;
+  /**
+   * e.g., upi, card, netbanking
+   */
+  paymentMethod?: string | null;
+  paidAt?: string | null;
+  /**
+   * Error details if payment failed
+   */
+  errorMessage?: string | null;
+  /**
+   * Audit log of received webhook events
+   */
+  webhookEvents?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -673,6 +743,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'subscriptions';
         value: string | Subscription;
+      } | null)
+    | ({
+        relationTo: 'transactions';
+        value: string | Transaction;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -811,6 +885,7 @@ export interface PricingCardsSelect<T extends boolean = true> {
   planName?: T;
   subtitle?: T;
   price?: T;
+  priceInPaise?: T;
   originalPrice?: T;
   discount?: T;
   badge?: T;
@@ -1011,11 +1086,34 @@ export interface PagesSelect<T extends boolean = true> {
 export interface SubscriptionsSelect<T extends boolean = true> {
   user?: T;
   plan?: T;
+  transaction?: T;
   status?: T;
   assignedCounselor?: T;
   assignedPage?: T;
   purchasedAt?: T;
   assignedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transactions_select".
+ */
+export interface TransactionsSelect<T extends boolean = true> {
+  user?: T;
+  plan?: T;
+  subscription?: T;
+  razorpayOrderId?: T;
+  razorpayPaymentId?: T;
+  razorpaySignature?: T;
+  amount?: T;
+  currency?: T;
+  status?: T;
+  idempotencyKey?: T;
+  paymentMethod?: T;
+  paidAt?: T;
+  errorMessage?: T;
+  webhookEvents?: T;
   updatedAt?: T;
   createdAt?: T;
 }

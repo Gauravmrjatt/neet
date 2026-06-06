@@ -15,6 +15,7 @@ import { Helpdesk } from './collections/Helpdesk'
 import { LiveCounselling } from './collections/LiveCounselling'
 import { Pages } from './collections/Pages'
 import { Subscriptions } from './collections/Subscriptions'
+import { Transactions } from './collections/Transactions'
 
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
@@ -44,10 +45,11 @@ export default buildConfig({
     LiveCounselling,
     Pages,
     Subscriptions,
+    Transactions,
   ],
   globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker, AboutPage],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET || (() => { throw new Error('PAYLOAD_SECRET environment variable is required') })(),
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

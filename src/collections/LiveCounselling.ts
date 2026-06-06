@@ -1,5 +1,15 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor, anyone } from '../access/roles'
+import { isAdminOrEditor } from '../access/roles'
+
+const canReadLiveCounselling = ({ req: { user } }: { req: { user: any } }) => {
+  if (!user) return false
+  if (user.role === 'admin' || user.role === 'editor') return true
+  return {
+    status: {
+      in: ['scheduled', 'live'],
+    },
+  }
+}
 
 export const LiveCounselling: CollectionConfig = {
   slug: 'live-counselling',
@@ -7,10 +17,20 @@ export const LiveCounselling: CollectionConfig = {
     useAsTitle: 'title',
   },
   access: {
-    read: anyone,
+    read: canReadLiveCounselling,
     create: isAdminOrEditor,
     update: isAdminOrEditor,
     delete: isAdminOrEditor,
+  },
+  hooks: {
+    afterRead: [
+      ({ doc, req: { user } }) => {
+        if (user?.role !== 'admin' && user?.role !== 'editor' && doc) {
+          delete doc.meetingUrl
+        }
+        return doc
+      },
+    ],
   },
   fields: [
     {

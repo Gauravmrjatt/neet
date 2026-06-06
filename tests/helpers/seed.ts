@@ -86,6 +86,7 @@ export async function seedTestData() {
     data: {
       planName: 'Basic Plan',
       price: '₹999',
+      priceInPaise: 99900,
       features: [{ feature: 'Feature 1' }, { feature: 'Feature 2' }],
       description: 'Basic plan description',
       popular: false,

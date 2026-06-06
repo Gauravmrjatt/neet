@@ -1,5 +1,15 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor, anyone } from '../access/roles'
+import { isAdminOrEditor } from '../access/roles'
+
+const canReadCounselors = ({ req: { user } }: { req: { user: any } }) => {
+  if (!user) return false
+  if (user.role === 'admin' || user.role === 'editor') return true
+  return {
+    status: {
+      equals: 'active',
+    },
+  }
+}
 
 export const Counselors: CollectionConfig = {
   slug: 'counselors',
@@ -7,10 +17,21 @@ export const Counselors: CollectionConfig = {
     useAsTitle: 'name',
   },
   access: {
-    read: anyone,
+    read: canReadCounselors,
     create: isAdminOrEditor,
     update: isAdminOrEditor,
     delete: isAdminOrEditor,
+  },
+  hooks: {
+    afterRead: [
+      ({ doc, req: { user } }) => {
+        if (user?.role !== 'admin' && user?.role !== 'editor' && doc) {
+          delete doc.email
+          delete doc.phone
+        }
+        return doc
+      },
+    ],
   },
   fields: [
     {

@@ -66,10 +66,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
             Secure Checkout
           </Badge>
           <h1 className="text-3xl font-extrabold tracking-tight text-[#062963] sm:text-4xl">
-            Confirm Your Plan
+            Complete Your Purchase
           </h1>
           <p className="mt-3 text-base text-gray-600">
-            Review the plan details below and confirm your purchase.
+            Review the plan details below and proceed to secure payment.
           </p>
         </div>
 
@@ -136,7 +136,14 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
             )}
 
             <div className="border-t border-gray-200 pt-6">
-              <PurchaseButton planId={plan.id} planName={plan.planName} />
+              <PurchaseButton
+                planId={plan.id}
+                planName={plan.planName}
+                amount={plan.priceInPaise}
+                userName={user.name}
+                userEmail={user.email}
+                userPhone={user.phone}
+              />
             </div>
           </CardContent>
         </Card>

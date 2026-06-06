@@ -1,5 +1,15 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor, anyone } from '../access/roles'
+import { isAdminOrEditor } from '../access/roles'
+
+const canReadHelpdesk = ({ req: { user } }: { req: { user: any } }) => {
+  if (!user) return false
+  if (user.role === 'admin' || user.role === 'editor') return true
+  return {
+    status: {
+      equals: 'active',
+    },
+  }
+}
 
 export const Helpdesk: CollectionConfig = {
   slug: 'helpdesk',
@@ -7,7 +17,7 @@ export const Helpdesk: CollectionConfig = {
     useAsTitle: 'question',
   },
   access: {
-    read: anyone,
+    read: canReadHelpdesk,
     create: isAdminOrEditor,
     update: isAdminOrEditor,
     delete: isAdminOrEditor,

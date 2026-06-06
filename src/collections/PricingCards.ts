@@ -37,6 +37,17 @@ export const PricingCards: CollectionConfig = {
       },
     },
     {
+      name: 'priceInPaise',
+      type: 'number',
+      required: true,
+      min: 0,
+      admin: {
+        description:
+          'Numeric price in paise for Razorpay (e.g., 239900 for ₹2399). 100 paise = ₹1.',
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'originalPrice',
       type: 'text',
       admin: {
