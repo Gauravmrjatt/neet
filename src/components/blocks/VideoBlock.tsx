@@ -30,28 +30,24 @@ export function VideoBlock({ title, videoUrl, thumbnail, description }: VideoBlo
       <Container className="max-w-4xl">
         {title && (
           <div className="mb-8 text-center">
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-              {title}
-            </h2>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
           </div>
         )}
-        <div className="overflow-hidden rounded-2xl border border-primary/10 shadow-md">
-          <div className="aspect-video">
-            {embedUrl ? (
-              <iframe
-                src={embedUrl}
-                className="h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center bg-muted">
-                <p className="text-muted-foreground">Video not available</p>
-              </div>
-            )}
-          </div>
+        <div className="aspect-video overflow-hidden rounded-lg">
+          {embedUrl ? (
+            <iframe
+              src={embedUrl}
+              className="h-full w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center bg-muted">
+              <p className="text-muted-foreground">Video not available</p>
+            </div>
+          )}
         </div>
-        {description && <p className="mt-5 text-center text-muted-foreground leading-relaxed">{description}</p>}
+        {description && <p className="mt-4 text-center text-muted-foreground">{description}</p>}
       </Container>
     </Section>
   )

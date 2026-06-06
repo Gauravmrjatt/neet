@@ -22,9 +22,7 @@ export function FAQBlock({ title, items }: FAQBlockProps) {
       <Container className="max-w-3xl">
         {title && (
           <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-              {title}
-            </h2>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
           </div>
         )}
         <Accordion type="single" collapsible className="w-full">

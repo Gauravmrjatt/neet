@@ -34,7 +34,7 @@ export default async function CounsellorsPage() {
         title="Our Counsellors"
         subtitle="Find experienced NEET counsellors to guide your journey to a top medical college."
       />
-      <Section className="bg-navbar-bg/30">
+      <Section className="bg-[#F6F3EE]/30">
         <Container>
           <CounselorFilter counselors={counselorData} />
         </Container>

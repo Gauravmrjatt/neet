@@ -7,7 +7,6 @@ import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
 import { Media } from '@/payload-types'
-import { cn } from '@/lib/utils'
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateSEOMetadata({
@@ -46,21 +45,20 @@ export default async function VideosPage({
         title="Videos"
         subtitle="Video guides and tutorials for NEET preparation"
       />
-      <Section className="bg-navbar-bg/30">
+      <Section className="bg-[#F6F3EE]/30">
         <Container>
-          <div className="mb-10 flex flex-wrap justify-center gap-2">
+          <div className="mb-8 flex flex-wrap justify-center gap-2">
             {CATEGORIES.map((cat) => {
               const isActive = (cat.value === selectedCategory) || (!cat.value && !selectedCategory)
               return (
                 <Link
                   key={cat.label}
                   href={cat.value ? `/videos?category=${cat.value}` : '/videos'}
-                  className={cn(
-                    'inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98]',
+                  className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition ${
                     isActive
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'border border-primary/15 bg-white text-primary hover:border-primary/40 hover:bg-primary/5'
-                  )}
+                      ? 'bg-[#062963] text-white'
+                      : 'border border-gray-300 bg-white text-[#062963] hover:bg-[#062963] hover:text-white'
+                  }`}
                 >
                   {cat.label}
                 </Link>
@@ -77,17 +75,17 @@ export default async function VideosPage({
                     <Link
                       key={video.id}
                       href={`/videos/${video.slug}`}
-                      className="group overflow-hidden rounded-2xl border border-primary/10 bg-white transition-all duration-200 ease-out hover:-translate-y-1 hover:border-primary/30 hover:shadow-md"
+                      className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:shadow-lg hover:-translate-y-0.5"
                     >
-                      <div className="relative aspect-video overflow-hidden bg-muted">
+                      <div className="relative aspect-video overflow-hidden bg-gray-100">
                         {thumbnail?.url ? (
                           <img
                             src={thumbnail.url}
                             alt={thumbnail.alt || video.title}
-                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                            className="h-full w-full object-cover transition group-hover:scale-105"
                           />
                         ) : (
-                          <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary to-primary-navy-dark">
+                          <div className="flex h-full items-center justify-center bg-gradient-to-br from-[#062963] to-[#041d45]">
                             <svg className="h-12 w-12 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -95,17 +93,17 @@ export default async function VideosPage({
                           </div>
                         )}
                         {video.duration && (
-                          <span className="absolute bottom-2 right-2 rounded-full bg-primary/90 px-2.5 py-1 text-xs font-medium text-white shadow-sm">
+                          <span className="absolute bottom-2 right-2 rounded bg-[#062963]/90 px-2 py-1 text-xs font-medium text-white">
                             {video.duration}
                           </span>
                         )}
                       </div>
                       <div className="p-5">
-                        <h2 className="font-display font-bold text-primary transition-colors group-hover:text-button-gold line-clamp-2">
+                        <h2 className="font-bold text-[#062963] group-hover:text-[#FBAC1A] transition-colors line-clamp-2">
                           {video.title}
                         </h2>
                         {video.category && (
-                          <span className="mt-3 inline-block rounded-full bg-primary/10 px-3 py-0.5 text-xs font-medium capitalize text-primary">
+                          <span className="mt-3 inline-block rounded-full bg-[#062963]/10 text-[#062963] px-2.5 py-0.5 text-xs font-medium capitalize">
                             {video.category}
                           </span>
                         )}
@@ -116,11 +114,11 @@ export default async function VideosPage({
               </div>
 
               {totalPages > 1 && (
-                <div className="mt-14 flex justify-center gap-2 flex-wrap">
+                <div className="mt-12 flex justify-center gap-2 flex-wrap">
                   {currentPage > 1 && (
                     <Link
                       href={`/videos?page=${currentPage - 1}${category ? `&category=${category}` : ''}`}
-                      className="inline-flex items-center rounded-full border border-primary/15 bg-white px-5 py-2 text-sm font-semibold text-primary transition-all duration-200 ease-out hover:border-primary/40 hover:bg-primary/5"
+                      className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-[#062963] hover:bg-[#062963] hover:text-white transition-colors"
                     >
                       Previous
                     </Link>
@@ -129,12 +127,11 @@ export default async function VideosPage({
                     <Link
                       key={p}
                       href={`/videos?page=${p}${category ? `&category=${category}` : ''}`}
-                      className={cn(
-                        'inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ease-out',
+                      className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                         p === currentPage
-                          ? 'bg-primary text-primary-foreground shadow-sm'
-                          : 'border border-primary/15 bg-white text-primary hover:border-primary/40 hover:bg-primary/5'
-                      )}
+                          ? 'bg-[#062963] text-white'
+                          : 'border border-gray-300 bg-white text-[#062963] hover:bg-[#062963] hover:text-white'
+                      }`}
                     >
                       {p}
                     </Link>
@@ -142,7 +139,7 @@ export default async function VideosPage({
                   {currentPage < totalPages && (
                     <Link
                       href={`/videos?page=${currentPage + 1}${category ? `&category=${category}` : ''}`}
-                      className="inline-flex items-center rounded-full border border-primary/15 bg-white px-5 py-2 text-sm font-semibold text-primary transition-all duration-200 ease-out hover:border-primary/40 hover:bg-primary/5"
+                      className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-[#062963] hover:bg-[#062963] hover:text-white transition-colors"
                     >
                       Next
                     </Link>
@@ -151,9 +148,9 @@ export default async function VideosPage({
               )}
             </>
           ) : (
-            <div className="mx-auto max-w-md rounded-2xl border-2 border-dashed border-primary/20 bg-white p-12 text-center">
-              <p className="font-display text-lg font-semibold text-primary">No videos available yet</p>
-              <p className="mt-2 text-sm text-muted-foreground">Check back soon for new content.</p>
+            <div className="mx-auto max-w-md rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center">
+              <p className="text-lg font-semibold text-[#062963]">No videos available yet</p>
+              <p className="mt-2 text-sm text-gray-500">Check back soon for new content.</p>
             </div>
           )}
         </Container>

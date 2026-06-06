@@ -23,33 +23,22 @@ export function FeatureBlock({ title, subtitle, items }: FeatureBlockProps) {
     <Section>
       <Container>
         {title && (
-          <div className="mb-14 text-center">
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-              {title}
-            </h2>
-            {subtitle && (
-              <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground leading-relaxed">
-                {subtitle}
-              </p>
-            )}
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
+            {subtitle && <p className="mt-4 text-lg text-muted-foreground">{subtitle}</p>}
           </div>
         )}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => {
             const iconUrl = typeof item.icon === 'object' ? item.icon?.url : null
             return (
-              <div
-                key={item.id || index}
-                className="group rounded-2xl border border-primary/10 bg-card p-7 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:border-primary/20 hover:shadow-md"
-              >
+              <div key={item.id || index} className="rounded-lg border p-6 transition hover:shadow-lg">
                 {iconUrl && (
-                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
-                    <img src={iconUrl} alt="" className="h-8 w-8" />
-                  </div>
+                  <img src={iconUrl} alt="" className="mb-4 h-12 w-12" />
                 )}
-                <h3 className="font-display text-xl font-semibold tracking-tight">{item.title}</h3>
+                <h3 className="text-xl font-semibold">{item.title}</h3>
                 {item.description && (
-                  <p className="mt-2 text-muted-foreground leading-relaxed">{item.description}</p>
+                  <p className="mt-2 text-muted-foreground">{item.description}</p>
                 )}
               </div>
             )

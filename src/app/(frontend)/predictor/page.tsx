@@ -27,15 +27,15 @@ export default function PredictorPage() {
         subtitle="Enter your NEET rank and details to see which colleges you can get into — based on official MCC allotment data."
       />
 
-      <Section className="bg-navbar-bg/30">
+      <Section className="bg-[#F6F3EE]/30">
         <Container className="max-w-5xl">
           <PredictorForm filterOptions={filterOptions} />
         </Container>
       </Section>
 
-      <section className="bg-primary py-14 text-center text-white">
+      <section className="bg-[#062963] py-12 text-center text-white">
         <Container>
-          <p className="text-sm text-white/65">
+          <p className="text-sm text-white/60">
             Based on official MCC NEET UG counselling data. Predictions are estimates and do not
             guarantee admission.
           </p>
