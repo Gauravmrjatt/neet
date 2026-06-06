@@ -1,4 +1,12 @@
+import { Quicksand } from 'next/font/google'
 import '../(frontend)/globals.css'
+
+const quicksand = Quicksand({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-quicksand',
+})
 
 export const metadata = {
   title: 'Authentication',
@@ -7,7 +15,7 @@ export const metadata = {
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={quicksand.variable}>
       <body className="min-h-screen bg-background font-sans antialiased">
         <div className="flex min-h-screen">
           {/* Left branding panel - hidden on mobile */}

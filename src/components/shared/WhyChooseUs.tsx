@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, Target, Users, Clock, BookOpen, Shield, Headphones } from 'lucide-react'
+import { ChevronDown, Target, Users, Clock, BookOpen, Shield, Headphones, Sparkles } from 'lucide-react'
 
 const REASONS = [
   {
@@ -40,50 +40,86 @@ export function WhyChooseUs() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section className="bg-white py-8 px-3 sm:py-12 sm:px-4 lg:py-14">
+    <section
+      aria-label="Why choose us"
+      className="bg-background py-16 sm:py-20 px-3 sm:px-4"
+    >
       <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-[#062963] mb-2 sm:mb-4 leading-tight px-1">
-          Why 17000+ Students Trust Us
+        <p
+          className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full mb-4 tracking-wide uppercase shadow-sm"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(251,172,26,0.18) 0%, rgba(255,255,255,0.7) 50%, rgba(6,41,99,0.10) 100%)',
+            color: '#062963',
+            border: '1.5px solid rgba(6,41,99,0.15)',
+          }}
+        >
+          <Sparkles className="w-3 h-3 text-button-gold" aria-hidden="true" />
+          Why Us
+        </p>
+        <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-[#062963] mb-3 sm:mb-4 leading-tight tracking-tight">
+          Why 17,000+ Students Trust Us
         </h2>
-        <p className="text-gray-600 max-w-2xl mx-auto mb-4 sm:mb-6 text-xs sm:text-sm lg:text-base leading-snug px-1">
+        <p className="text-foreground/70 max-w-2xl mx-auto mb-10 sm:mb-14 text-sm sm:text-base leading-relaxed">
           NEET Counselling is your one-stop guide for college admissions — made for every student, in every corner of India.
         </p>
 
         {/* Mobile: Accordion */}
-        <div className="space-y-2 sm:space-y-4 sm:hidden text-left">
-          {REASONS.map((reason, index) => (
-            <div key={reason.title} className="glass-card p-3 bg-[#F8F8F8]">
-              <button
-                type="button"
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="flex justify-between items-center gap-2 w-full font-semibold text-sm leading-snug text-[#062963]"
+        <div className="space-y-3 sm:hidden text-left">
+          {REASONS.map((reason, index) => {
+            const Icon = reason.icon
+            const isOpen = openIndex === index
+            return (
+              <div
+                key={reason.title}
+                className="glass-card rounded-2xl bg-card-bg border border-[#062963]/8 shadow-sm overflow-hidden"
               >
-                <span className="flex items-center gap-2">
-                  <reason.icon className="w-5 h-5 text-[#062963]" />
-                  {reason.title}
-                </span>
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform ${openIndex === index ? 'rotate-180' : ''}`}
-                />
-              </button>
-              {openIndex === index && (
-                <p className="mt-2 text-xs text-gray-600 leading-relaxed">
-                  {reason.description}
-                </p>
-              )}
-            </div>
-          ))}
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  aria-expanded={isOpen}
+                  className="flex justify-between items-center gap-2 w-full font-semibold text-sm leading-snug text-[#062963] p-4 hover:bg-navbar-bg transition-colors duration-200 ease-out"
+                >
+                  <span className="flex items-center gap-3">
+                    <span className="shrink-0 w-9 h-9 rounded-xl bg-button-gold/15 flex items-center justify-center">
+                      <Icon className="w-4 h-4 text-[#062963]" aria-hidden="true" />
+                    </span>
+                    {reason.title}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-[#062963] transition-transform duration-200 ease-out ${isOpen ? 'rotate-180' : ''}`}
+                    aria-hidden="true"
+                  />
+                </button>
+                {isOpen && (
+                  <p className="px-4 pb-4 text-xs text-foreground/70 leading-relaxed">
+                    {reason.description}
+                  </p>
+                )}
+              </div>
+            )
+          })}
         </div>
 
         {/* Desktop: Grid */}
         <div className="hidden sm:grid sm:grid-cols-3 sm:gap-5 lg:gap-6 text-left">
-          {REASONS.map((reason) => (
-            <div key={reason.title} className="glass-card p-4 shadow-sm bg-[#F8F8F8]">
-              <reason.icon className="w-8 h-8 mb-3 text-[#062963]" />
-              <h3 className="font-semibold text-[#062963] text-sm sm:text-lg mb-2">{reason.title}</h3>
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{reason.description}</p>
-            </div>
-          ))}
+          {REASONS.map((reason) => {
+            const Icon = reason.icon
+            return (
+              <div
+                key={reason.title}
+                className="glass-card rounded-2xl p-6 shadow-sm bg-card-bg border border-[#062963]/8 hover:shadow-md hover:-translate-y-0.5 hover:border-[#062963]/20 transition-all duration-200 ease-out group"
+              >
+                <span className="inline-flex w-12 h-12 rounded-2xl bg-button-gold/15 text-[#062963] items-center justify-center mb-4 group-hover:bg-button-gold/25 transition-colors duration-200 ease-out">
+                  <Icon className="w-6 h-6" aria-hidden="true" />
+                </span>
+                <h3 className="font-display font-bold text-[#062963] text-lg lg:text-xl mb-2 tracking-tight">
+                  {reason.title}
+                </h3>
+                <p className="text-sm text-foreground/70 leading-relaxed">{reason.description}</p>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>

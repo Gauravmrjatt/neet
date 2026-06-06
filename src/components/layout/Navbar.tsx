@@ -26,8 +26,11 @@ export async function Navbar() {
   const visibleItems = navItems.filter((item: any) => shouldShow(item.showWhen, user))
 
   return (
-    <nav className="bg-[#F6F3EE] text-[#062963] h-[45px] font-medium whitespace-nowrap border-b border-gray-200">
-      <div className="max-w-6xl mx-auto flex h-full overflow-x-auto">
+    <nav
+      aria-label="Primary"
+      className="sticky top-[88px] z-30 hidden w-full border-b border-border/70 bg-navbar-bg/95 text-primary shadow-sm backdrop-blur-md md:block lg:top-[96px]"
+    >
+      <div className="mx-auto flex h-12 max-w-7xl items-center gap-1 overflow-x-auto px-4 sm:px-6 lg:px-8">
         {visibleItems.map((item: any) => {
           if (item.link === '/logout') {
             return <LogoutButton key="logout" label={item.label} />
@@ -35,7 +38,13 @@ export async function Navbar() {
           return <NavLink key={item.link} href={item.link} label={item.label} />
         })}
         {!user && ctaButton?.text && ctaButton?.link && (
-          <NavLink href={ctaButton.link} label={ctaButton.text} />
+          <div className="ml-auto pl-2">
+            <NavLink
+              href={ctaButton.link}
+              label={ctaButton.text}
+              variant="cta"
+            />
+          </div>
         )}
       </div>
     </nav>

@@ -1,12 +1,13 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { ArrowRight, ArrowLeft, Calendar, BookOpen } from 'lucide-react'
 import { getBlogs } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
-import { formatDate } from '@/lib/utils'
+import { formatDate, cn } from '@/lib/utils'
 import { Media } from '@/payload-types'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -29,55 +30,83 @@ export default async function BlogPage({
   return (
     <>
       <PageHero
+        badge="Insights & Guides"
         title="Blog"
         subtitle="Latest articles, guides, and insights for NEET aspirants"
       />
-      <Section className="bg-[#F6F3EE]/30">
+
+      <Section tone="cream" className="relative">
         <Container>
           {blogs.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <div className="mb-8 flex items-center justify-between gap-4">
+                <p className="inline-flex items-center gap-2 text-sm text-foreground/70">
+                  <BookOpen className="h-4 w-4 text-primary-navy" aria-hidden="true" />
+                  Showing <span className="font-semibold text-primary-navy">{blogs.length}</span> of <span className="font-semibold text-primary-navy">{blogs.length * totalPages}</span> articles
+                </p>
+                <p className="text-sm text-foreground/60">
+                  Page <span className="font-semibold text-primary-navy">{paginationPage}</span> of <span className="font-semibold text-primary-navy">{totalPages}</span>
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-3">
                 {blogs.map((blog: any) => {
                   const featuredImage = typeof blog.featuredImage === 'object' ? blog.featuredImage as Media : null
                   return (
                     <Link
                       key={blog.id}
                       href={`/blog/${blog.slug}`}
-                      className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:shadow-lg hover:-translate-y-0.5"
+                      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md"
                     >
-                      {featuredImage?.url ? (
-                        <div className="aspect-video overflow-hidden bg-gray-100">
+                      <div className="relative aspect-video overflow-hidden bg-muted">
+                        {featuredImage?.url ? (
                           <img
                             src={featuredImage.url}
                             alt={featuredImage.alt || blog.title}
-                            className="h-full w-full object-cover transition group-hover:scale-105"
+                            className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
                           />
-                        </div>
-                      ) : (
-                        <div className="aspect-video bg-gradient-to-br from-[#062963] to-[#041d45]" />
-                      )}
-                      <div className="p-6">
+                        ) : (
+                          <div className="h-full w-full bg-linear-to-br from-primary-navy to-primary-navy-dark" />
+                        )}
+                        {/* Gold ribbon on hover */}
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-button-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-navy opacity-0 shadow-sm transition-opacity duration-200 ease-out group-hover:opacity-100"
+                        >
+                          Read
+                        </span>
+                      </div>
+                      <div className="flex flex-1 flex-col p-6">
                         {blog.categories && blog.categories.length > 0 && (
-                          <div className="mb-3 flex flex-wrap gap-2">
+                          <div className="mb-3 flex flex-wrap gap-1.5">
                             {blog.categories.map((cat: any, i: number) => (
                               <span
                                 key={i}
-                                className="rounded-full bg-[#062963]/10 text-[#062963] px-2.5 py-1 text-xs font-medium"
+                                className="rounded-full bg-button-gold/15 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary-navy"
                               >
                                 {cat.category}
                               </span>
                             ))}
                           </div>
                         )}
-                        <h2 className="text-lg font-bold text-[#062963] group-hover:text-[#FBAC1A] transition-colors">
+                        <h2 className="font-display text-lg font-bold leading-snug text-primary-navy transition-colors duration-200 ease-out group-hover:text-button-gold-hover">
                           {blog.title}
                         </h2>
                         {blog.publishedAt && (
-                          <p className="mt-2 text-xs text-gray-500">{formatDate(blog.publishedAt)}</p>
+                          <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-foreground/60">
+                            <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
+                            <time dateTime={blog.publishedAt}>{formatDate(blog.publishedAt)}</time>
+                          </p>
                         )}
                         {blog.excerpt && (
-                          <p className="mt-3 line-clamp-3 text-sm text-gray-600">{blog.excerpt}</p>
+                          <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-foreground/70">
+                            {blog.excerpt}
+                          </p>
                         )}
+                        <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-navy transition-colors duration-200 ease-out group-hover:text-button-gold-hover">
+                          Read article
+                          <ArrowRight className="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5" aria-hidden="true" />
+                        </span>
                       </div>
                     </Link>
                   )
@@ -85,43 +114,75 @@ export default async function BlogPage({
               </div>
 
               {totalPages > 1 && (
-                <div className="mt-12 flex justify-center gap-2 flex-wrap">
-                  {currentPage > 1 && (
+                <nav
+                  aria-label="Blog pagination"
+                  className="mt-14 flex flex-wrap items-center justify-center gap-2"
+                >
+                  {currentPage > 1 ? (
                     <Link
                       href={`/blog?page=${currentPage - 1}`}
-                      className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-[#062963] hover:bg-[#062963] hover:text-white transition-colors"
+                      className="inline-flex items-center gap-1.5 rounded-2xl border border-border bg-card px-4 py-2 text-sm font-semibold text-primary-navy shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md"
                     >
+                      <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                       Previous
                     </Link>
+                  ) : (
+                    <span
+                      aria-disabled="true"
+                      className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-2xl border border-border bg-card/60 px-4 py-2 text-sm font-semibold text-foreground/40"
+                    >
+                      <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                      Previous
+                    </span>
                   )}
+
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                     <Link
                       key={p}
                       href={`/blog?page=${p}`}
-                      className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                      aria-current={p === currentPage ? 'page' : undefined}
+                      className={cn(
+                        'inline-flex h-10 min-w-10 items-center justify-center rounded-2xl px-3 text-sm font-semibold transition-all duration-200 ease-out',
                         p === currentPage
-                          ? 'bg-[#062963] text-white'
-                          : 'border border-gray-300 bg-white text-[#062963] hover:bg-[#062963] hover:text-white'
-                      }`}
+                          ? 'bg-primary-navy text-primary-foreground shadow-sm'
+                          : 'border border-border bg-card text-primary-navy shadow-sm hover:-translate-y-0.5 hover:shadow-md',
+                      )}
                     >
                       {p}
                     </Link>
                   ))}
-                  {currentPage < totalPages && (
+
+                  {currentPage < totalPages ? (
                     <Link
                       href={`/blog?page=${currentPage + 1}`}
-                      className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-[#062963] hover:bg-[#062963] hover:text-white transition-colors"
+                      className="inline-flex items-center gap-1.5 rounded-2xl border border-border bg-card px-4 py-2 text-sm font-semibold text-primary-navy shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md"
                     >
                       Next
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </Link>
+                  ) : (
+                    <span
+                      aria-disabled="true"
+                      className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-2xl border border-border bg-card/60 px-4 py-2 text-sm font-semibold text-foreground/40"
+                    >
+                      Next
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </span>
                   )}
-                </div>
+                </nav>
               )}
             </>
           ) : (
-            <div className="mx-auto max-w-md rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center">
-              <p className="text-lg font-semibold text-[#062963]">No blog posts available yet</p>
-              <p className="mt-2 text-sm text-gray-500">Check back soon for new articles.</p>
+            <div className="mx-auto max-w-md rounded-3xl border border-dashed border-border bg-card p-12 text-center shadow-sm">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-button-gold/15 text-primary-navy">
+                <BookOpen className="h-6 w-6" aria-hidden="true" />
+              </div>
+              <p className="mt-5 font-display text-lg font-bold text-primary-navy">
+                No blog posts available yet
+              </p>
+              <p className="mt-2 text-sm text-foreground/60">
+                Check back soon for new articles.
+              </p>
             </div>
           )}
         </Container>

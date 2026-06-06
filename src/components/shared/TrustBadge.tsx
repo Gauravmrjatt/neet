@@ -22,19 +22,34 @@ export async function TrustBadges() {
   ]
 
   return (
-    <section className="py-8 px-4">
+    <section
+      aria-label="Trust statistics"
+      className="py-10 sm:py-14 px-4 bg-navbar-bg"
+    >
       <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {STAT_ITEMS.map((stat) => (
-            <div
-              key={stat.label}
-              className="trust-badge rounded-xl p-4 text-center hover:shadow-lg transition-shadow"
-            >
-              <stat.icon className="w-8 h-8 mx-auto mb-2 text-[#062963]" />
-              <div className="text-2xl sm:text-3xl font-bold text-[#062963]">{stat.value}</div>
-              <div className="text-xs sm:text-sm text-gray-600 mt-1">{stat.label}</div>
-            </div>
-          ))}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5">
+          {STAT_ITEMS.map((stat) => {
+            const Icon = stat.icon
+            return (
+              <div
+                key={stat.label}
+                className="trust-badge relative rounded-2xl bg-white p-5 sm:p-6 text-center border border-[#062963]/8 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out group"
+              >
+                <div
+                  aria-hidden="true"
+                  className="mx-auto mb-3 w-12 h-12 rounded-2xl bg-button-gold/15 text-[#062963] flex items-center justify-center group-hover:bg-button-gold/25 transition-colors duration-200 ease-out"
+                >
+                  <Icon className="w-6 h-6" />
+                </div>
+                <div className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-[#062963] leading-none tracking-tight">
+                  {stat.value}
+                </div>
+                <div className="text-xs sm:text-sm text-foreground/60 mt-2 font-medium">
+                  {stat.label}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>

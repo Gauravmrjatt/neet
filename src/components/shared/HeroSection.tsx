@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Sparkles, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getPayloadClient } from '@/lib/payload'
 
@@ -21,45 +22,73 @@ export async function HeroSection() {
   const secondaryCtaLink = hero.secondaryCtaLink || '/pricing'
 
   return (
-    <section className="bg-gradient-to-r from-gray-50 to-gray-100 pt-5 pb-10 px-4 text-center">
-      <p
-        className="inline-flex items-center gap-1.5 text-xs font-bold px-4 py-1.5 rounded-full mb-3 tracking-wide uppercase"
-        style={{
-          background: 'linear-gradient(135deg, rgba(6,41,99,0.1) 0%, rgba(255,255,255,0.6) 50%, rgba(6,41,99,0.1) 100%)',
-          color: '#062963',
-          border: '1.5px solid rgba(6,41,99,0.25)',
-          backdropFilter: 'blur(4px)',
-        }}
-      >
-        {badge}
-      </p>
+    <section className="relative gov-dots pt-12 pb-16 sm:pt-16 sm:pb-20 px-4 overflow-hidden">
+      {/* Soft decorative blobs */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-24 -left-24 w-72 h-72 rounded-full bg-button-gold/10 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-32 -right-20 w-80 h-80 rounded-full bg-[#062963]/8 blur-3xl"
+      />
 
-      <h2 className="text-2xl sm:text-4xl font-bold text-[#062963] mb-3">
-        {heading}
-        <span className="text-green-700">
-          {' '}from (
-          <Link href={secondaryCtaLink} className="underline decoration-green-600 hover:text-green-900">
-            {priceText}
-          </Link>
-          )
-        </span>
-      </h2>
+      <div className="relative max-w-5xl mx-auto text-center">
+        <p
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold px-4 py-2 rounded-full mb-6 tracking-wide uppercase shadow-sm transition-all duration-200 ease-out"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(251,172,26,0.12) 0%, rgba(255,255,255,0.85) 50%, rgba(6,41,99,0.08) 100%)',
+            color: '#062963',
+            border: '1.5px solid rgba(6,41,99,0.18)',
+            backdropFilter: 'blur(6px)',
+          }}
+        >
+          <Sparkles className="w-3.5 h-3.5 text-button-gold" aria-hidden="true" />
+          {badge}
+        </p>
 
-      <p className="text-xs sm:text-sm text-gray-700 leading-relaxed mb-5 max-w-xl mx-auto">
-        {description}
-      </p>
+        <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold text-[#062963] mb-5 tracking-tight leading-[1.1]">
+          {heading}
+          <span className="block mt-3 text-button-gold text-xl sm:text-2xl lg:text-3xl font-semibold">
+            starting from{' '}
+            <Link
+              href={secondaryCtaLink}
+              className="underline decoration-button-gold decoration-2 underline-offset-4 hover:text-button-gold-hover transition-colors duration-200 ease-out"
+            >
+              {priceText}
+            </Link>
+          </span>
+        </h1>
 
-      <p className="text-xs sm:text-sm text-gray-600 mb-4">
-        {hindiDescription}
-      </p>
+        <p className="text-sm sm:text-base text-foreground/70 leading-relaxed mb-3 max-w-2xl mx-auto">
+          {description}
+        </p>
 
-      <div className="flex flex-row gap-4 justify-center">
-        <Button asChild size="lg" className="bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963] font-semibold shadow-sm">
-          <Link href={primaryCtaLink}>{primaryCtaText}</Link>
-        </Button>
-        <Button asChild size="lg" variant="outline" className="bg-[#062963] hover:bg-[#041d45] text-white border-[#062963] font-semibold shadow-sm">
-          <Link href={secondaryCtaLink}>{secondaryCtaText}</Link>
-        </Button>
+        <p className="text-xs sm:text-sm text-foreground/60 mb-8 max-w-2xl mx-auto italic">
+          {hindiDescription}
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+          <Button
+            asChild
+            size="lg"
+            className="rounded-2xl bg-button-gold hover:bg-button-gold-hover text-[#062963] font-bold shadow-md hover:shadow-lg transition-all duration-200 ease-out px-7 py-6 text-base"
+          >
+            <Link href={primaryCtaLink} className="flex items-center gap-2">
+              {primaryCtaText}
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Link>
+          </Button>
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="rounded-2xl bg-[#062963] hover:bg-primary-navy-dark text-white border-[#062963] font-bold shadow-md hover:shadow-lg transition-all duration-200 ease-out px-7 py-6 text-base"
+          >
+            <Link href={secondaryCtaLink}>{secondaryCtaText}</Link>
+          </Button>
+        </div>
       </div>
     </section>
   )

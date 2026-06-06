@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getPricingCards } from '@/lib/queries/pricing'
 import { PlansCarousel } from './PlansCarousel'
+import { Sparkles } from 'lucide-react'
 
 export async function PlansCoverflow() {
   const cards = await getPricingCards()
@@ -23,29 +24,45 @@ export async function PlansCoverflow() {
   })
 
   return (
-    <section className="plans-coverflow-section py-8 sm:py-12 px-3 sm:px-4 overflow-hidden">
+    <section
+      aria-label="Counselling plans"
+      className="plans-coverflow-section relative py-14 sm:py-20 px-3 sm:px-4 overflow-hidden gov-dots"
+    >
       <div className="max-w-6xl mx-auto relative z-10">
-        <h2 className="text-xl sm:text-3xl font-bold text-center text-[#062963] mb-1 tracking-tight">
-          Choose Your Plan
-        </h2>
-        <p className="text-center text-xs sm:text-sm text-slate-600 mb-2 max-w-xl mx-auto lg:hidden">
-          Trusted by 17,000+ students — swipe or use arrows to compare all options
-        </p>
-        <p className="text-center text-sm text-slate-600 mb-2 max-w-2xl mx-auto hidden lg:block">
-          Trusted by 17,000+ students — compare all counselling options below
-        </p>
+        <div className="text-center mb-6 sm:mb-8">
+          <p
+            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full mb-3 tracking-wide uppercase shadow-sm"
+            style={{
+              background: 'linear-gradient(135deg, rgba(251,172,26,0.18) 0%, rgba(255,255,255,0.7) 50%, rgba(6,41,99,0.10) 100%)',
+              color: '#062963',
+              border: '1.5px solid rgba(6,41,99,0.15)',
+            }}
+          >
+            <Sparkles className="w-3 h-3 text-button-gold" aria-hidden="true" />
+            Plans
+          </p>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-[#062963] mb-2 tracking-tight">
+            Choose Your Plan
+          </h2>
+          <p className="text-sm sm:text-base text-foreground/70 max-w-2xl mx-auto">
+            Trusted by 17,000+ students — compare all counselling options below
+          </p>
+        </div>
 
         {plans.length > 0 ? (
           <PlansCarousel plans={plans} />
         ) : (
-          <p className="text-center text-gray-500 py-10">
+          <p className="text-center text-foreground/60 py-10">
             No pricing plans configured yet. Add them from the admin panel.
           </p>
         )}
 
-        <p className="text-center text-xs text-slate-500 mt-6">
+        <p className="text-center text-xs sm:text-sm text-foreground/60 mt-8">
           Full details on{' '}
-          <Link href="/pricing" className="text-[#062963] underline hover:text-[#041d45] font-medium">
+          <Link
+            href="/pricing"
+            className="text-[#062963] underline decoration-button-gold decoration-2 underline-offset-4 hover:text-button-gold-hover font-semibold transition-colors duration-200 ease-out"
+          >
             our pricing page →
           </Link>
         </p>

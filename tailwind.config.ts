@@ -7,6 +7,13 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			sans: ['var(--font-quicksand)', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+  			display: ['var(--font-quicksand)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+  		},
+  		borderRadius: {
+  			'4xl': '2rem',
+  		},
   		keyframes: {
   			'accordion-down': {
   				from: {

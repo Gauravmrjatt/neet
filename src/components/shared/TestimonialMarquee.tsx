@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
-import { Star } from 'lucide-react'
+import { Star, Quote, Sparkles } from 'lucide-react'
 
 const TESTIMONIALS = [
   {
@@ -85,38 +85,72 @@ export function TestimonialMarquee() {
   const duplicated = [...TESTIMONIALS, ...TESTIMONIALS]
 
   return (
-    <section className="py-10 px-4 bg-[#F8F8F8]">
+    <section aria-label="Student testimonials" className="relative py-16 sm:py-20 px-4 bg-card-bg overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-xl sm:text-3xl font-bold text-center text-[#062963] mb-2">
-          What Students Say
-        </h2>
-        <p className="text-center text-xs sm:text-sm text-gray-600 mb-6">
-          Trusted by 17,000+ students across India
-        </p>
+        <div className="text-center mb-8 sm:mb-12">
+          <p
+            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full mb-3 tracking-wide uppercase shadow-sm"
+            style={{
+              background:
+                'linear-gradient(135deg, rgba(251,172,26,0.18) 0%, rgba(255,255,255,0.7) 50%, rgba(6,41,99,0.10) 100%)',
+              color: '#062963',
+              border: '1.5px solid rgba(6,41,99,0.15)',
+            }}
+          >
+            <Sparkles className="w-3 h-3 text-button-gold" aria-hidden="true" />
+            Testimonials
+          </p>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-[#062963] mb-2 tracking-tight">
+            What Students Say
+          </h2>
+          <p className="text-sm sm:text-base text-foreground/70 max-w-xl mx-auto">
+            Trusted by 17,000+ students across India
+          </p>
+        </div>
 
         <div
           ref={trackRef}
-          className="testimonial-wrapper overflow-hidden"
+          className="testimonial-wrapper relative overflow-hidden"
         >
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-20 z-10 bg-linear-to-r from-card-bg to-transparent"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-20 z-10 bg-linear-to-l from-card-bg to-transparent"
+          />
           <div className="animate-marquee">
             {duplicated.map((testimonial, index) => (
-              <div
+              <article
                 key={index}
-                className="flex-shrink-0 w-72 sm:w-80 mx-3 p-5 rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+                className="shrink-0 w-80 sm:w-96 mx-3 p-6 rounded-2xl border border-[#062963]/10 bg-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out"
               >
-                <div className="flex gap-1 mb-3">
-                  {Array.from({ length: testimonial.rating }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  ))}
+                <div className="flex items-start justify-between mb-4">
+                  <span
+                    aria-hidden="true"
+                    className="inline-flex w-10 h-10 rounded-xl bg-button-gold/15 text-[#062963] items-center justify-center"
+                  >
+                    <Quote className="w-5 h-5" />
+                  </span>
+                  <div className="flex gap-0.5" aria-label={`${testimonial.rating} star rating`}>
+                    {Array.from({ length: testimonial.rating }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-4 h-4 fill-button-gold text-button-gold"
+                        aria-hidden="true"
+                      />
+                    ))}
+                  </div>
                 </div>
-                <p className="text-sm text-gray-700 leading-relaxed mb-4">
+                <p className="text-sm text-foreground/80 leading-relaxed mb-5">
                   &ldquo;{testimonial.quote}&rdquo;
                 </p>
-                <div>
+                <div className="pt-4 border-t border-[#062963]/10">
                   <p className="font-semibold text-sm text-[#062963]">{testimonial.author}</p>
-                  <p className="text-xs text-gray-500">{testimonial.role}</p>
+                  <p className="text-xs text-foreground/60 mt-0.5">{testimonial.role}</p>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
