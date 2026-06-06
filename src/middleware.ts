@@ -97,12 +97,33 @@ export async function getRoleFromToken(token: string): Promise<string | null> {
       })
       return ((payload as { role?: string })?.role as string) || null
     } catch (err) {
+      // Decode the payload WITHOUT verification so we can see iat/exp/role
+      // of the failed token. This tells us when it was issued and what
+      // role the user had at sign time — crucial for diagnosing stale
+      // tokens (signed with an older PAYLOAD_SECRET).
+      let decoded: Record<string, unknown> | null = null
+      try {
+        const parts = token.split('.')
+        if (parts.length === 3) {
+          decoded = JSON.parse(
+            Buffer.from(parts[1].replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString(
+              'utf8',
+            ),
+          )
+        }
+      } catch {
+        // ignore — keep going
+      }
       authLog('jwt', {
         step: 'verify',
         ok: false,
         candidate: cand.name,
         error: err instanceof Error ? err.message : String(err),
         errorName: err instanceof Error ? err.name : 'Unknown',
+        tokenIat: decoded?.iat ?? null,
+        tokenExp: decoded?.exp ?? null,
+        tokenRole: decoded?.role ?? null,
+        tokenEmail: decoded?.email ?? null,
       })
     }
   }
