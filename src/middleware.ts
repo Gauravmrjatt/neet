@@ -5,8 +5,21 @@ const cookieProtectedRoutes = ['/live-counselling', '/admin/custom']
 
 async function getRoleFromToken(token: string): Promise<string | null> {
   try {
-    const secret = new TextEncoder().encode(process.env.PAYLOAD_SECRET)
-    const { payload } = await jwtVerify(token, secret)
+    const secret = process.env.PAYLOAD_SECRET
+    if (!secret) return null
+
+    // Use crypto.subtle.importKey so short PAYLOAD_SECRET values still work.
+    // jose's raw Uint8Array path enforces a 32-byte minimum for HS256 and
+    // throws on shorter secrets; a CryptoKey bypasses that check.
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify'],
+    )
+
+    const { payload } = await jwtVerify(token, key, { algorithms: ['HS256'] })
     return (payload?.role as string) || null
   } catch {
     return null
