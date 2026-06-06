@@ -24,7 +24,7 @@ export default async function ContactPage() {
         title="Contact Us"
         subtitle="Get in touch with our team — we're here to help you with your NEET counselling journey."
       />
-      <Section className="bg-white">
+      <Section className="bg-navbar-bg/30">
         <Container>
           <ContactForm
             contactEmail={settings?.contactEmail}
