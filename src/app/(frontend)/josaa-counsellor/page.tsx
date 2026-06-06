@@ -28,25 +28,21 @@ export default async function JosaaCounsellorPage() {
         subtitle="Get personalized guidance for the JOSAA counselling process. Our experienced counsellors will help you understand the process, choose the right colleges, and maximize your chances of admission."
       />
 
-      <div className="bg-[#062963] py-8 text-center -mt-px">
+      <div className="bg-primary py-10 text-center -mt-px">
         <Container>
-          <Button
-            asChild
-            size="lg"
-            className="bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963] font-semibold"
-          >
+          <Button asChild size="lg" variant="gold">
             <Link href="/contact">Get Started</Link>
           </Button>
         </Container>
       </div>
 
-      <Section className="bg-[#F6F3EE]/30">
+      <Section className="bg-navbar-bg/30">
         <Container>
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-[#062963] sm:text-4xl">
+          <div className="mb-14 text-center">
+            <h2 className="font-display text-3xl font-bold tracking-tight text-primary sm:text-4xl lg:text-5xl">
               Our JOSAA Experts
             </h2>
-            <p className="mt-4 text-base sm:text-lg text-gray-600">
+            <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
               Counsellors specialized in JOSAA counselling process
             </p>
           </div>
@@ -58,10 +54,10 @@ export default async function JosaaCounsellorPage() {
                 return (
                   <div
                     key={counselor.id}
-                    className="rounded-xl border border-gray-200 bg-white p-6 text-center transition hover:shadow-lg hover:-translate-y-0.5"
+                    className="group rounded-2xl border border-primary/10 bg-white p-7 text-center transition-all duration-200 ease-out hover:-translate-y-1 hover:border-primary/30 hover:shadow-md"
                   >
                     {imageUrl ? (
-                      <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-2 border-[#062963]/20">
+                      <div className="mx-auto h-24 w-24 overflow-hidden rounded-full ring-2 ring-primary/20">
                         <img
                           src={imageUrl}
                           alt={counselor.name}
@@ -69,14 +65,14 @@ export default async function JosaaCounsellorPage() {
                         />
                       </div>
                     ) : (
-                      <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#062963] text-2xl font-bold text-white">
+                      <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-primary text-2xl font-bold text-white">
                         {counselor.name.charAt(0)}
                       </div>
                     )}
-                    <h3 className="mt-4 text-lg font-bold text-[#062963]">{counselor.name}</h3>
-                    <p className="text-sm text-gray-600">{counselor.designation}</p>
+                    <h3 className="mt-4 font-display text-lg font-bold text-primary">{counselor.name}</h3>
+                    <p className="text-sm text-muted-foreground">{counselor.designation}</p>
                     {counselor.experience && (
-                      <p className="mt-1 text-xs text-[#062963]/70 font-medium">
+                      <p className="mt-1 text-xs font-medium text-primary/80">
                         {counselor.experience} years experience
                       </p>
                     )}
@@ -85,7 +81,7 @@ export default async function JosaaCounsellorPage() {
                         {counselor.specializations.map((s: any, i: number) => (
                           <span
                             key={i}
-                            className="rounded-full bg-[#062963]/10 text-[#062963] px-2.5 py-0.5 text-xs font-medium capitalize"
+                            className="rounded-full bg-primary/10 px-3 py-0.5 text-xs font-medium capitalize text-primary"
                           >
                             {s.specialization}
                           </span>
@@ -97,9 +93,9 @@ export default async function JosaaCounsellorPage() {
               })}
             </div>
           ) : (
-            <div className="mx-auto max-w-md rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center">
-              <p className="text-lg font-semibold text-[#062963]">No JOSAA counsellors listed yet</p>
-              <p className="mt-2 text-sm text-gray-500">Our JOSAA specialists will appear here once added.</p>
+            <div className="mx-auto max-w-md rounded-2xl border-2 border-dashed border-primary/20 bg-white p-12 text-center">
+              <p className="font-display text-lg font-semibold text-primary">No JOSAA counsellors listed yet</p>
+              <p className="mt-2 text-sm text-muted-foreground">Our JOSAA specialists will appear here once added.</p>
             </div>
           )}
         </Container>

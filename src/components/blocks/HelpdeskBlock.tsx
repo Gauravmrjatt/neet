@@ -28,14 +28,24 @@ export function HelpdeskBlock({ title, subtitle, categories }: HelpdeskBlockProp
     <Section>
       <Container className="max-w-3xl">
         {title && (
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
-            {subtitle && <p className="mt-4 text-lg text-muted-foreground">{subtitle}</p>}
+          <div className="mb-14 text-center">
+            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+              {title}
+            </h2>
+            {subtitle && (
+              <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground leading-relaxed">
+                {subtitle}
+              </p>
+            )}
           </div>
         )}
         {categories.map((category, catIndex) => (
-          <div key={category.id || catIndex} className="mb-8">
-            {category.name && <h3 className="mb-4 text-xl font-semibold">{category.name}</h3>}
+          <div key={category.id || catIndex} className="mb-10">
+            {category.name && (
+              <h3 className="mb-4 font-display text-xl font-semibold tracking-tight">
+                {category.name}
+              </h3>
+            )}
             {category.items && category.items.length > 0 && (
               <Accordion type="single" collapsible className="w-full">
                 {category.items.map((item, itemIndex) => (
