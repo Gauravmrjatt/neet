@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { PredictResponse } from '@/lib/predictor/types'
 
@@ -30,39 +30,37 @@ function ChanceBadge({ chance }: { chance: string }) {
   )
 }
 
-function PremiumUpsellCard({ total }: { total: number }) {
+function UnlockCtaRow({ total }: { total: number }) {
   return (
-    <div className="relative z-10 mx-auto mt-8 max-w-lg">
-      <Card className="border-[#FBAC1A]/40 bg-gradient-to-br from-[#062963] to-[#0a3d7a] text-white shadow-2xl">
-        <CardHeader className="text-center">
-          <div className="mb-2 text-4xl">🔒</div>
-          <CardTitle className="text-2xl font-bold text-white">
-            {total} More College{total !== 1 ? 's' : ''} Available
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 text-center">
-          <p className="text-base leading-relaxed text-white/80">
-            Unlock the full list of <strong className="text-[#FBAC1A]">{total} eligible college{total !== 1 ? 's' : ''}</strong>{' '}
-            with personalized chance analysis.
+    <tr className="border-b border-border bg-gradient-to-r from-button-gold/5 to-button-gold/10">
+      <td colSpan={8} className="px-6 py-8 text-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="mb-1 text-3xl" role="img" aria-label="locked">🔒</div>
+          <p className="text-lg font-bold text-primary-navy">
+            {total.toLocaleString('en-IN')} More College{total !== 1 ? 's' : ''} Available
           </p>
-          <div className="flex flex-wrap justify-center gap-2 text-sm text-white/70">
-            <span className="rounded-full bg-white/10 px-3 py-1">Full college list</span>
-            <span className="rounded-full bg-white/10 px-3 py-1">Chance analysis</span>
-            <span className="rounded-full bg-white/10 px-3 py-1">Dedicated counsellor</span>
+          <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
+            Unlock the full list of <span className="font-semibold text-button-gold">{total.toLocaleString('en-IN')} eligible college{total !== 1 ? 's' : ''}</span> with personalized chance analysis.
+          </p>
+          <div className="flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
+            <span className="rounded-full bg-primary-navy/5 px-3 py-1">Full college list</span>
+            <span className="rounded-full bg-primary-navy/5 px-3 py-1">Chance analysis</span>
+            <span className="rounded-full bg-primary-navy/5 px-3 py-1">Dedicated counsellor</span>
           </div>
           <Button
             asChild
-            size="lg"
-            className="mt-2 h-12 w-full bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963] font-bold text-base"
+            size="sm"
+            className="mt-1 h-9 px-6 bg-button-gold text-xs font-bold text-primary-navy hover:bg-button-gold-hover"
           >
-            <Link href="/pricing">View Plans &amp; Unlock All Results</Link>
+            <Link href="/pricing">Unlock</Link>
           </Button>
-          <p className="text-xs text-white/50">
-            Already purchased a plan? <Link href="/login?redirect=/predictor" className="underline text-white/70 hover:text-white">Log in</Link> to see all results.
+          <p className="text-xs text-muted-foreground/70">
+            Already purchased a plan?{' '}
+            <Link href="/login?redirect=/predictor" className="underline hover:text-primary-navy">Log in</Link> to see all results.
           </p>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </td>
+    </tr>
   )
 }
 
@@ -76,14 +74,14 @@ function ResultRow({
   isTeaser: boolean
 }) {
   return (
-    <tr className={cn('border-b border-gray-100 transition hover:bg-gray-50', isTeaser && 'opacity-30')}>
-      <td className="px-4 py-3 text-sm text-gray-500">{index + 1}</td>
-      <td className="px-4 py-3 text-sm font-medium text-[#062963]">{result.institute}</td>
-      <td className="hidden px-4 py-3 text-sm text-gray-600 md:table-cell">{result.state}</td>
-      <td className="hidden px-4 py-3 text-sm text-gray-600 md:table-cell">{result.course}</td>
-      <td className="hidden px-4 py-3 text-sm text-gray-600 lg:table-cell">{result.quota}</td>
-      <td className="hidden px-4 py-3 text-sm text-gray-600 sm:table-cell">{result.allottedCategory}</td>
-      <td className="px-4 py-3 text-right text-sm tabular-nums text-gray-900">{result.closingRank.toLocaleString('en-IN')}</td>
+    <tr className={cn('border-b border-border transition hover:bg-muted/50', isTeaser && 'opacity-30')}>
+      <td className="px-4 py-3 text-sm text-muted-foreground">{index + 1}</td>
+      <td className="px-4 py-3 text-sm font-medium text-primary-navy">{result.institute}</td>
+      <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">{result.state}</td>
+      <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">{result.course}</td>
+      <td className="hidden px-4 py-3 text-sm text-muted-foreground lg:table-cell">{result.quota}</td>
+      <td className="hidden px-4 py-3 text-sm text-muted-foreground sm:table-cell">{result.allottedCategory}</td>
+      <td className="px-4 py-3 text-right text-sm tabular-nums text-foreground">{result.closingRank.toLocaleString('en-IN')}</td>
       <td className="px-4 py-3 text-right"><ChanceBadge chance={result.chance} /></td>
     </tr>
   )
@@ -94,12 +92,12 @@ export function PredictorResults({ response, onReset }: PredictorResultsProps) {
 
   if (results.length === 0) {
     return (
-      <Card className="border-gray-200 bg-white shadow-lg">
+      <Card className="border-border bg-card shadow-lg">
         <CardContent className="py-12 text-center">
           <div className="mb-4 text-5xl">🔍</div>
-          <CardTitle className="mb-2 text-xl text-[#062963]">No Matching Colleges Found</CardTitle>
-          <p className="mb-6 text-sm text-gray-600">Try adjusting your rank, category, or filters to find matching colleges.</p>
-          <Button onClick={onReset} className="bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963] font-semibold">Try Again</Button>
+          <CardTitle className="mb-2 text-xl text-primary-navy">No Matching Colleges Found</CardTitle>
+          <p className="mb-6 text-sm text-muted-foreground">Try adjusting your rank, category, or filters to find matching colleges.</p>
+          <Button onClick={onReset} className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-semibold">Try Again</Button>
         </CardContent>
       </Card>
     )
@@ -109,9 +107,9 @@ export function PredictorResults({ response, onReset }: PredictorResultsProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-6">
         <div>
-          <h2 className="text-lg font-bold text-[#062963] sm:text-xl">
+          <h2 className="text-lg font-bold text-primary-navy sm:text-xl">
             {total} Eligible College{total !== 1 ? 's' : ''} Found
           </h2>
           <div className="mt-1 flex flex-wrap gap-2 text-sm">
@@ -128,7 +126,7 @@ export function PredictorResults({ response, onReset }: PredictorResultsProps) {
         </div>
         <div className="flex items-center gap-2">
           {!premium && (
-            <Badge className="border-0 bg-[#FBAC1A]/10 px-3 py-1.5 text-xs font-bold text-[#FBAC1A] hover:bg-[#FBAC1A]/10">
+            <Badge className="border-0 bg-button-gold/10 px-3 py-1.5 text-xs font-bold text-button-gold hover:bg-button-gold/10">
               Showing Top 1
             </Badge>
           )}
@@ -140,11 +138,11 @@ export function PredictorResults({ response, onReset }: PredictorResultsProps) {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#062963]/5 text-left text-xs font-semibold uppercase tracking-wider text-[#062963]/70">
+              <tr className="bg-primary-navy/5 text-left text-xs font-semibold uppercase tracking-wider text-primary-navy/70">
                 <th className="px-4 py-3">#</th>
                 <th className="px-4 py-3">Institute</th>
                 <th className="hidden px-4 py-3 md:table-cell">State</th>
@@ -159,20 +157,22 @@ export function PredictorResults({ response, onReset }: PredictorResultsProps) {
               <ResultRow result={results[0]} index={0} isTeaser={false} />
 
               {!premium && total > 1 && (
-                <tr>
-                  <td colSpan={8} className="px-0 py-0">
+                <>
+                  <UnlockCtaRow total={total} />
+                  <tr>
+                    <td colSpan={8} className="px-0 py-0">
                     <div className="relative overflow-hidden">
                       <table className="w-full">
                         <tbody>
                           {[1, 2, 3].map((i) => (
-                            <tr key={i} className="border-b border-gray-100 opacity-40">
-                              <td className="px-4 py-3 text-sm text-gray-400">{total - (3 - i)}</td>
-                              <td className="px-4 py-3 text-sm text-gray-400">................................</td>
-                              <td className="hidden px-4 py-3 text-sm text-gray-400 md:table-cell">---</td>
-                              <td className="hidden px-4 py-3 text-sm text-gray-400 md:table-cell">---</td>
-                              <td className="hidden px-4 py-3 text-sm text-gray-400 lg:table-cell">---</td>
-                              <td className="hidden px-4 py-3 text-sm text-gray-400 sm:table-cell">---</td>
-                              <td className="px-4 py-3 text-right text-sm text-gray-400">------</td>
+                            <tr key={i} className="border-b border-border opacity-40">
+                              <td className="px-4 py-3 text-sm text-muted-foreground">{total - (3 - i)}</td>
+                              <td className="px-4 py-3 text-sm text-muted-foreground">................................</td>
+                              <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">---</td>
+                              <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">---</td>
+                              <td className="hidden px-4 py-3 text-sm text-muted-foreground lg:table-cell">---</td>
+                              <td className="hidden px-4 py-3 text-sm text-muted-foreground sm:table-cell">---</td>
+                              <td className="px-4 py-3 text-right text-sm text-muted-foreground">------</td>
                               <td className="px-4 py-3 text-right">---</td>
                             </tr>
                           ))}
@@ -182,6 +182,7 @@ export function PredictorResults({ response, onReset }: PredictorResultsProps) {
                     </div>
                   </td>
                 </tr>
+                </>
               )}
 
               {premium && results.slice(1).map((result, i) => (
@@ -192,26 +193,24 @@ export function PredictorResults({ response, onReset }: PredictorResultsProps) {
         </div>
 
         {premium && total > premiumResultsCount && (
-          <div className="border-t border-gray-100 px-4 py-3 text-center text-xs text-gray-500">
+          <div className="border-t border-border px-4 py-3 text-center text-xs text-muted-foreground">
             Showing all {total} results.
           </div>
         )}
       </div>
 
-      {!premium && total > 1 && <PremiumUpsellCard total={total - 1} />}
-
       <div className="flex flex-wrap justify-center gap-3">
-        <Button onClick={onReset} variant="outline" className="border-[#062963]/30 text-[#062963] hover:bg-[#062963]/5">
+        <Button onClick={onReset} variant="outline" className="border-primary-navy/30 text-primary-navy hover:bg-primary-navy/5">
           Try Different Rank
         </Button>
         {!premium && (
-          <Button asChild className="bg-[#062963] hover:bg-[#041d45] text-white font-semibold">
+          <Button asChild className="bg-primary-navy hover:bg-primary-navy-dark text-white font-semibold">
             <Link href="/pricing">View Pricing Plans</Link>
           </Button>
         )}
       </div>
 
-      <p className="text-center text-xs text-gray-400">
+      <p className="text-center text-xs text-muted-foreground/70">
         Predictions are based on previous year closing ranks from official MCC data. Actual cutoffs
         may vary. This is not a guarantee of admission.
       </p>

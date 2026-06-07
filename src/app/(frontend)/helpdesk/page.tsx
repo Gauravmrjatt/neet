@@ -50,14 +50,14 @@ export default async function HelpdeskPage() {
         title="Helpdesk"
         subtitle="Find answers to common questions about NEET counselling, plans, and services."
       />
-      <Section className="bg-white">
+      <Section className="bg-card">
         <Container className="max-w-3xl">
           {items.length > 0 ? (
             <HelpdeskSearch items={helpdeskItems} />
           ) : (
-            <div className="mx-auto max-w-md rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center">
-              <p className="text-lg font-semibold text-[#062963]">No help articles available yet</p>
-              <p className="mt-2 text-sm text-gray-500">Check back soon for new articles.</p>
+            <div className="mx-auto max-w-md rounded-lg border border-dashed border-border bg-card p-12 text-center">
+              <p className="text-lg font-semibold text-primary-navy">No help articles available yet</p>
+              <p className="mt-2 text-sm text-muted-foreground">Check back soon for new articles.</p>
             </div>
           )}
         </Container>

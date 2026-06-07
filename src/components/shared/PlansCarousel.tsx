@@ -21,32 +21,32 @@ interface PlanData {
 
 const COLOR_MAP: Record<string, { border: string; bg: string; text: string; btn: string; badge: string }> = {
   popular: {
-    border: 'border-[#062963]',
-    bg: 'bg-[#F8F8F8]',
-    text: 'text-[#062963]',
-    btn: 'bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963]',
-    badge: 'bg-[#062963]',
+    border: 'border-primary-navy',
+    bg: 'bg-card-bg',
+    text: 'text-primary-navy',
+    btn: 'bg-button-gold hover:bg-button-gold-hover text-primary-navy',
+    badge: 'bg-primary-navy',
   },
   premium: {
-    border: 'border-[#062963]/80',
-    bg: 'bg-[#F8F8F8]',
-    text: 'text-[#062963]',
-    btn: 'bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963]',
-    badge: 'bg-[#062963]',
+    border: 'border-primary-navy/80',
+    bg: 'bg-card-bg',
+    text: 'text-primary-navy',
+    btn: 'bg-button-gold hover:bg-button-gold-hover text-primary-navy',
+    badge: 'bg-primary-navy',
   },
   standard: {
-    border: 'border-[#062963]/60',
-    bg: 'bg-[#F8F8F8]',
-    text: 'text-[#062963]',
-    btn: 'bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963]',
-    badge: 'bg-[#062963]',
+    border: 'border-primary-navy/60',
+    bg: 'bg-card-bg',
+    text: 'text-primary-navy',
+    btn: 'bg-button-gold hover:bg-button-gold-hover text-primary-navy',
+    badge: 'bg-primary-navy',
   },
   basic: {
-    border: 'border-[#062963]/40',
-    bg: 'bg-[#F8F8F8]',
-    text: 'text-[#062963]',
-    btn: 'bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963]',
-    badge: 'bg-[#062963]',
+    border: 'border-primary-navy/40',
+    bg: 'bg-card-bg',
+    text: 'text-primary-navy',
+    btn: 'bg-button-gold hover:bg-button-gold-hover text-primary-navy',
+    badge: 'bg-primary-navy',
   },
 }
 
@@ -173,19 +173,19 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
                     Most Popular
                   </p>
                 )}
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 leading-snug">
+                <h3 className="text-base sm:text-lg font-bold text-foreground leading-snug">
                   {plan.subtitle || plan.id}
                 </h3>
                 <p className={`text-3xl font-extrabold mt-2 ${colors.text}`}>
                   {plan.price}
                 </p>
                 {plan.originalPrice && (
-                  <p className="text-xs text-gray-400 line-through">{plan.originalPrice}</p>
+                  <p className="text-xs text-muted-foreground/70 line-through">{plan.originalPrice}</p>
                 )}
                 {plan.colleges && (
-                  <p className="text-xs text-gray-500 mb-0">{plan.colleges}</p>
+                  <p className="text-xs text-muted-foreground mb-0">{plan.colleges}</p>
                 )}
-                <ul className="mt-3 space-y-1.5 text-xs text-gray-700 flex-1">
+                <ul className="mt-3 space-y-1.5 text-xs text-foreground/80 flex-1">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-center gap-1.5">
                       <Check className={`w-3.5 h-3.5 flex-shrink-0 ${colors.text}`} />

@@ -39,6 +39,16 @@
   100% { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Call button: gradient + pulse animation (replaces inline style in CallButton.tsx) ── */
+.call-button {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7), 0 2px 8px rgba(22, 163, 74, 0.35);
+  animation: callPulse 2s ease-in-out infinite;
+}
+.call-button-icon {
+  animation: callWiggle 2s ease-in-out infinite;
+}
+
 /* ── Testimonial marquee ── */
 .testimonial-wrapper {
   cursor: grab;
@@ -68,6 +78,27 @@
   background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(6px);
   border-radius: 18px;
+}
+
+/* ── Pill glass morphism (hero badge, ticker tag) ──
+   Replaces repeated inline `style={{ background: 'linear-gradient(135deg, ...)' }}`
+   in HeroSection, TestimonialMarquee, CallButton, PlansCoverflow, WhyChooseUs. */
+.glass-pill {
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklch, var(--color-button-gold) 14%, transparent) 0%,
+    color-mix(in oklch, var(--color-card) 85%, transparent) 50%,
+    color-mix(in oklch, var(--color-primary-navy) 10%, transparent) 100%
+  );
+  color: var(--color-primary-navy);
+  border: 1.5px solid color-mix(in oklch, var(--color-primary-navy) 22%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+/* Dark-mode flip for the glass pill — gold tint stays, text inverts to gold. */
+.dark .glass-pill {
+  color: var(--color-button-gold);
+  border-color: color-mix(in oklch, var(--color-button-gold) 30%, transparent);
 }
 
 /* ── Plans coverflow styles ── */

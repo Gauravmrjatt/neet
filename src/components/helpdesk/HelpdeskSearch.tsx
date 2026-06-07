@@ -66,26 +66,26 @@ export function HelpdeskSearch({ items }: HelpdeskSearchProps) {
             placeholder="Search help articles..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 border-gray-300 focus-visible:ring-[#062963]"
+            className="pl-10"
           />
         </div>
       </div>
 
       {Object.keys(grouped).length === 0 ? (
-        <p className="text-center text-gray-500 py-8">No results found.</p>
+        <p className="text-center text-muted-foreground py-8">No results found.</p>
       ) : (
         <div className="space-y-8">
           {Object.entries(grouped).map(([category, categoryItems]) => (
             <div key={category}>
-              <h3 className="mb-4 text-lg font-bold text-[#062963] capitalize">{category}</h3>
+              <h3 className="mb-4 text-lg font-bold text-primary-navy capitalize">{category}</h3>
               <Accordion type="single" collapsible className="w-full">
                 {categoryItems.map((item) => (
-                  <AccordionItem key={item.id} value={item.id} className="border-gray-200">
-                    <AccordionTrigger className="text-left hover:no-underline hover:text-[#062963]">
+                  <AccordionItem key={item.id} value={item.id} className="border-border">
+                    <AccordionTrigger className="text-left hover:no-underline hover:text-primary-navy">
                       {item.question}
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="prose prose-sm max-w-none text-gray-600">
+                      <div className="prose prose-sm max-w-none text-muted-foreground">
                         {getAnswerText(item.answer) || 'See our documentation for more details.'}
                       </div>
                     </AccordionContent>

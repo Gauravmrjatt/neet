@@ -60,9 +60,11 @@ export default async function BlogPage({
                     >
                       <div className="relative aspect-video overflow-hidden bg-muted">
                         {featuredImage?.url ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
                           <img
                             src={featuredImage.url}
                             alt={featuredImage.alt || blog.title}
+                            loading="lazy"
                             className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
                           />
                         ) : (

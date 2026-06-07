@@ -45,7 +45,7 @@ export default async function VideosPage({
         title="Videos"
         subtitle="Video guides and tutorials for NEET preparation"
       />
-      <Section className="bg-[#F6F3EE]/30">
+      <Section className="bg-navbar-bg/30">
         <Container>
           <div className="mb-8 flex flex-wrap justify-center gap-2">
             {CATEGORIES.map((cat) => {
@@ -56,8 +56,8 @@ export default async function VideosPage({
                   href={cat.value ? `/videos?category=${cat.value}` : '/videos'}
                   className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition ${
                     isActive
-                      ? 'bg-[#062963] text-white'
-                      : 'border border-gray-300 bg-white text-[#062963] hover:bg-[#062963] hover:text-white'
+                      ? 'bg-primary-navy text-white'
+                      : 'border border-border bg-card text-primary-navy hover:bg-primary-navy hover:text-white'
                   }`}
                 >
                   {cat.label}
@@ -75,35 +75,37 @@ export default async function VideosPage({
                     <Link
                       key={video.id}
                       href={`/videos/${video.slug}`}
-                      className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:shadow-lg hover:-translate-y-0.5"
+                      className="group overflow-hidden rounded-xl border border-border bg-card transition hover:shadow-lg hover:-translate-y-0.5"
                     >
-                      <div className="relative aspect-video overflow-hidden bg-gray-100">
+                      <div className="relative aspect-video overflow-hidden bg-muted">
                         {thumbnail?.url ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
                           <img
                             src={thumbnail.url}
                             alt={thumbnail.alt || video.title}
+                            loading="lazy"
                             className="h-full w-full object-cover transition group-hover:scale-105"
                           />
                         ) : (
-                          <div className="flex h-full items-center justify-center bg-gradient-to-br from-[#062963] to-[#041d45]">
-                            <svg className="h-12 w-12 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary-navy to-primary-navy-dark">
+                            <svg className="h-12 w-12 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                           </div>
                         )}
                         {video.duration && (
-                          <span className="absolute bottom-2 right-2 rounded bg-[#062963]/90 px-2 py-1 text-xs font-medium text-white">
+                          <span className="absolute bottom-2 right-2 rounded bg-primary-navy/90 px-2 py-1 text-xs font-medium text-white">
                             {video.duration}
                           </span>
                         )}
                       </div>
                       <div className="p-5">
-                        <h2 className="font-bold text-[#062963] group-hover:text-[#FBAC1A] transition-colors line-clamp-2">
+                        <h2 className="font-bold text-primary-navy group-hover:text-button-gold transition-colors line-clamp-2">
                           {video.title}
                         </h2>
                         {video.category && (
-                          <span className="mt-3 inline-block rounded-full bg-[#062963]/10 text-[#062963] px-2.5 py-0.5 text-xs font-medium capitalize">
+                          <span className="mt-3 inline-block rounded-full bg-primary-navy/10 text-primary-navy px-2.5 py-0.5 text-xs font-medium capitalize">
                             {video.category}
                           </span>
                         )}
@@ -118,7 +120,7 @@ export default async function VideosPage({
                   {currentPage > 1 && (
                     <Link
                       href={`/videos?page=${currentPage - 1}${category ? `&category=${category}` : ''}`}
-                      className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-[#062963] hover:bg-[#062963] hover:text-white transition-colors"
+                      className="inline-flex items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-primary-navy hover:bg-primary-navy hover:text-white transition-colors"
                     >
                       Previous
                     </Link>
@@ -129,8 +131,8 @@ export default async function VideosPage({
                       href={`/videos?page=${p}${category ? `&category=${category}` : ''}`}
                       className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                         p === currentPage
-                          ? 'bg-[#062963] text-white'
-                          : 'border border-gray-300 bg-white text-[#062963] hover:bg-[#062963] hover:text-white'
+                          ? 'bg-primary-navy text-white'
+                          : 'border border-border bg-card text-primary-navy hover:bg-primary-navy hover:text-white'
                       }`}
                     >
                       {p}
@@ -139,7 +141,7 @@ export default async function VideosPage({
                   {currentPage < totalPages && (
                     <Link
                       href={`/videos?page=${currentPage + 1}${category ? `&category=${category}` : ''}`}
-                      className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-[#062963] hover:bg-[#062963] hover:text-white transition-colors"
+                      className="inline-flex items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-primary-navy hover:bg-primary-navy hover:text-white transition-colors"
                     >
                       Next
                     </Link>
@@ -148,9 +150,9 @@ export default async function VideosPage({
               )}
             </>
           ) : (
-            <div className="mx-auto max-w-md rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center">
-              <p className="text-lg font-semibold text-[#062963]">No videos available yet</p>
-              <p className="mt-2 text-sm text-gray-500">Check back soon for new content.</p>
+            <div className="mx-auto max-w-md rounded-lg border border-dashed border-border bg-card p-12 text-center">
+              <p className="text-lg font-semibold text-primary-navy">No videos available yet</p>
+              <p className="mt-2 text-sm text-muted-foreground">Check back soon for new content.</p>
             </div>
           )}
         </Container>

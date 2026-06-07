@@ -28,25 +28,25 @@ export default async function JosaaCounsellorPage() {
         subtitle="Get personalized guidance for the JOSAA counselling process. Our experienced counsellors will help you understand the process, choose the right colleges, and maximize your chances of admission."
       />
 
-      <div className="bg-[#062963] py-8 text-center -mt-px">
+      <div className="bg-primary-navy py-8 text-center -mt-px">
         <Container>
           <Button
             asChild
             size="lg"
-            className="bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963] font-semibold"
+            className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-semibold"
           >
             <Link href="/contact">Get Started</Link>
           </Button>
         </Container>
       </div>
 
-      <Section className="bg-[#F6F3EE]/30">
+      <Section className="bg-navbar-bg/30">
         <Container>
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-[#062963] sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-primary-navy sm:text-4xl">
               Our JOSAA Experts
             </h2>
-            <p className="mt-4 text-base sm:text-lg text-gray-600">
+            <p className="mt-4 text-base sm:text-lg text-muted-foreground">
               Counsellors specialized in JOSAA counselling process
             </p>
           </div>
@@ -58,10 +58,11 @@ export default async function JosaaCounsellorPage() {
                 return (
                   <div
                     key={counselor.id}
-                    className="rounded-xl border border-gray-200 bg-white p-6 text-center transition hover:shadow-lg hover:-translate-y-0.5"
+                    className="rounded-xl border border-border bg-card p-6 text-center transition hover:shadow-lg hover:-translate-y-0.5"
                   >
                     {imageUrl ? (
-                      <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-2 border-[#062963]/20">
+                      <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-2 border-primary-navy/20">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={imageUrl}
                           alt={counselor.name}
@@ -69,14 +70,14 @@ export default async function JosaaCounsellorPage() {
                         />
                       </div>
                     ) : (
-                      <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#062963] text-2xl font-bold text-white">
+                      <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-primary-navy text-2xl font-bold text-white">
                         {counselor.name.charAt(0)}
                       </div>
                     )}
-                    <h3 className="mt-4 text-lg font-bold text-[#062963]">{counselor.name}</h3>
-                    <p className="text-sm text-gray-600">{counselor.designation}</p>
+                    <h3 className="mt-4 text-lg font-bold text-primary-navy">{counselor.name}</h3>
+                    <p className="text-sm text-muted-foreground">{counselor.designation}</p>
                     {counselor.experience && (
-                      <p className="mt-1 text-xs text-[#062963]/70 font-medium">
+                      <p className="mt-1 text-xs text-primary-navy/70 font-medium">
                         {counselor.experience} years experience
                       </p>
                     )}
@@ -85,7 +86,7 @@ export default async function JosaaCounsellorPage() {
                         {counselor.specializations.map((s: any, i: number) => (
                           <span
                             key={i}
-                            className="rounded-full bg-[#062963]/10 text-[#062963] px-2.5 py-0.5 text-xs font-medium capitalize"
+                            className="rounded-full bg-primary-navy/10 text-primary-navy px-2.5 py-0.5 text-xs font-medium capitalize"
                           >
                             {s.specialization}
                           </span>
@@ -97,9 +98,9 @@ export default async function JosaaCounsellorPage() {
               })}
             </div>
           ) : (
-            <div className="mx-auto max-w-md rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center">
-              <p className="text-lg font-semibold text-[#062963]">No JOSAA counsellors listed yet</p>
-              <p className="mt-2 text-sm text-gray-500">Our JOSAA specialists will appear here once added.</p>
+            <div className="mx-auto max-w-md rounded-lg border border-dashed border-border bg-card p-12 text-center">
+              <p className="text-lg font-semibold text-primary-navy">No JOSAA counsellors listed yet</p>
+              <p className="mt-2 text-sm text-muted-foreground">Our JOSAA specialists will appear here once added.</p>
             </div>
           )}
         </Container>

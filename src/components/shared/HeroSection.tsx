@@ -30,25 +30,16 @@ export async function HeroSection() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-32 -right-20 w-80 h-80 rounded-full bg-[#062963]/8 blur-3xl"
+        className="pointer-events-none absolute -bottom-32 -right-20 w-80 h-80 rounded-full bg-primary-navy/10 blur-3xl"
       />
 
       <div className="relative max-w-5xl mx-auto text-center">
-        <p
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold px-4 py-2 rounded-full mb-6 tracking-wide uppercase shadow-sm transition-all duration-200 ease-out"
-          style={{
-            background:
-              'linear-gradient(135deg, rgba(251,172,26,0.12) 0%, rgba(255,255,255,0.85) 50%, rgba(6,41,99,0.08) 100%)',
-            color: '#062963',
-            border: '1.5px solid rgba(6,41,99,0.18)',
-            backdropFilter: 'blur(6px)',
-          }}
-        >
+        <p className="glass-pill inline-flex items-center gap-2 text-xs sm:text-sm font-bold px-4 py-2 rounded-full mb-6 tracking-wide uppercase shadow-sm transition-all duration-200 ease-out">
           <Sparkles className="w-3.5 h-3.5 text-button-gold" aria-hidden="true" />
           {badge}
         </p>
 
-        <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold text-[#062963] mb-5 tracking-tight leading-[1.1]">
+        <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold text-primary-navy mb-5 tracking-tight leading-[1.1]">
           {heading}
           <span className="block mt-3 text-button-gold text-xl sm:text-2xl lg:text-3xl font-semibold">
             starting from{' '}
@@ -73,7 +64,7 @@ export async function HeroSection() {
           <Button
             asChild
             size="lg"
-            className="rounded-2xl bg-button-gold hover:bg-button-gold-hover text-[#062963] font-bold shadow-md hover:shadow-lg transition-all duration-200 ease-out px-7 py-6 text-base"
+            className="rounded-2xl bg-button-gold hover:bg-button-gold-hover text-primary-navy font-bold shadow-md hover:shadow-lg transition-all duration-200 ease-out px-7 py-6 text-base"
           >
             <Link href={primaryCtaLink} className="flex items-center gap-2">
               {primaryCtaText}
@@ -84,7 +75,7 @@ export async function HeroSection() {
             asChild
             size="lg"
             variant="outline"
-            className="rounded-2xl bg-[#062963] hover:bg-primary-navy-dark text-white border-[#062963] font-bold shadow-md hover:shadow-lg transition-all duration-200 ease-out px-7 py-6 text-base"
+            className="rounded-2xl bg-primary-navy hover:bg-primary-navy-dark text-white border-primary-navy font-bold shadow-md hover:shadow-lg transition-all duration-200 ease-out px-7 py-6 text-base"
           >
             <Link href={secondaryCtaLink}>{secondaryCtaText}</Link>
           </Button>

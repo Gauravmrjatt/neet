@@ -77,23 +77,23 @@ function SignupForm() {
 
   return (
     <div className="w-full max-w-md">
-      <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-8">
+      <div className="bg-card rounded-xl border border-border shadow-lg p-8">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-[#062963]">Create Account</h1>
-          <p className="text-sm text-gray-500 mt-2">
+          <h1 className="text-2xl font-bold text-primary-navy">Create Account</h1>
+          <p className="text-sm text-muted-foreground mt-2">
             Join us for expert NEET counselling guidance
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          <div className="mb-6 p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm" role="alert">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-[#062963]">
+            <Label htmlFor="name" className="text-primary-navy">
               Full Name
             </Label>
             <Input
@@ -104,12 +104,11 @@ function SignupForm() {
               required
               autoComplete="name"
               placeholder="Your full name"
-              className="border-gray-300 focus-visible:ring-[#062963]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-[#062963]">
+            <Label htmlFor="email" className="text-primary-navy">
               Email
             </Label>
             <Input
@@ -120,12 +119,11 @@ function SignupForm() {
               required
               autoComplete="email"
               placeholder="you@example.com"
-              className="border-gray-300 focus-visible:ring-[#062963]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone" className="text-[#062963]">
+            <Label htmlFor="phone" className="text-primary-navy">
               Phone Number
             </Label>
             <Input
@@ -136,12 +134,11 @@ function SignupForm() {
               required
               autoComplete="tel"
               placeholder="+91 98765 43210"
-              className="border-gray-300 focus-visible:ring-[#062963]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-[#062963]">
+            <Label htmlFor="password" className="text-primary-navy">
               Password
             </Label>
             <Input
@@ -152,12 +149,11 @@ function SignupForm() {
               required
               autoComplete="new-password"
               placeholder="At least 6 characters"
-              className="border-gray-300 focus-visible:ring-[#062963]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-[#062963]">
+            <Label htmlFor="confirmPassword" className="text-primary-navy">
               Confirm Password
             </Label>
             <Input
@@ -168,14 +164,13 @@ function SignupForm() {
               required
               autoComplete="new-password"
               placeholder="Re-enter your password"
-              className="border-gray-300 focus-visible:ring-[#062963]"
             />
           </div>
 
           <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963] font-semibold"
+            className="w-full bg-button-gold hover:bg-button-gold-hover text-primary-navy font-semibold"
           >
             {loading ? (
               <>
@@ -188,11 +183,11 @@ function SignupForm() {
           </Button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-500">
+        <div className="mt-6 text-center text-sm text-muted-foreground">
           Already have an account?{' '}
           <Link
             href="/login"
-            className="text-[#062963] font-semibold hover:underline"
+            className="text-primary-navy font-semibold hover:underline"
           >
             Sign in
           </Link>
@@ -207,7 +202,7 @@ export default function SignupPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center p-12">
-          <Loader2 className="h-8 w-8 animate-spin text-[#062963]" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary-navy" />
         </div>
       }
     >

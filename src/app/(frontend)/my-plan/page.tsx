@@ -64,9 +64,9 @@ export default async function MyPlanPage() {
   return (
     <>
       {/* Plan Info Banner - always visible */}
-      <section className="relative overflow-hidden bg-[#062963] py-12 sm:py-16 text-white">
+      <section className="relative overflow-hidden bg-primary-navy py-12 sm:py-16 text-white">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-[#FBAC1A] blur-3xl" />
+          <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-button-gold blur-3xl" />
           <div className="absolute -bottom-20 -right-20 h-96 w-96 rounded-full bg-white blur-3xl" />
         </div>
         <Container className="relative">
@@ -76,7 +76,7 @@ export default async function MyPlanPage() {
                 className={`mb-3 border-0 px-3 py-1 text-xs font-semibold tracking-wider uppercase ${
                   isActive
                     ? 'bg-green-300/20 text-green-200 hover:bg-green-300/20'
-                    : 'bg-[#FBAC1A]/20 text-[#FBAC1A] hover:bg-[#FBAC1A]/20'
+                    : 'bg-button-gold/20 text-button-gold hover:bg-button-gold/20'
                 }`}
               >
                 {isActive ? 'Active' : 'Pending Assignment'}
@@ -102,50 +102,50 @@ export default async function MyPlanPage() {
 
       {/* State C: Pending - waiting for assignment */}
       {!isActive && (
-        <Section className="bg-[#F6F3EE]/30">
+        <Section className="bg-navbar-bg/30">
           <Container className="max-w-3xl">
-            <Card className="border-gray-200 bg-white shadow-md">
+            <Card className="border-border bg-card shadow-md">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold text-[#062963]">
+                <CardTitle className="text-2xl font-bold text-primary-navy">
                   Your Counselor is Being Assigned
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-base leading-relaxed text-gray-700">
+                <p className="text-base leading-relaxed text-foreground/80">
                   Thank you for purchasing the{' '}
-                  <strong className="text-[#062963]">{planName}</strong> plan. Our team is
+                  <strong className="text-primary-navy">{planName}</strong> plan. Our team is
                   reviewing your purchase and will assign a dedicated counselor to you shortly.
                 </p>
-                <p className="text-base leading-relaxed text-gray-700">
+                <p className="text-base leading-relaxed text-foreground/80">
                   Once your counselor is assigned and your personalized plan page is ready, you&apos;ll
                   have full access to:
                 </p>
-                <ul className="ml-2 space-y-2 text-sm text-gray-700">
+                <ul className="ml-2 space-y-2 text-sm text-foreground/80">
                   <li className="flex items-start">
-                    <span className="mr-2 text-[#FBAC1A]">✓</span>
+                    <span className="mr-2 text-button-gold">✓</span>
                     Your dedicated counselor&apos;s contact details
                   </li>
                   <li className="flex items-start">
-                    <span className="mr-2 text-[#FBAC1A]">✓</span>
+                    <span className="mr-2 text-button-gold">✓</span>
                     Personalized plan content curated for you
                   </li>
                   <li className="flex items-start">
-                    <span className="mr-2 text-[#FBAC1A]">✓</span>
+                    <span className="mr-2 text-button-gold">✓</span>
                     All premium resources and guidance
                   </li>
                 </ul>
-                <div className="rounded-md border border-[#062963]/20 bg-[#062963]/5 p-4 text-sm text-gray-700">
-                  <strong className="text-[#062963]">Need help?</strong> Contact our support team
+                <div className="rounded-md border border-primary-navy/20 bg-primary-navy/5 p-4 text-sm text-foreground/80">
+                  <strong className="text-primary-navy">Need help?</strong> Contact our support team
                   if you have any questions about your purchase.
                 </div>
                 <div className="flex flex-wrap gap-3">
                   <Button
                     asChild
-                    className="bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963] font-semibold"
+                    className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-semibold"
                   >
                     <Link href="/contact">Contact Support</Link>
                   </Button>
-                  <Button asChild variant="outline" className="border-[#062963]/30 text-[#062963]">
+                  <Button asChild variant="outline" className="border-primary-navy/30 text-primary-navy">
                     <Link href="/">Back to Home</Link>
                   </Button>
                 </div>
@@ -160,16 +160,16 @@ export default async function MyPlanPage() {
         <>
           {/* Counselor Section */}
           {counselor && (
-            <Section className="bg-[#F6F3EE]/30">
+            <Section className="bg-navbar-bg/30">
               <Container>
                 <div className="mb-8">
-                  <Badge className="mb-3 border-0 bg-[#062963]/10 px-3 py-1 text-xs font-semibold tracking-wider text-[#062963] uppercase hover:bg-[#062963]/10">
+                  <Badge className="mb-3 border-0 bg-primary-navy/10 px-3 py-1 text-xs font-semibold tracking-wider text-primary-navy uppercase hover:bg-primary-navy/10">
                     Your Dedicated Counselor
                   </Badge>
-                  <h2 className="text-2xl font-bold tracking-tight text-[#062963] sm:text-3xl">
+                  <h2 className="text-2xl font-bold tracking-tight text-primary-navy sm:text-3xl">
                     Meet Your Counselor
                   </h2>
-                  <p className="mt-2 text-base text-gray-600">
+                  <p className="mt-2 text-base text-muted-foreground">
                     Reach out to your counselor for personalized guidance and support.
                   </p>
                 </div>
@@ -187,10 +187,10 @@ export default async function MyPlanPage() {
 
           {/* If no page content blocks, show a fallback */}
           {(!assignedPage?.content || assignedPage.content.length === 0) && (
-            <Section className="bg-white">
+            <Section className="bg-card">
               <Container className="max-w-3xl text-center">
-                <h2 className="text-2xl font-bold text-[#062963]">Your Plan is Ready</h2>
-                <p className="mt-3 text-base text-gray-600">
+                <h2 className="text-2xl font-bold text-primary-navy">Your Plan is Ready</h2>
+                <p className="mt-3 text-base text-muted-foreground">
                   Your personalized plan content will appear here once configured by the admin.
                 </p>
               </Container>

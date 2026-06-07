@@ -41,11 +41,12 @@ export function CounselorFilter({ counselors }: CounselorFilterProps) {
         {SPECIALIZATION_OPTIONS.map((opt) => (
           <button
             key={opt.label}
+            type="button"
             onClick={() => setSelected(opt.value)}
             className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition ${
               opt.value === selected
-                ? 'bg-[#062963] text-white'
-                : 'border border-gray-300 bg-white text-[#062963] hover:bg-[#062963] hover:text-white'
+                ? 'bg-primary-navy text-white'
+                : 'border border-border bg-card text-primary-navy hover:bg-primary-navy hover:text-white'
             }`}
           >
             {opt.label}
@@ -60,25 +61,27 @@ export function CounselorFilter({ counselors }: CounselorFilterProps) {
             return (
               <div
                 key={counselor.id}
-                className="rounded-xl border border-gray-200 bg-white p-6 text-center transition hover:shadow-lg hover:-translate-y-0.5"
+                className="rounded-xl border border-border bg-card p-6 text-center transition hover:shadow-lg hover:-translate-y-0.5"
               >
                 {imageUrl ? (
-                  <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-2 border-[#062963]/20">
+                  <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-2 border-primary-navy/20">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={imageUrl}
                       alt={counselor.name}
+                      loading="lazy"
                       className="h-full w-full object-cover"
                     />
                   </div>
                 ) : (
-                  <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#062963] text-2xl font-bold text-white">
+                  <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-primary-navy text-2xl font-bold text-white">
                     {counselor.name.charAt(0)}
                   </div>
                 )}
-                <h3 className="mt-4 text-lg font-bold text-[#062963]">{counselor.name}</h3>
-                <p className="text-sm text-gray-600">{counselor.designation}</p>
+                <h3 className="mt-4 text-lg font-bold text-primary-navy">{counselor.name}</h3>
+                <p className="text-sm text-muted-foreground">{counselor.designation}</p>
                 {counselor.experience && (
-                  <p className="mt-1 text-xs text-[#062963]/70 font-medium">
+                  <p className="mt-1 text-xs text-primary-navy/70 font-medium">
                     {counselor.experience} years experience
                   </p>
                 )}
@@ -87,7 +90,7 @@ export function CounselorFilter({ counselors }: CounselorFilterProps) {
                     {counselor.specializations.map((s, i) => (
                       <span
                         key={i}
-                        className="rounded-full bg-[#062963]/10 text-[#062963] px-2.5 py-0.5 text-xs font-medium capitalize"
+                        className="rounded-full bg-primary-navy/10 text-primary-navy px-2.5 py-0.5 text-xs font-medium capitalize"
                       >
                         {s.specialization}
                       </span>
@@ -99,7 +102,7 @@ export function CounselorFilter({ counselors }: CounselorFilterProps) {
           })}
         </div>
       ) : (
-        <p className="text-center text-gray-500 py-8">No counsellors found for this specialization.</p>
+        <p className="text-center text-muted-foreground py-8">No counsellors found for this specialization.</p>
       )}
     </div>
   )

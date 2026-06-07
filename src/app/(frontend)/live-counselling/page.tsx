@@ -33,7 +33,7 @@ export default async function LiveCounsellingPage() {
         title="Live Counselling"
         subtitle="Join live counselling sessions and Q&A with our expert counsellors"
       />
-      <Section className="bg-[#F6F3EE]/30">
+      <Section className="bg-navbar-bg/30">
         <Container>
           {sessions.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -43,34 +43,34 @@ export default async function LiveCounsellingPage() {
                 return (
                   <div
                     key={session.id}
-                    className="rounded-xl border border-gray-200 bg-white p-6 transition hover:shadow-lg"
+                    className="rounded-xl border border-border bg-card p-6 transition hover:shadow-lg"
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <h2 className="text-lg font-bold text-[#062963]">{session.title}</h2>
+                      <h2 className="text-lg font-bold text-primary-navy">{session.title}</h2>
                       <span
                         className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
                           isLive
-                            ? 'bg-red-50 text-red-700 border border-red-200'
-                            : 'bg-[#062963]/10 text-[#062963]'
+                            ? 'bg-destructive/10 text-destructive border border-destructive/30'
+                            : 'bg-primary-navy/10 text-primary-navy'
                         }`}
                       >
                         {isLive && (
-                          <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-red-600" />
+                          <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-destructive" />
                         )}
                         {isLive ? 'Live' : 'Upcoming'}
                       </span>
                     </div>
 
-                    <div className="mt-4 space-y-2.5 text-sm text-gray-600">
+                    <div className="mt-4 space-y-2.5 text-sm text-muted-foreground">
                       <div className="flex items-center gap-2">
-                        <svg className="h-4 w-4 text-[#062963]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="h-4 w-4 text-primary-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <span>{formatDate(session.scheduledAt)}</span>
                       </div>
                       {session.duration && (
                         <div className="flex items-center gap-2">
-                          <svg className="h-4 w-4 text-[#062963]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="h-4 w-4 text-primary-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           <span>{session.duration}</span>
@@ -78,10 +78,10 @@ export default async function LiveCounsellingPage() {
                       )}
                       {counsellor && (
                         <div className="flex items-center gap-2">
-                          <svg className="h-4 w-4 text-[#062963]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="h-4 w-4 text-primary-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
-                          <span className="font-medium text-[#062963]">{counsellor.name}</span>
+                          <span className="font-medium text-primary-navy">{counsellor.name}</span>
                         </div>
                       )}
                     </div>
@@ -92,7 +92,7 @@ export default async function LiveCounsellingPage() {
                           href={session.meetingUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex w-full items-center justify-center rounded-md bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963] px-4 py-2.5 text-sm font-bold transition-colors"
+                          className="inline-flex w-full items-center justify-center rounded-md bg-button-gold hover:bg-button-gold-hover text-primary-navy px-4 py-2.5 text-sm font-bold transition-colors"
                         >
                           Join Live Session
                         </a>
@@ -103,9 +103,9 @@ export default async function LiveCounsellingPage() {
               })}
             </div>
           ) : (
-            <div className="mx-auto max-w-md rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center">
-              <p className="text-lg font-semibold text-[#062963]">No upcoming live sessions</p>
-              <p className="mt-2 text-sm text-gray-500">Check back soon for new sessions.</p>
+            <div className="mx-auto max-w-md rounded-lg border border-dashed border-border bg-card p-12 text-center">
+              <p className="text-lg font-semibold text-primary-navy">No upcoming live sessions</p>
+              <p className="mt-2 text-sm text-muted-foreground">Check back soon for new sessions.</p>
             </div>
           )}
         </Container>

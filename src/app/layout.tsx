@@ -1,5 +1,7 @@
 import { Quicksand } from 'next/font/google'
+import Script from 'next/script'
 import './(frontend)/globals.css'
+import { themeScript } from '@/lib/theme-script'
 
 const quicksand = Quicksand({
   subsets: ['latin'],
@@ -19,6 +21,13 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className={quicksand.variable}>
+      <head>
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeScript }}
+        />
+      </head>
       <body className="min-h-screen bg-background font-sans antialiased gov-dots">
         {children}
       </body>

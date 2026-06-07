@@ -88,19 +88,11 @@ export function TestimonialMarquee() {
     <section aria-label="Student testimonials" className="relative py-16 sm:py-20 px-4 bg-card-bg overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8 sm:mb-12">
-          <p
-            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full mb-3 tracking-wide uppercase shadow-sm"
-            style={{
-              background:
-                'linear-gradient(135deg, rgba(251,172,26,0.18) 0%, rgba(255,255,255,0.7) 50%, rgba(6,41,99,0.10) 100%)',
-              color: '#062963',
-              border: '1.5px solid rgba(6,41,99,0.15)',
-            }}
-          >
+          <p className="glass-pill inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full mb-3 tracking-wide uppercase shadow-sm">
             <Sparkles className="w-3 h-3 text-button-gold" aria-hidden="true" />
             Testimonials
           </p>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-[#062963] mb-2 tracking-tight">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-navy mb-2 tracking-tight">
             What Students Say
           </h2>
           <p className="text-sm sm:text-base text-foreground/70 max-w-xl mx-auto">
@@ -124,12 +116,12 @@ export function TestimonialMarquee() {
             {duplicated.map((testimonial, index) => (
               <article
                 key={index}
-                className="shrink-0 w-80 sm:w-96 mx-3 p-6 rounded-2xl border border-[#062963]/10 bg-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out"
+                className="shrink-0 w-80 sm:w-96 mx-3 p-6 rounded-2xl border border-primary-navy/10 bg-card shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out"
               >
                 <div className="flex items-start justify-between mb-4">
                   <span
                     aria-hidden="true"
-                    className="inline-flex w-10 h-10 rounded-xl bg-button-gold/15 text-[#062963] items-center justify-center"
+                    className="inline-flex w-10 h-10 rounded-xl bg-button-gold/15 text-primary-navy items-center justify-center"
                   >
                     <Quote className="w-5 h-5" />
                   </span>
@@ -146,8 +138,8 @@ export function TestimonialMarquee() {
                 <p className="text-sm text-foreground/80 leading-relaxed mb-5">
                   &ldquo;{testimonial.quote}&rdquo;
                 </p>
-                <div className="pt-4 border-t border-[#062963]/10">
-                  <p className="font-semibold text-sm text-[#062963]">{testimonial.author}</p>
+                <div className="pt-4 border-t border-primary-navy/10">
+                  <p className="font-semibold text-sm text-primary-navy">{testimonial.author}</p>
                   <p className="text-xs text-foreground/60 mt-0.5">{testimonial.role}</p>
                 </div>
               </article>

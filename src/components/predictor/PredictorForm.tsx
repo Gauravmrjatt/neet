@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PredictorResults } from './PredictorResults'
 import type { PredictResponse } from '@/lib/predictor/types'
@@ -77,29 +77,28 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
   }, [])
 
   const selectClasses =
-    'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
+    'flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
 
   if (!response) {
     return (
-      <Card className="border-gray-200 bg-white shadow-lg">
-        <CardHeader className="border-b border-gray-200 bg-[#062963]/5">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl" role="img" aria-label="predictor">🎯</span>
-            <div>
-              <CardTitle className="text-xl font-bold text-[#062963]">
-                Enter Your NEET Details
-              </CardTitle>
-              <p className="mt-1 text-sm text-gray-600">
-                Fill in the fields below to predict your college admission chances.
-              </p>
-            </div>
+      <div className="rounded-xl border border-border bg-card shadow-lg">
+        <div className="flex items-center gap-2 border-b border-border bg-primary-navy/5 px-5 py-3">
+          <span className="text-xl" role="img" aria-label="predictor">🎯</span>
+          <div>
+            <h2 className="text-base font-bold text-primary-navy">
+              Enter Your NEET Details
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Fill in the fields below to predict your college admission chances.
+            </p>
           </div>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
             <div>
-              <Label htmlFor="rank" className="text-sm font-semibold text-[#062963]">
-                NEET All India Rank (AIR) <span className="text-red-500">*</span>
+              <Label htmlFor="rank" className="text-xs font-semibold text-primary-navy">
+                Rank (AIR) <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="rank"
@@ -109,24 +108,25 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 placeholder="e.g. 50000"
                 value={rank}
                 onChange={(e) => setRank(e.target.value)}
-                className="mt-1.5 border-gray-300 focus:border-[#062963] focus:ring-[#062963]"
+                className="mt-1 h-10 text-sm"
                 required
                 disabled={status === 'loading'}
               />
             </div>
 
             <div>
-              <Label htmlFor="category" className="text-sm font-semibold text-[#062963]">
-                Your Category
+              <Label htmlFor="category" className="text-xs font-semibold text-primary-navy">
+                Category
               </Label>
               <select
                 id="category"
+                aria-label="Your category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className={cn(selectClasses, 'mt-1.5 border-gray-300')}
+                className={cn(selectClasses, 'mt-1')}
                 disabled={status === 'loading'}
               >
-                <option value="">-- Select Category (Optional) --</option>
+                <option value="">All Categories</option>
                 {filterOptions.categories.map((cat) => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
@@ -134,17 +134,18 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
             </div>
 
             <div>
-              <Label htmlFor="quota" className="text-sm font-semibold text-[#062963]">
+              <Label htmlFor="quota" className="text-xs font-semibold text-primary-navy">
                 Quota
               </Label>
               <select
                 id="quota"
+                aria-label="Quota"
                 value={quota}
                 onChange={(e) => setQuota(e.target.value)}
-                className={cn(selectClasses, 'mt-1.5 border-gray-300')}
+                className={cn(selectClasses, 'mt-1')}
                 disabled={status === 'loading'}
               >
-                <option value="">-- Select Quota (Optional) --</option>
+                <option value="">All Quotas</option>
                 {filterOptions.quotas.map((q) => (
                   <option key={q} value={q}>{q}</option>
                 ))}
@@ -152,17 +153,18 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
             </div>
 
             <div>
-              <Label htmlFor="state" className="text-sm font-semibold text-[#062963]">
+              <Label htmlFor="state" className="text-xs font-semibold text-primary-navy">
                 State
               </Label>
               <select
                 id="state"
+                aria-label="State"
                 value={state}
                 onChange={(e) => setState(e.target.value)}
-                className={cn(selectClasses, 'mt-1.5 border-gray-300')}
+                className={cn(selectClasses, 'mt-1')}
                 disabled={status === 'loading'}
               >
-                <option value="">-- Select State (Optional) --</option>
+                <option value="">All States</option>
                 {filterOptions.states.map((s) => (
                   <option key={s} value={s}>{s}</option>
                 ))}
@@ -170,49 +172,49 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
             </div>
 
             <div>
-              <Label htmlFor="course" className="text-sm font-semibold text-[#062963]">
+              <Label htmlFor="course" className="text-xs font-semibold text-primary-navy">
                 Course
               </Label>
               <select
                 id="course"
+                aria-label="Course"
                 value={course}
                 onChange={(e) => setCourse(e.target.value)}
-                className={cn(selectClasses, 'mt-1.5 border-gray-300')}
+                className={cn(selectClasses, 'mt-1')}
                 disabled={status === 'loading'}
               >
-                <option value="">-- Select Course (Optional) --</option>
+                <option value="">All Courses</option>
                 {filterOptions.courses.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
             </div>
+          </div>
 
-            {error && (
-              <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                {error}
-              </div>
-            )}
+          {error && (
+            <div className="mt-3 rounded-md border border-destructive/30 bg-destructive/10 p-2.5 text-sm text-destructive" role="alert">
+              {error}
+            </div>
+          )}
 
+          <div className="mt-4">
             <Button
               type="submit"
               disabled={status === 'loading'}
-              className="h-11 w-full bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963] font-bold text-base"
+              className="h-10 w-full bg-button-gold hover:bg-button-gold-hover text-primary-navy font-bold text-sm sm:w-auto sm:px-8"
             >
               {status === 'loading' ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                   Predicting...
                 </span>
               ) : (
                 'Predict My College'
               )}
             </Button>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+        </form>
+      </div>
     )
   }
 

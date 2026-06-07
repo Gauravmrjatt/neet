@@ -31,16 +31,16 @@ export function NewsTicker({ items }: NewsTickerProps) {
     <div
       role="region"
       aria-label="Latest news"
-      className="bg-[#062963] text-white border-y border-primary-navy-dark/60 shadow-sm"
+      className="bg-primary-navy text-white border-y border-primary-navy-dark/60 shadow-sm"
     >
       <div className="max-w-6xl mx-auto flex items-stretch overflow-hidden">
-        <div className="flex items-center gap-2 px-4 sm:px-6 py-3 bg-button-gold text-[#062963] font-bold uppercase tracking-wide text-xs sm:text-sm whitespace-nowrap rounded-r-2xl">
+        <div className="flex items-center gap-2 px-4 sm:px-6 py-3 bg-button-gold text-primary-navy font-bold uppercase tracking-wide text-xs sm:text-sm whitespace-nowrap rounded-r-2xl">
           <Megaphone className="w-4 h-4" aria-hidden="true" />
           <span>Latest News</span>
         </div>
         <div className="flex-1 overflow-hidden relative">
-          <div className="absolute inset-y-0 left-0 w-8 bg-linear-to-r from-[#062963] to-transparent z-10 pointer-events-none" aria-hidden="true" />
-          <div className="absolute inset-y-0 right-0 w-8 bg-linear-to-l from-[#062963] to-transparent z-10 pointer-events-none" aria-hidden="true" />
+          <div className="absolute inset-y-0 left-0 w-8 bg-linear-to-r from-primary-navy to-transparent z-10 pointer-events-none" aria-hidden="true" />
+          <div className="absolute inset-y-0 right-0 w-8 bg-linear-to-l from-primary-navy to-transparent z-10 pointer-events-none" aria-hidden="true" />
           <div className="animate-marquee flex items-center h-full">
             {duplicated.map((item, index) => (
               <span

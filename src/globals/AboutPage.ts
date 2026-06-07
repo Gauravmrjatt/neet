@@ -1,57 +1,19 @@
 import type { GlobalConfig } from 'payload'
 import { isAdminOrEditor, anyone } from '../access/roles'
 
-const defaultMissionBody = {
-  root: {
-    type: 'root',
-    children: [
-      {
-        type: 'paragraph',
-        version: 1,
-        children: [
-          {
-            type: 'text',
-            text: 'We are dedicated to providing expert guidance and support to NEET aspirants. Our team of experienced counsellors helps students navigate the complex counselling process and make informed decisions about their medical career.',
-            version: 1,
-          },
-        ],
-        direction: 'ltr',
-        format: '',
-        indent: 0,
-      },
-    ],
-    direction: 'ltr',
-    format: '',
-    indent: 0,
-    version: 1,
-  },
-}
+const iconOptions = [
+  { label: 'Award', value: 'Award' },
+  { label: 'Target', value: 'Target' },
+  { label: 'BookOpen', value: 'BookOpen' },
+  { label: 'Headphones', value: 'Headphones' },
+  { label: 'Heart', value: 'Heart' },
+  { label: 'Users', value: 'Users' },
+]
 
-const defaultTeamBody = {
-  root: {
-    type: 'root',
-    children: [
-      {
-        type: 'paragraph',
-        version: 1,
-        children: [
-          {
-            type: 'text',
-            text: 'Our team consists of medical professionals, education experts, and experienced counsellors who have guided thousands of students to successful admissions in top medical colleges across India.',
-            version: 1,
-          },
-        ],
-        direction: 'ltr',
-        format: '',
-        indent: 0,
-      },
-    ],
-    direction: 'ltr',
-    format: '',
-    indent: 0,
-    version: 1,
-  },
-}
+const statAccentOptions = [
+  { label: 'Navy', value: 'navy' },
+  { label: 'Gold', value: 'gold' },
+]
 
 export const AboutPage: GlobalConfig = {
   slug: 'about-page',
@@ -100,7 +62,41 @@ export const AboutPage: GlobalConfig = {
         {
           name: 'body',
           type: 'richText',
-          defaultValue: defaultMissionBody,
+        },
+        {
+          name: 'stats',
+          type: 'array',
+          label: 'Stats (2×2 grid)',
+          minRows: 0,
+          maxRows: 4,
+          admin: {
+            description:
+              'Shown in the 2×2 stats grid next to the mission text. Use "Gold" accent for the primary number.',
+          },
+          fields: [
+            {
+              name: 'value',
+              type: 'text',
+              required: true,
+              admin: {
+                placeholder: 'e.g. 10k+',
+              },
+            },
+            {
+              name: 'label',
+              type: 'text',
+              required: true,
+              admin: {
+                placeholder: 'e.g. Students guided',
+              },
+            },
+            {
+              name: 'accent',
+              type: 'select',
+              options: statAccentOptions,
+              defaultValue: 'navy',
+            },
+          ],
         },
       ],
     },
@@ -113,27 +109,39 @@ export const AboutPage: GlobalConfig = {
           name: 'heading',
           type: 'text',
           required: true,
-          defaultValue: 'Why Choose Us?',
+          defaultValue: 'Why Choose Us',
+        },
+        {
+          name: 'intro',
+          type: 'textarea',
+          defaultValue: 'Six reasons students and parents across India trust us with their NEET journey.',
         },
         {
           name: 'items',
           type: 'array',
           labels: {
-            singular: 'Bullet',
-            plural: 'Bullets',
+            singular: 'Feature',
+            plural: 'Features',
           },
-          defaultValue: [
-            { text: 'Experienced counsellors with proven track records' },
-            { text: 'Personalized guidance tailored to your needs' },
-            { text: 'Comprehensive support throughout the counselling process' },
-            { text: 'Access to exclusive resources and video content' },
-            { text: 'Live sessions for real-time interaction with experts' },
-          ],
+          minRows: 1,
+          maxRows: 12,
           fields: [
             {
-              name: 'text',
+              name: 'title',
               type: 'text',
               required: true,
+            },
+            {
+              name: 'description',
+              type: 'textarea',
+              required: true,
+            },
+            {
+              name: 'icon',
+              type: 'select',
+              required: true,
+              options: iconOptions,
+              defaultValue: 'Award',
             },
           ],
         },
@@ -153,7 +161,41 @@ export const AboutPage: GlobalConfig = {
         {
           name: 'body',
           type: 'richText',
-          defaultValue: defaultTeamBody,
+        },
+        {
+          name: 'stats',
+          type: 'array',
+          label: 'Stats (3-column strip)',
+          minRows: 0,
+          maxRows: 6,
+          admin: {
+            description:
+              'Shown below the team description. Use "Gold" accent for the primary number.',
+          },
+          fields: [
+            {
+              name: 'value',
+              type: 'text',
+              required: true,
+              admin: {
+                placeholder: 'e.g. 20+',
+              },
+            },
+            {
+              name: 'label',
+              type: 'text',
+              required: true,
+              admin: {
+                placeholder: 'e.g. Medical experts',
+              },
+            },
+            {
+              name: 'accent',
+              type: 'select',
+              options: statAccentOptions,
+              defaultValue: 'navy',
+            },
+          ],
         },
       ],
     },

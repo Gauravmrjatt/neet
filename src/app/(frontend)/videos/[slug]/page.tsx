@@ -71,10 +71,10 @@ export default async function VideoPage({ params }: VideoPageProps) {
         { name: video.title, url: `${siteUrl}/videos/${video.slug}` },
       ])} />
 
-      <Section className="bg-white">
+      <Section className="bg-card">
         <Container className="max-w-4xl">
-          <Link href="/videos" className="inline-flex items-center text-sm text-[#062963] hover:text-[#FBAC1A] transition-colors mb-6">
-            <svg className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <Link href="/videos" className="inline-flex items-center text-sm text-primary-navy hover:text-button-gold transition-colors mb-6">
+            <svg className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             Back to Videos
@@ -82,17 +82,17 @@ export default async function VideoPage({ params }: VideoPageProps) {
 
           <div className="mb-6">
             {video.category && (
-              <span className="mb-3 inline-block rounded-full bg-[#062963]/10 text-[#062963] px-3 py-1 text-xs font-semibold capitalize">
+              <span className="mb-3 inline-block rounded-full bg-primary-navy/10 text-primary-navy px-3 py-1 text-xs font-semibold capitalize">
                 {video.category}
               </span>
             )}
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#062963]">
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-primary-navy">
               {video.title}
             </h1>
-            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-gray-500">
+            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               {video.publishedAt && (
                 <div className="flex items-center gap-2">
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   <time>{formatDate(video.publishedAt)}</time>
@@ -100,7 +100,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
               )}
               {video.duration && (
                 <div className="flex items-center gap-2">
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <span>{video.duration}</span>
@@ -109,7 +109,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
             </div>
           </div>
 
-          <div className="aspect-video overflow-hidden rounded-xl border border-gray-200 shadow-md">
+          <div className="aspect-video overflow-hidden rounded-xl border border-border shadow-md">
             {embedUrl ? (
               <iframe
                 src={embedUrl}
@@ -118,14 +118,14 @@ export default async function VideoPage({ params }: VideoPageProps) {
                 allowFullScreen
               />
             ) : (
-              <div className="flex h-full items-center justify-center bg-gray-100">
-                <p className="text-gray-500">Video not available</p>
+              <div className="flex h-full items-center justify-center bg-muted">
+                <p className="text-muted-foreground">Video not available</p>
               </div>
             )}
           </div>
 
           {video.description && (
-            <div className="mt-8 prose prose-lg max-w-none prose-headings:text-[#062963] prose-a:text-[#062963]">
+            <div className="mt-8 prose prose-lg max-w-none prose-headings:text-primary-navy prose-a:text-primary-navy">
               <RichText content={video.description} />
             </div>
           )}

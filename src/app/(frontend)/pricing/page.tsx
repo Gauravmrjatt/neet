@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { PricingCard } from '@/payload-types'
 import { getPricingCards } from '@/lib/queries'
@@ -8,6 +9,12 @@ import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
@@ -20,18 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
   })
 }
 
-const CHECK_ICON = (
-  <svg
-    className="mr-2.5 mt-0.5 h-5 w-5 flex-shrink-0 text-[#FBAC1A]"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    aria-hidden="true"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-  </svg>
-)
-
 function PricingCardItem({ card }: { card: PricingCard }) {
   const isPopular = card.popular
 
@@ -40,12 +35,12 @@ function PricingCardItem({ card }: { card: PricingCard }) {
       className={cn(
         'relative flex flex-col rounded-2xl border p-8 transition-all duration-300',
         isPopular
-          ? 'bg-[#062963] text-white border-[#062963] shadow-xl ring-2 ring-[#FBAC1A] scale-[1.02]'
-          : 'bg-white text-[#062963] border-gray-200 hover:border-[#062963]/40 hover:shadow-lg',
+          ? 'bg-primary-navy text-white border-primary-navy shadow-xl ring-2 ring-button-gold scale-[1.02]'
+          : 'bg-card text-primary-navy border-border hover:border-primary-navy/40 hover:shadow-lg',
       )}
     >
       {isPopular && (
-        <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-[#FBAC1A] px-4 py-1 text-xs font-bold uppercase tracking-wider text-[#062963] shadow-md">
+        <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-button-gold px-4 py-1 text-xs font-bold uppercase tracking-wider text-primary-navy shadow-md">
           Most Popular
         </span>
       )}
@@ -54,7 +49,7 @@ function PricingCardItem({ card }: { card: PricingCard }) {
         <div>
           <h3 className={cn('text-lg font-bold uppercase tracking-wide')}>{card.planName}</h3>
           {card.subtitle && (
-            <p className={cn('mt-1 text-sm leading-snug', isPopular ? 'text-white/70' : 'text-gray-500')}>
+            <p className={cn('mt-1 text-sm leading-snug', isPopular ? 'text-white/70' : 'text-muted-foreground')}>
               {card.subtitle}
             </p>
           )}
@@ -65,8 +60,8 @@ function PricingCardItem({ card }: { card: PricingCard }) {
               className={cn(
                 'border-0 px-2.5 py-1 text-xs font-bold',
                 isPopular
-                  ? 'bg-[#FBAC1A] text-[#062963] hover:bg-[#FBAC1A]'
-                  : 'bg-[#062963]/10 text-[#062963] hover:bg-[#062963]/10',
+                  ? 'bg-button-gold text-primary-navy hover:bg-button-gold'
+                  : 'bg-primary-navy/10 text-primary-navy hover:bg-primary-navy/10',
               )}
             >
               {card.discount}
@@ -79,7 +74,7 @@ function PricingCardItem({ card }: { card: PricingCard }) {
                 'px-2.5 py-1 text-xs font-semibold',
                 isPopular
                   ? 'border-white/30 bg-white/10 text-white'
-                  : 'border-[#062963]/20 bg-[#062963]/5 text-[#062963]',
+                  : 'border-primary-navy/20 bg-primary-navy/5 text-primary-navy',
               )}
             >
               {card.badge}
@@ -91,14 +86,14 @@ function PricingCardItem({ card }: { card: PricingCard }) {
       <div className="mb-2 flex items-baseline gap-3">
         <span className="text-4xl font-extrabold tracking-tight sm:text-5xl">{card.price}</span>
         {card.originalPrice && (
-          <span className={cn('text-lg line-through', isPopular ? 'text-white/50' : 'text-gray-400')}>
+          <span className={cn('text-lg line-through', isPopular ? 'text-white/50' : 'text-muted-foreground/70')}>
             {card.originalPrice}
           </span>
         )}
       </div>
 
       {card.description && (
-        <p className={cn('mb-6 text-sm leading-relaxed', isPopular ? 'text-white/80' : 'text-gray-600')}>
+        <p className={cn('mb-6 text-sm leading-relaxed', isPopular ? 'text-white/80' : 'text-muted-foreground')}>
           {card.description}
         </p>
       )}
@@ -107,13 +102,13 @@ function PricingCardItem({ card }: { card: PricingCard }) {
         <div
           className={cn(
             'mb-6 rounded-lg p-3 text-sm font-medium',
-            isPopular ? 'bg-white/10' : 'bg-[#062963]/5',
+            isPopular ? 'bg-white/10' : 'bg-primary-navy/5',
           )}
         >
           <p
             className={cn(
               'mb-1 text-xs font-semibold uppercase tracking-wider',
-              isPopular ? 'text-white/60' : 'text-[#062963]/70',
+              isPopular ? 'text-white/60' : 'text-primary-navy/70',
             )}
           >
             Colleges covered
@@ -129,10 +124,14 @@ function PricingCardItem({ card }: { card: PricingCard }) {
               key={f.id ?? i}
               className={cn(
                 'flex items-start text-sm leading-relaxed',
-                isPopular ? 'text-white/90' : 'text-[#062963]',
+                isPopular ? 'text-white/90' : 'text-primary-navy',
               )}
             >
-              {CHECK_ICON}
+              <Check
+                className="mr-2.5 mt-0.5 h-5 w-5 flex-shrink-0 text-button-gold"
+                aria-hidden="true"
+                strokeWidth={2.5}
+              />
               <span>{f.feature}</span>
             </li>
           ))}
@@ -145,8 +144,8 @@ function PricingCardItem({ card }: { card: PricingCard }) {
           className={cn(
             'h-12 w-full rounded-md text-base font-bold transition-colors',
             isPopular
-              ? 'bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963]'
-              : 'bg-[#062963] hover:bg-[#041d45] text-white',
+              ? 'bg-button-gold hover:bg-button-gold-hover text-primary-navy'
+              : 'bg-primary-navy hover:bg-primary-navy-dark text-white',
           )}
         >
           <Link href={`/checkout/${card.id}`}>{card.ctaText}</Link>
@@ -216,19 +215,19 @@ export default async function PricingPage() {
         title="Choose the Plan That Gets You In"
         subtitle="Transparent pricing. No hidden fees. Pick the counselling plan that matches your ambition — from single-round guidance to full admission coverage."
       />
-      <div className="bg-[#062963] py-8 text-center -mt-px">
+      <div className="bg-primary-navy py-8 text-center -mt-px">
         <Container>
           <Button
             asChild
             size="lg"
-            className="bg-[#FBAC1A] hover:bg-[#e09b18] text-[#062963] font-bold"
+            className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-bold"
           >
             <Link href="#plans">View Plans</Link>
           </Button>
         </Container>
       </div>
 
-      <Section id="plans" className="bg-[#F6F3EE]/30">
+      <Section id="plans" className="bg-navbar-bg/30">
         <Container>
           {cards.length > 0 ? (
             <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 pt-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
@@ -237,9 +236,9 @@ export default async function PricingPage() {
               ))}
             </div>
           ) : (
-            <div className="mx-auto max-w-md rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center">
-              <p className="text-lg font-semibold text-[#062963]">No plans available yet</p>
-              <p className="mt-2 text-sm text-gray-500">
+            <div className="mx-auto max-w-md rounded-lg border border-dashed border-border bg-card p-12 text-center">
+              <p className="text-lg font-semibold text-primary-navy">No plans available yet</p>
+              <p className="mt-2 text-sm text-muted-foreground">
                 Pricing plans will appear here once added from the admin panel.
               </p>
             </div>
@@ -247,13 +246,13 @@ export default async function PricingPage() {
         </Container>
       </Section>
 
-      <Section className="bg-white">
+      <Section className="bg-background">
         <Container>
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-[#062963] sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-primary-navy sm:text-4xl">
               Why Thousands Trust Us
             </h2>
-            <p className="mt-4 text-base sm:text-lg text-gray-600">
+            <p className="mt-4 text-base sm:text-lg text-muted-foreground">
               Built by IIT alumni. Battle-tested across 5 counselling seasons.
             </p>
           </div>
@@ -261,61 +260,48 @@ export default async function PricingPage() {
             {TRUST_POINTS.map((point) => (
               <div
                 key={point.title}
-                className="rounded-xl border border-gray-200 bg-white p-6 transition hover:border-[#062963]/40 hover:shadow-md"
+                className="rounded-xl border border-border bg-card p-6 transition hover:border-primary-navy/40 hover:shadow-md"
               >
-                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-[#062963]/10 text-[#062963]">
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary-navy/10 text-primary-navy">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     {point.icon}
                   </svg>
                 </div>
-                <h3 className="text-base font-bold text-[#062963]">{point.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-gray-600">{point.description}</p>
+                <h3 className="text-base font-bold text-primary-navy">{point.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{point.description}</p>
               </div>
             ))}
           </div>
         </Container>
       </Section>
 
-      <Section className="bg-[#F6F3EE]/30">
+      <Section className="bg-navbar-bg/30">
         <Container className="max-w-3xl">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-[#062963] sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-primary-navy sm:text-4xl">
               Frequently Asked Questions
             </h2>
           </div>
-          <div className="space-y-3">
+          <Accordion type="single" collapsible className="w-full">
             {FAQS.map((faq, i) => (
-              <details
+              <AccordionItem
                 key={i}
-                className="group rounded-lg border border-gray-200 bg-white p-5 transition open:border-[#062963]/40 open:shadow-md"
+                value={`faq-${i}`}
+                className="rounded-lg border border-border bg-card px-5 mb-3 last:mb-0"
               >
-                <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-[#062963]">
-                  <span>{faq.q}</span>
-                  <span className="ml-4 text-[#062963] transition-transform group-open:rotate-45">
-                    <svg
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
-                  </span>
-                </summary>
-                <p className="mt-3 text-sm leading-relaxed text-gray-600">{faq.a}</p>
-              </details>
+                <AccordionTrigger className="text-base font-semibold text-primary-navy hover:no-underline">
+                  {faq.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                  {faq.a}
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </div>
+          </Accordion>
         </Container>
       </Section>
 
-      <section className="bg-[#062963] py-16 text-white">
+      <section className="bg-primary-navy py-16 text-white">
         <Container className="text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Still not sure which plan?
@@ -328,7 +314,7 @@ export default async function PricingPage() {
             <Button
               asChild
               size="lg"
-              className="h-12 rounded-md bg-[#FBAC1A] hover:bg-[#e09b18] px-8 text-base font-bold text-[#062963]"
+              className="h-12 rounded-md bg-button-gold hover:bg-button-gold-hover px-8 text-base font-bold text-primary-navy"
             >
               <Link href="/contact">Book a Free Call</Link>
             </Button>

@@ -8,10 +8,10 @@ export function BlogUpdateStrip() {
         <Link
           href="/blog"
           aria-label="Visit our blog for latest NEET and JOSAA updates"
-          className="group flex items-center justify-between gap-3 rounded-2xl px-4 sm:px-5 py-3 sm:py-4 text-xs sm:text-sm font-semibold border border-[#062963]/15 bg-card-bg hover:bg-card-bg hover:border-[#062963]/35 hover:shadow-md text-[#062963] transition-all duration-200 ease-out"
+          className="group flex items-center justify-between gap-3 rounded-2xl px-4 sm:px-5 py-3 sm:py-4 text-xs sm:text-sm font-semibold border border-primary-navy/15 bg-card-bg hover:bg-card-bg hover:border-primary-navy/35 hover:shadow-md text-primary-navy transition-all duration-200 ease-out"
         >
           <span className="flex items-center gap-3 min-w-0">
-            <span className="shrink-0 w-9 h-9 rounded-xl bg-button-gold/15 text-[#062963] flex items-center justify-center group-hover:bg-button-gold/25 transition-colors duration-200 ease-out">
+            <span className="shrink-0 w-9 h-9 rounded-xl bg-button-gold/15 text-primary-navy flex items-center justify-center group-hover:bg-button-gold/25 transition-colors duration-200 ease-out">
               <Newspaper className="w-4 h-4" aria-hidden="true" />
             </span>
             <span className="truncate">

@@ -45,19 +45,11 @@ export function WhyChooseUs() {
       className="bg-background py-16 sm:py-20 px-3 sm:px-4"
     >
       <div className="max-w-7xl mx-auto text-center">
-        <p
-          className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full mb-4 tracking-wide uppercase shadow-sm"
-          style={{
-            background:
-              'linear-gradient(135deg, rgba(251,172,26,0.18) 0%, rgba(255,255,255,0.7) 50%, rgba(6,41,99,0.10) 100%)',
-            color: '#062963',
-            border: '1.5px solid rgba(6,41,99,0.15)',
-          }}
-        >
+        <p className="glass-pill inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full mb-4 tracking-wide uppercase shadow-sm">
           <Sparkles className="w-3 h-3 text-button-gold" aria-hidden="true" />
           Why Us
         </p>
-        <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-[#062963] mb-3 sm:mb-4 leading-tight tracking-tight">
+        <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-navy mb-3 sm:mb-4 leading-tight tracking-tight">
           Why 17,000+ Students Trust Us
         </h2>
         <p className="text-foreground/70 max-w-2xl mx-auto mb-10 sm:mb-14 text-sm sm:text-base leading-relaxed">
@@ -72,22 +64,22 @@ export function WhyChooseUs() {
             return (
               <div
                 key={reason.title}
-                className="glass-card rounded-2xl bg-card-bg border border-[#062963]/8 shadow-sm overflow-hidden"
+                className="glass-card rounded-2xl bg-card-bg border border-primary-navy/10 shadow-sm overflow-hidden"
               >
                 <button
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                   aria-expanded={isOpen}
-                  className="flex justify-between items-center gap-2 w-full font-semibold text-sm leading-snug text-[#062963] p-4 hover:bg-navbar-bg transition-colors duration-200 ease-out"
+                  className="flex justify-between items-center gap-2 w-full font-semibold text-sm leading-snug text-primary-navy p-4 hover:bg-navbar-bg transition-colors duration-200 ease-out"
                 >
                   <span className="flex items-center gap-3">
                     <span className="shrink-0 w-9 h-9 rounded-xl bg-button-gold/15 flex items-center justify-center">
-                      <Icon className="w-4 h-4 text-[#062963]" aria-hidden="true" />
+                      <Icon className="w-4 h-4 text-primary-navy" aria-hidden="true" />
                     </span>
                     {reason.title}
                   </span>
                   <ChevronDown
-                    className={`w-4 h-4 text-[#062963] transition-transform duration-200 ease-out ${isOpen ? 'rotate-180' : ''}`}
+                    className={`w-4 h-4 text-primary-navy transition-transform duration-200 ease-out ${isOpen ? 'rotate-180' : ''}`}
                     aria-hidden="true"
                   />
                 </button>
@@ -108,12 +100,12 @@ export function WhyChooseUs() {
             return (
               <div
                 key={reason.title}
-                className="glass-card rounded-2xl p-6 shadow-sm bg-card-bg border border-[#062963]/8 hover:shadow-md hover:-translate-y-0.5 hover:border-[#062963]/20 transition-all duration-200 ease-out group"
+                className="glass-card rounded-2xl p-6 shadow-sm bg-card-bg border border-primary-navy/10 hover:shadow-md hover:-translate-y-0.5 hover:border-primary-navy/20 transition-all duration-200 ease-out group"
               >
-                <span className="inline-flex w-12 h-12 rounded-2xl bg-button-gold/15 text-[#062963] items-center justify-center mb-4 group-hover:bg-button-gold/25 transition-colors duration-200 ease-out">
+                <span className="inline-flex w-12 h-12 rounded-2xl bg-button-gold/15 text-primary-navy items-center justify-center mb-4 group-hover:bg-button-gold/25 transition-colors duration-200 ease-out">
                   <Icon className="w-6 h-6" aria-hidden="true" />
                 </span>
-                <h3 className="font-display font-bold text-[#062963] text-lg lg:text-xl mb-2 tracking-tight">
+                <h3 className="font-display font-bold text-primary-navy text-lg lg:text-xl mb-2 tracking-tight">
                   {reason.title}
                 </h3>
                 <p className="text-sm text-foreground/70 leading-relaxed">{reason.description}</p>

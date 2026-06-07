@@ -1363,12 +1363,26 @@ export interface AboutPage {
       };
       [k: string]: unknown;
     } | null;
+    /**
+     * Shown in the 2×2 stats grid next to the mission text. Use "Gold" accent for the primary number.
+     */
+    stats?:
+      | {
+          value: string;
+          label: string;
+          accent?: ('navy' | 'gold') | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   whyChooseUs: {
     heading: string;
+    intro?: string | null;
     items?:
       | {
-          text: string;
+          title: string;
+          description: string;
+          icon: 'Award' | 'Target' | 'BookOpen' | 'Headphones' | 'Heart' | 'Users';
           id?: string | null;
         }[]
       | null;
@@ -1390,6 +1404,17 @@ export interface AboutPage {
       };
       [k: string]: unknown;
     } | null;
+    /**
+     * Shown below the team description. Use "Gold" accent for the primary number.
+     */
+    stats?:
+      | {
+          value: string;
+          label: string;
+          accent?: ('navy' | 'gold') | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * Optional extra content blocks rendered after the Team section
@@ -1612,15 +1637,26 @@ export interface AboutPageSelect<T extends boolean = true> {
     | {
         heading?: T;
         body?: T;
+        stats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              accent?: T;
+              id?: T;
+            };
       };
   whyChooseUs?:
     | T
     | {
         heading?: T;
+        intro?: T;
         items?:
           | T
           | {
-              text?: T;
+              title?: T;
+              description?: T;
+              icon?: T;
               id?: T;
             };
       };
@@ -1629,6 +1665,14 @@ export interface AboutPageSelect<T extends boolean = true> {
     | {
         heading?: T;
         body?: T;
+        stats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              accent?: T;
+              id?: T;
+            };
       };
   extraSections?:
     | T

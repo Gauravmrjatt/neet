@@ -8,10 +8,10 @@ interface PageHeroProps {
 
 export function PageHero({ title, subtitle, badge }: PageHeroProps) {
   return (
-    <section className="relative overflow-hidden bg-[#062963] py-16 sm:py-20 text-white">
+    <section className="relative overflow-hidden bg-primary-navy py-16 sm:py-20 text-white">
       {/* Decorative elements */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-[#FBAC1A] blur-3xl" />
+        <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-button-gold blur-3xl" />
         <div className="absolute -bottom-20 -right-20 h-96 w-96 rounded-full bg-white blur-3xl" />
       </div>
       <Container className="relative text-center">
