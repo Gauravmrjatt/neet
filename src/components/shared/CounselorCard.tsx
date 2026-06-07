@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { MediaImage } from './MediaImage'
@@ -7,7 +8,7 @@ interface CounselorCardProps {
   counselor: any
 }
 
-export function CounselorCard({ counselor }: CounselorCardProps) {
+export const CounselorCard = memo(function CounselorCard({ counselor }: CounselorCardProps) {
   return (
     <Card className="h-full">
       <div className="relative aspect-square">
@@ -50,4 +51,4 @@ export function CounselorCard({ counselor }: CounselorCardProps) {
       </CardContent>
     </Card>
   )
-}
+})

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Container } from '@/components/layout/Container'
 
 interface PageHeroProps {
@@ -6,7 +7,7 @@ interface PageHeroProps {
   badge?: string
 }
 
-export function PageHero({ title, subtitle, badge }: PageHeroProps) {
+export const PageHero = memo(function PageHero({ title, subtitle, badge }: PageHeroProps) {
   return (
     <section className="relative overflow-hidden bg-primary-navy py-16 sm:py-20 text-white">
       {/* Decorative elements */}
@@ -31,4 +32,4 @@ export function PageHero({ title, subtitle, badge }: PageHeroProps) {
       </Container>
     </section>
   )
-}
+})

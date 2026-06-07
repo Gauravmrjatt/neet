@@ -16,6 +16,14 @@ export const metadata = {
     default: 'NEET Counselling',
     template: '%s | NEET Counselling',
   },
+  icons: {
+    icon: '/favicon.svg',
+  },
+  openGraph: {
+    siteName: 'NEET Counselling',
+    type: 'website',
+    locale: 'en_IN',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

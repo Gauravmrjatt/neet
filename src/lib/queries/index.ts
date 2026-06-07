@@ -15,6 +15,7 @@ export {
   getUserSubscription,
   getActiveSubscription,
   hasActiveOrPendingSubscription,
+  markPredictorUsed,
 } from './subscriptions'
 export { getHeader, getFooter, getSiteSettings, getHomePageSEO } from './globals'
 export {

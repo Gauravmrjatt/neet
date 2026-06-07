@@ -1,10 +1,10 @@
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
 
-export function generateOrganizationSchema() {
+export function generateOrganizationSchema(siteName = 'NEET Counselling') {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'NEET Counselling',
+    name: siteName,
     url: SITE_URL,
     logo: '/logo.png',
     contactPoint: {
@@ -16,14 +16,17 @@ export function generateOrganizationSchema() {
   }
 }
 
-export function generateBlogPostingSchema(blog: {
-  title?: string
-  excerpt?: string
-  featuredImage?: { url?: string } | null
-  publishedAt?: string
-  updatedAt?: string
-  author?: { name?: string } | null
-}) {
+export function generateBlogPostingSchema(
+  blog: {
+    title?: string
+    excerpt?: string
+    featuredImage?: { url?: string } | null
+    publishedAt?: string
+    updatedAt?: string
+    author?: { name?: string } | null
+  },
+  siteName = 'NEET Counselling',
+) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -38,7 +41,7 @@ export function generateBlogPostingSchema(blog: {
     },
     publisher: {
       '@type': 'Organization',
-      name: 'NEET Counselling',
+      name: siteName,
     },
   }
 }

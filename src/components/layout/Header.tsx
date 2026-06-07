@@ -14,12 +14,14 @@ export async function Header() {
   const payload = await getPayload({ config: payloadConfig })
   const { user } = await payload.auth({ headers })
 
-  const settings = await getSiteSettings()
-  const headerData = await getHeader()
+  const [settings, headerData] = await Promise.all([
+    getSiteSettings(),
+    getHeader(),
+  ])
 
   const phone = (settings as any)?.phone || ''
-  const hindiTitle = headerData?.hindiTitle || 'नीट काउंसलिंग'
-  const englishTitle = headerData?.englishTitle || 'NEET Counselling'
+  const hindiTitle = (settings as any)?.siteNameHindi || 'नीट काउंसलिंग'
+  const englishTitle = (settings as any)?.siteName || 'NEET Counselling'
   const tagline = headerData?.tagline || 'Expert NEET and JOSAA Counselling Services'
   const logo = headerData?.logo
   const emblem = headerData?.emblem
@@ -55,13 +57,13 @@ export async function Header() {
 
         {/* Centered title block */}
         <div className="flex min-w-0 flex-1 flex-col items-center px-2 text-center">
-          <h1 className="font-display text-balance text-base font-bold leading-tight tracking-tight text-primary sm:text-xl md:text-2xl">
+          <div className="font-display text-balance text-base font-bold leading-tight tracking-tight text-primary sm:text-xl md:text-2xl">
             <span lang="hi">{hindiTitle}</span>
             <span className="mx-1.5 text-button-gold sm:mx-2" aria-hidden="true">
               |
             </span>
             <span className="text-primary">{englishTitle}</span>
-          </h1>
+          </div>
           <p className="mt-1 line-clamp-2 text-[11px] font-medium text-foreground/70 sm:text-sm">
             {tagline}
           </p>
@@ -92,7 +94,7 @@ export async function Header() {
             <ThemeToggle />
           </div>
           <div className="md:hidden">
-            <MobileMenu user={user} navigation={navigation} ctaButton={ctaButton} />
+            <MobileMenu user={user} navigation={navigation} ctaButton={ctaButton} siteName={englishTitle} />
           </div>
         </div>
       </div>

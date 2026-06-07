@@ -13,7 +13,7 @@ interface PredictorResultsProps {
   onReset: () => void
 }
 
-function ChanceBadge({ chance }: { chance: string }) {
+const ChanceBadge = React.memo(function ChanceBadge({ chance }: { chance: string }) {
   const styles: Record<string, string> = {
     High: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100',
     Good: 'bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100',
@@ -22,120 +22,178 @@ function ChanceBadge({ chance }: { chance: string }) {
 
   return (
     <Badge variant="outline" className={cn('border-0 px-2.5 py-1 text-xs font-semibold', styles[chance] || 'bg-gray-100 text-gray-800')}>
-      {chance === 'High' && '🟢 '}
-      {chance === 'Good' && '🟡 '}
-      {chance === 'Low' && '🔴 '}
+      {chance === 'High' && <span className="mr-1">🟢</span>}
+      {chance === 'Good' && <span className="mr-1">🟡</span>}
+      {chance === 'Low' && <span className="mr-1">🔴</span>}
       {chance}
     </Badge>
   )
-}
+})
 
-function UnlockCtaRow({ total }: { total: number }) {
+const UnlockPremiumPanel = React.memo(function UnlockPremiumPanel({ total }: { total: number }) {
   return (
-    <tr className="border-b border-border bg-gradient-to-r from-button-gold/5 to-button-gold/10">
-      <td colSpan={8} className="px-6 py-8 text-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="mb-1 text-3xl" role="img" aria-label="locked">🔒</div>
-          <p className="text-lg font-bold text-primary-navy">
-            {total.toLocaleString('en-IN')} More College{total !== 1 ? 's' : ''} Available
-          </p>
-          <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
-            Unlock the full list of <span className="font-semibold text-button-gold">{total.toLocaleString('en-IN')} eligible college{total !== 1 ? 's' : ''}</span> with personalized chance analysis.
-          </p>
-          <div className="flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
-            <span className="rounded-full bg-primary-navy/5 px-3 py-1">Full college list</span>
-            <span className="rounded-full bg-primary-navy/5 px-3 py-1">Chance analysis</span>
-            <span className="rounded-full bg-primary-navy/5 px-3 py-1">Dedicated counsellor</span>
+    <tr>
+      <td colSpan={8} className="px-0 py-0">
+        <div className="relative overflow-hidden">
+          <div className="flex flex-col items-center gap-3 bg-gradient-to-b from-button-gold/[0.07] to-button-gold/[0.12] px-6 py-10 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-button-gold/20 text-3xl">
+              🔒
+            </div>
+            <div>
+              <p className="text-lg font-bold text-primary-navy">
+                {total.toLocaleString('en-IN')} More College{total !== 1 ? 's' : ''} Available
+              </p>
+              <p className="mt-1 max-w-md text-sm leading-relaxed text-muted-foreground">
+                Unlock the full list with personalized chance analysis for every college.
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
+              <span className="rounded-full bg-primary-navy/5 px-3 py-1">Full college list</span>
+              <span className="rounded-full bg-primary-navy/5 px-3 py-1">Chance analysis</span>
+              <span className="rounded-full bg-primary-navy/5 px-3 py-1">Dedicated counsellor</span>
+            </div>
+            <Button
+              asChild
+              className="mt-1 h-10 px-8 bg-button-gold text-sm font-bold text-primary-navy hover:bg-button-gold-hover"
+            >
+              <Link href="/pricing">Unlock Full Results</Link>
+            </Button>
+            <p className="text-xs text-muted-foreground/70">
+              Already purchased a plan?{' '}
+              <Link href="/login?redirect=/predictor" className="underline hover:text-primary-navy">Log in</Link>
+            </p>
           </div>
-          <Button
-            asChild
-            size="sm"
-            className="mt-1 h-9 px-6 bg-button-gold text-xs font-bold text-primary-navy hover:bg-button-gold-hover"
-          >
-            <Link href="/pricing">Unlock</Link>
-          </Button>
-          <p className="text-xs text-muted-foreground/70">
-            Already purchased a plan?{' '}
-            <Link href="/login?redirect=/predictor" className="underline hover:text-primary-navy">Log in</Link> to see all results.
-          </p>
         </div>
       </td>
     </tr>
   )
-}
+})
 
-function ResultRow({
+const ResultRow = React.memo(function ResultRow({
   result,
   index,
-  isTeaser,
 }: {
   result: PredictResponse['results'][number]
   index: number
-  isTeaser: boolean
 }) {
   return (
-    <tr className={cn('border-b border-border transition hover:bg-muted/50', isTeaser && 'opacity-30')}>
+    <tr className="border-b border-border transition-colors hover:bg-muted/40">
       <td className="px-4 py-3 text-sm text-muted-foreground">{index + 1}</td>
-      <td className="px-4 py-3 text-sm font-medium text-primary-navy">{result.institute}</td>
+      <td className="min-w-[200px] px-4 py-3 text-sm font-medium text-primary-navy">
+        {result.institute}
+      </td>
       <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">{result.state}</td>
       <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">{result.course}</td>
       <td className="hidden px-4 py-3 text-sm text-muted-foreground lg:table-cell">{result.quota}</td>
       <td className="hidden px-4 py-3 text-sm text-muted-foreground sm:table-cell">{result.allottedCategory}</td>
-      <td className="px-4 py-3 text-right text-sm tabular-nums text-foreground">{result.closingRank.toLocaleString('en-IN')}</td>
-      <td className="px-4 py-3 text-right"><ChanceBadge chance={result.chance} /></td>
+      <td className="px-4 py-3 text-right text-sm tabular-nums text-foreground">
+        {result.closingRank.toLocaleString('en-IN')}
+      </td>
+      <td className="px-4 py-3 text-right">
+        <ChanceBadge chance={result.chance} />
+      </td>
     </tr>
   )
-}
+})
 
-export function PredictorResults({ response, onReset }: PredictorResultsProps) {
+const SummaryCard = React.memo(function SummaryCard({
+  label,
+  value,
+  color,
+  icon,
+}: {
+  label: string
+  value: number | string
+  color: string
+  icon: string
+}) {
+  return (
+    <div className={cn('rounded-xl border p-4 shadow-sm', color)}>
+      <div className="flex items-center justify-between">
+        <span className="text-2xl">{icon}</span>
+        <span className="text-2xl font-bold">{typeof value === 'number' ? value.toLocaleString('en-IN') : value}</span>
+      </div>
+      <p className="mt-1 text-xs font-medium">{label}</p>
+    </div>
+  )
+})
+
+export const PredictorResults = React.memo(function PredictorResults({ response, onReset }: PredictorResultsProps) {
   const { results, summary, total, premium } = response
 
   if (results.length === 0) {
     return (
       <Card className="border-border bg-card shadow-lg">
-        <CardContent className="py-12 text-center">
+        <CardContent className="py-16 text-center">
           <div className="mb-4 text-5xl">🔍</div>
           <CardTitle className="mb-2 text-xl text-primary-navy">No Matching Colleges Found</CardTitle>
-          <p className="mb-6 text-sm text-muted-foreground">Try adjusting your rank, category, or filters to find matching colleges.</p>
-          <Button onClick={onReset} className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-semibold">Try Again</Button>
+          <p className="mx-auto mb-6 max-w-md text-sm leading-relaxed text-muted-foreground">
+            No colleges matched your rank and filters. Try adjusting your category, quota, or expanding
+            your search criteria.
+          </p>
+          <div className="flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
+            <span className="rounded-full bg-primary-navy/5 px-3 py-1">Lower rank requirement</span>
+            <span className="rounded-full bg-primary-navy/5 px-3 py-1">Different category</span>
+            <span className="rounded-full bg-primary-navy/5 px-3 py-1">All states</span>
+          </div>
+          <Button
+            onClick={onReset}
+            className="mt-6 bg-button-gold hover:bg-button-gold-hover text-primary-navy font-semibold"
+          >
+            Try Again
+          </Button>
         </CardContent>
       </Card>
     )
   }
 
-  const premiumResultsCount = premium ? results.length : 1
+  const summaryCards = [
+    { label: 'Total Colleges', value: total, color: 'bg-card border-primary-navy/20', icon: '🎓' },
+    { label: 'High Chance', value: summary.high, color: 'bg-green-50 border-green-200', icon: '🟢' },
+    { label: 'Good Chance', value: summary.good, color: 'bg-yellow-50 border-yellow-200', icon: '🟡' },
+    { label: 'Low Chance', value: summary.low, color: 'bg-red-50 border-red-200', icon: '🔴' },
+  ]
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-6">
-        <div>
-          <h2 className="text-lg font-bold text-primary-navy sm:text-xl">
-            {total} Eligible College{total !== 1 ? 's' : ''} Found
-          </h2>
-          <div className="mt-1 flex flex-wrap gap-2 text-sm">
-            <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-0.5 text-green-700">
-              <span className="h-2 w-2 rounded-full bg-green-500" /> High: {summary.high}
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-yellow-50 px-2.5 py-0.5 text-yellow-700">
-              <span className="h-2 w-2 rounded-full bg-yellow-500" /> Good: {summary.good}
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-red-700">
-              <span className="h-2 w-2 rounded-full bg-red-500" /> Low: {summary.low}
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {!premium && (
-            <Badge className="border-0 bg-button-gold/10 px-3 py-1.5 text-xs font-bold text-button-gold hover:bg-button-gold/10">
-              Showing Top 1
-            </Badge>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {summaryCards.map((card) => (
+          <SummaryCard key={card.label} {...card} />
+        ))}
+      </div>
+
+      <div
+        className={cn(
+          'flex items-center gap-3 rounded-lg border px-4 py-3 text-sm',
+          premium
+            ? 'border-amber-200 bg-amber-50 text-amber-800'
+            : 'border-button-gold/30 bg-button-gold/5 text-primary-navy',
+        )}
+      >
+        <span className="text-lg">{premium ? '⚠️' : '🔒'}</span>
+        <div className="flex-1">
+          {premium ? (
+            <>
+              <span className="font-semibold">Results are shown once.</span>{' '}
+              Do not refresh or leave this page — your data will be lost and you'll need to
+              purchase again.
+            </>
+          ) : (
+            <>
+              Showing <span className="font-semibold">1 of {total.toLocaleString('en-IN')}</span>{' '}
+              matching college{total !== 1 ? 's' : ''}.{' '}
+              <Link href="/pricing" className="font-semibold underline hover:text-button-gold">
+                Purchase a plan
+              </Link>{' '}
+              to see the full list.
+            </>
           )}
-          {premium && (
-            <Badge className="border-0 bg-green-100 px-3 py-1.5 text-xs font-bold text-green-700 hover:bg-green-100">
-              Premium &middot; Full Access
-            </Badge>
-          )}
         </div>
+        {premium && (
+          <Badge className="shrink-0 border-0 bg-green-100 px-3 py-1.5 text-xs font-bold text-green-700 hover:bg-green-100">
+            Premium
+          </Badge>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
@@ -154,53 +212,32 @@ export function PredictorResults({ response, onReset }: PredictorResultsProps) {
               </tr>
             </thead>
             <tbody>
-              <ResultRow result={results[0]} index={0} isTeaser={false} />
+              <ResultRow result={results[0]} index={0} />
 
               {!premium && total > 1 && (
-                <>
-                  <UnlockCtaRow total={total} />
-                  <tr>
-                    <td colSpan={8} className="px-0 py-0">
-                    <div className="relative overflow-hidden">
-                      <table className="w-full">
-                        <tbody>
-                          {[1, 2, 3].map((i) => (
-                            <tr key={i} className="border-b border-border opacity-40">
-                              <td className="px-4 py-3 text-sm text-muted-foreground">{total - (3 - i)}</td>
-                              <td className="px-4 py-3 text-sm text-muted-foreground">................................</td>
-                              <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">---</td>
-                              <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">---</td>
-                              <td className="hidden px-4 py-3 text-sm text-muted-foreground lg:table-cell">---</td>
-                              <td className="hidden px-4 py-3 text-sm text-muted-foreground sm:table-cell">---</td>
-                              <td className="px-4 py-3 text-right text-sm text-muted-foreground">------</td>
-                              <td className="px-4 py-3 text-right">---</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                      <div className="pointer-events-none absolute inset-0 backdrop-blur-[6px]" />
-                    </div>
-                  </td>
-                </tr>
-                </>
+                <UnlockPremiumPanel total={total} />
               )}
 
               {premium && results.slice(1).map((result, i) => (
-                <ResultRow key={`${result.institute}-${i}`} result={result} index={i + 1} isTeaser={false} />
+                <ResultRow key={`${result.institute}-${i}`} result={result} index={i + 1} />
               ))}
             </tbody>
           </table>
         </div>
 
-        {premium && total > premiumResultsCount && (
+        {premium && (
           <div className="border-t border-border px-4 py-3 text-center text-xs text-muted-foreground">
-            Showing all {total} results.
+            Showing all {total.toLocaleString('en-IN')} result{total !== 1 ? 's' : ''}.
           </div>
         )}
       </div>
 
       <div className="flex flex-wrap justify-center gap-3">
-        <Button onClick={onReset} variant="outline" className="border-primary-navy/30 text-primary-navy hover:bg-primary-navy/5">
+        <Button
+          onClick={onReset}
+          variant="outline"
+          className="border-primary-navy/30 text-primary-navy hover:bg-primary-navy/5"
+        >
           Try Different Rank
         </Button>
         {!premium && (
@@ -216,4 +253,4 @@ export function PredictorResults({ response, onReset }: PredictorResultsProps) {
       </p>
     </div>
   )
-}
+})

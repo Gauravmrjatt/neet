@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,28 +13,34 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ contactEmail, phone, address }: ContactFormProps) {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' })
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [subject, setSubject] = useState('')
+  const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus('loading')
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ name, email, subject, message }),
       })
       if (res.ok) {
         setStatus('success')
-        setFormData({ name: '', email: '', subject: '', message: '' })
+        setName('')
+        setEmail('')
+        setSubject('')
+        setMessage('')
       } else {
         setStatus('error')
       }
     } catch {
       setStatus('error')
     }
-  }
+  }, [name, email, subject, message])
 
   return (
     <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
@@ -50,8 +56,8 @@ export function ContactForm({ contactEmail, phone, address }: ContactFormProps) 
               id="name"
               type="text"
               required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder="Your name"
             />
           </div>
@@ -61,8 +67,8 @@ export function ContactForm({ contactEmail, phone, address }: ContactFormProps) 
               id="email"
               type="email"
               required
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
             />
           </div>
@@ -71,8 +77,8 @@ export function ContactForm({ contactEmail, phone, address }: ContactFormProps) 
             <Input
               id="subject"
               type="text"
-              value={formData.subject}
-              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
               placeholder="Subject"
             />
           </div>
@@ -82,8 +88,8 @@ export function ContactForm({ contactEmail, phone, address }: ContactFormProps) 
               id="message"
               rows={5}
               required
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
               className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
               placeholder="Your message"
             />

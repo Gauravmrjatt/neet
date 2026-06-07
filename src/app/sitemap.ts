@@ -14,6 +14,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/helpdesk`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
     { url: `${siteUrl}/counsellors`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8 },
     { url: `${siteUrl}/josaa-counsellor`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: `${siteUrl}/predictor`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${siteUrl}/pricing`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${siteUrl}/live-counselling`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
   ]
 
   const blogs = await payload.find({

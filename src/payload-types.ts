@@ -617,6 +617,10 @@ export interface Subscription {
    * Auto-set when status becomes active
    */
   assignedAt?: string | null;
+  /**
+   * Auto-set after premium user uses their one-time AI college predictor
+   */
+  predictorUsed?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1092,6 +1096,7 @@ export interface SubscriptionsSelect<T extends boolean = true> {
   assignedPage?: T;
   purchasedAt?: T;
   assignedAt?: T;
+  predictorUsed?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1171,8 +1176,6 @@ export interface Header {
    * Right-side emblem/logo (e.g., NTA or organization logo)
    */
   emblem?: (string | null) | Media;
-  hindiTitle?: string | null;
-  englishTitle?: string | null;
   tagline?: string | null;
   navigation?:
     | {
@@ -1465,8 +1468,6 @@ export interface AboutPage {
 export interface HeaderSelect<T extends boolean = true> {
   logo?: T;
   emblem?: T;
-  hindiTitle?: T;
-  englishTitle?: T;
   tagline?: T;
   navigation?:
     | T

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useTransition } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 
@@ -60,6 +60,7 @@ interface PlansCarouselProps {
 
 export function PlansCarousel({ plans }: PlansCarouselProps) {
   const [active, setActive] = useState(0)
+  const [, startTransition] = useTransition()
   const viewportRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const touchStartX = useRef<number | null>(null)
@@ -87,8 +88,10 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
   }, [active, isCarousel])
 
   const go = useCallback((index: number) => {
-    setActive((index + n * 10) % n)
-  }, [n])
+    startTransition(() => {
+      setActive(((index % n) + n) % n)
+    })
+  }, [n, startTransition])
 
   useEffect(() => {
     centerTrack()

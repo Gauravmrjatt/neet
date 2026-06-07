@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Moon, Sun } from 'lucide-react'
 
 /**
@@ -17,21 +17,23 @@ export function ThemeToggle() {
     setIsDark(document.documentElement.classList.contains('dark'))
   }, [])
 
-  function toggle() {
-    const next = !isDark
-    setIsDark(next)
-    if (next) {
-      document.documentElement.classList.add('dark')
-      try {
-        localStorage.setItem('theme', 'dark')
-      } catch {}
-    } else {
-      document.documentElement.classList.remove('dark')
-      try {
-        localStorage.setItem('theme', 'light')
-      } catch {}
-    }
-  }
+  const toggle = useCallback(function toggle() {
+    setIsDark((prev) => {
+      const next = !prev
+      if (next) {
+        document.documentElement.classList.add('dark')
+        try {
+          localStorage.setItem('theme', 'dark')
+        } catch {}
+      } else {
+        document.documentElement.classList.remove('dark')
+        try {
+          localStorage.setItem('theme', 'light')
+        } catch {}
+      }
+      return next
+    })
+  }, [])
 
   // Avoid hydration mismatch — render a placeholder of fixed size until mounted.
   if (!mounted) {

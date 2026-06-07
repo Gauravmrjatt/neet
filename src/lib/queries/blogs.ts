@@ -1,7 +1,8 @@
+import { cache } from 'react'
 import { getPayloadClient } from '../payload'
 import type { Blog } from '@/payload-types'
 
-export async function getBlogs({
+export const getBlogs = cache(async ({
   limit = 10,
   page = 1,
   category,
@@ -11,7 +12,7 @@ export async function getBlogs({
   page?: number
   category?: string
   status?: 'draft' | 'published'
-} = {}) {
+} = {}) => {
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: status } }
   if (category) where.categories = { contains: category }
@@ -23,9 +24,9 @@ export async function getBlogs({
     page,
     sort: '-publishedAt',
   })
-}
+})
 
-export async function getBlogBySlug(slug: string): Promise<Blog | null> {
+export const getBlogBySlug = cache(async (slug: string): Promise<Blog | null> => {
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'blogs',
@@ -33,9 +34,9 @@ export async function getBlogBySlug(slug: string): Promise<Blog | null> {
     limit: 1,
   })
   return result.docs[0] || null
-}
+})
 
-export async function getRecentBlogs(limit = 5) {
+export const getRecentBlogs = cache(async (limit = 5) => {
   const payload = await getPayloadClient()
   return payload.find({
     collection: 'blogs',
@@ -43,4 +44,4 @@ export async function getRecentBlogs(limit = 5) {
     limit,
     sort: '-publishedAt',
   })
-}
+})

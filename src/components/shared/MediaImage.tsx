@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import Image from 'next/image'
 import { getMediaUrl, getMediaAlt } from '@/lib/media'
 import { cn } from '@/lib/utils'
@@ -13,7 +14,7 @@ interface MediaImageProps {
   priority?: boolean
 }
 
-export function MediaImage({
+export const MediaImage = memo(function MediaImage({
   media,
   alt,
   width,
@@ -52,4 +53,4 @@ export function MediaImage({
       priority={priority}
     />
   )
-}
+})

@@ -13,8 +13,6 @@ export async function seedDefaultGlobals(payload: Payload): Promise<void> {
       await payload.updateGlobal({
         slug: 'header',
         data: {
-          hindiTitle: 'नीट काउंसलिंग',
-          englishTitle: 'NEET Counselling',
           tagline: 'Expert NEET and JOSAA Counselling Services',
           navigation: [
             { label: 'Home', link: '/' },

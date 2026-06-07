@@ -1,6 +1,16 @@
 import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor, publishedOrAdmin } from '../access/roles'
 
+function formatSlug(val: string): string {
+  return val
+    .replace(/^\//, '')
+    .replace(/\/+/g, '-')
+    .replace(/[^a-zA-Z0-9-_]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .toLowerCase()
+}
+
 export const Videos: CollectionConfig = {
   slug: 'videos',
   admin: {
@@ -8,6 +18,15 @@ export const Videos: CollectionConfig = {
   },
   versions: {
     drafts: true,
+  },
+  hooks: {
+    beforeChange: [
+      ({ data }) => {
+        if (data?.slug) {
+          data.slug = formatSlug(data.slug)
+        }
+      },
+    ],
   },
   access: {
     read: publishedOrAdmin,

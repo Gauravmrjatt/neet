@@ -1,7 +1,8 @@
+import { cache } from 'react'
 import { getPayloadClient } from '../payload'
 import type { Video } from '@/payload-types'
 
-export async function getVideos({
+export const getVideos = cache(async ({
   limit = 12,
   page = 1,
   category,
@@ -9,7 +10,7 @@ export async function getVideos({
   limit?: number
   page?: number
   category?: 'lecture' | 'tips' | 'interview' | 'other'
-} = {}) {
+} = {}) => {
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: 'published' } }
   if (category) where.category = { equals: category }
@@ -21,9 +22,9 @@ export async function getVideos({
     page,
     sort: '-publishedAt',
   })
-}
+})
 
-export async function getVideoBySlug(slug: string): Promise<Video | null> {
+export const getVideoBySlug = cache(async (slug: string): Promise<Video | null> => {
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'videos',
@@ -31,4 +32,4 @@ export async function getVideoBySlug(slug: string): Promise<Video | null> {
     limit: 1,
   })
   return result.docs[0] || null
-}
+})

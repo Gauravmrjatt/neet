@@ -5,6 +5,8 @@ import { notFound, redirect } from 'next/navigation'
 import { Check } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth'
 import { getPricingCardById, hasActiveOrPendingSubscription } from '@/lib/queries'
+import { getSiteSettings } from '@/lib/queries/globals'
+import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { Badge } from '@/components/ui/badge'
@@ -19,24 +21,28 @@ interface CheckoutPageProps {
 export async function generateMetadata({ params }: CheckoutPageProps): Promise<Metadata> {
   const { planId } = await params
   const plan = await getPricingCardById(planId)
-  return {
+  return generateSEOMetadata({
     title: plan ? `Checkout - ${plan.planName}` : 'Checkout',
     description: 'Confirm your plan purchase',
-    robots: { index: false, follow: false },
-  }
+    noIndex: true,
+  })
 }
 
 export default async function CheckoutPage({ params }: CheckoutPageProps) {
   const { planId } = await params
 
-  // Auth check - redirect to login if not authenticated
-  const user = await getCurrentUser()
+  // Fetch settings, auth, and plan in parallel (only subscription depends on user)
+  const [settings, user, plan] = await Promise.all([
+    getSiteSettings(),
+    getCurrentUser(),
+    getPricingCardById(planId),
+  ])
+  const siteName = (settings as any)?.siteName || 'NEET Counselling'
+
   if (!user) {
     redirect(`/login?redirect=/checkout/${planId}`)
   }
 
-  // Fetch the plan
-  const plan = await getPricingCardById(planId)
   if (!plan) {
     notFound()
   }
@@ -136,6 +142,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
                 userName={user.name}
                 userEmail={user.email}
                 userPhone={user.phone}
+                siteName={siteName}
               />
             </div>
           </CardContent>

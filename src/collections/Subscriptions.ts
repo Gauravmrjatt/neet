@@ -157,5 +157,15 @@ export const Subscriptions: CollectionConfig = {
         readOnly: true,
       },
     },
+    {
+      name: 'predictorUsed',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Auto-set after premium user uses their one-time AI college predictor',
+        readOnly: true,
+      },
+    },
   ],
 }

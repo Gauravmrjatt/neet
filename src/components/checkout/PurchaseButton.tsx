@@ -11,6 +11,7 @@ interface PurchaseButtonProps {
   userName?: string | null
   userEmail?: string | null
   userPhone?: string | null
+  siteName?: string
 }
 
 declare global {
@@ -50,6 +51,7 @@ export function PurchaseButton({
   userName,
   userEmail,
   userPhone,
+  siteName = 'NEET Counselling',
 }: PurchaseButtonProps) {
   const router = useRouter()
   const [step, setStep] = useState<Step>('idle')
@@ -93,7 +95,7 @@ export function PurchaseButton({
         order_id: orderData.orderId,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: 'NEET Counselling',
+        name: siteName,
         description: planName,
         prefill: {
           name: userName || '',

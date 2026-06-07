@@ -18,8 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
     seo = await payload.findGlobal({ slug: 'home-page-seo' })
   } catch {}
   return generateSEOMetadata({
-    title: seo?.metaTitle || 'Home',
-    description: seo?.metaDescription || 'Expert NEET and JOSAA counselling services',
+    title: seo?.metaTitle || 'NEET Counselling 2026 — College Predictor & Expert Guidance',
+    description: seo?.metaDescription || 'Expert NEET and JOSAA counselling for 2026 admissions. Predict your college, get personalized guidance from experienced counsellors, and secure your seat.',
     ogImage: seo?.ogImage,
     keywords: seo?.keywords,
   })
@@ -28,15 +28,20 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function HomePage() {
   const payload = await getPayloadClient()
 
+  let siteName = 'NEET Counselling'
   let newsTickerItems: any[] = []
   try {
-    const ticker = await payload.findGlobal({ slug: 'news-ticker' })
+    const [settings, ticker] = await Promise.all([
+      payload.findGlobal({ slug: 'site-settings' }).catch(() => null),
+      payload.findGlobal({ slug: 'news-ticker' }).catch(() => null),
+    ])
+    if (settings?.siteName) siteName = settings.siteName
     newsTickerItems = ticker?.items?.filter((i: any) => i.isActive) || []
   } catch {}
 
   return (
     <>
-      <JsonLd data={generateOrganizationSchema()} />
+      <JsonLd data={generateOrganizationSchema(siteName)} />
       <NewsTicker items={newsTickerItems} />
       <HeroSection />
       <BlogUpdateStrip />

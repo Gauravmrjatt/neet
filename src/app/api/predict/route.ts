@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
-import { getActiveSubscription } from '@/lib/queries'
+import { getActiveSubscription, markPredictorUsed } from '@/lib/queries'
 import { checkLimit, extractClientIp } from '@/lib/rate-limit'
 import { predict } from '@/lib/predictor/engine'
 import type { PredictRequest, PredictResponse } from '@/lib/predictor/types'
@@ -79,7 +79,23 @@ export async function POST(request: Request) {
     let isPremium = false
     if (user) {
       const subscription = await getActiveSubscription(user.id)
-      isPremium = !!subscription
+      if (subscription) {
+        if (subscription.predictorUsed) {
+          return NextResponse.json(
+            {
+              error:
+                'You have already used your one-time prediction. Please purchase a new plan to predict again.',
+              code: 'PREDICTOR_ALREADY_USED',
+            },
+            { status: 403 },
+          )
+        }
+        isPremium = true
+      }
+    }
+
+    if (isPremium && results.length > 0) {
+      await markPredictorUsed(user!.id)
     }
 
     const response: PredictResponse = {

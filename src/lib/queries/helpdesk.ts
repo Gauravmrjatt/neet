@@ -1,13 +1,14 @@
+import { cache } from 'react'
 import { getPayloadClient } from '../payload'
 import type { Helpdesk } from '@/payload-types'
 
-export async function getHelpdeskItems({
+export const getHelpdeskItems = cache(async ({
   category,
   status = 'active',
 }: {
   category?: 'admission' | 'exam' | 'counselling' | 'technical' | 'other'
   status?: 'active' | 'inactive'
-} = {}) {
+} = {}) => {
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: status } }
   if (category) where.category = { equals: category }
@@ -17,9 +18,9 @@ export async function getHelpdeskItems({
     where,
     sort: 'order',
   })
-}
+})
 
-export async function getHelpdeskCategories(): Promise<string[]> {
+export const getHelpdeskCategories = cache(async (): Promise<string[]> => {
   const payload = await getPayloadClient()
   const items = await payload.find({
     collection: 'helpdesk',
@@ -35,4 +36,4 @@ export async function getHelpdeskCategories(): Promise<string[]> {
     ),
   ]
   return categories
-}
+})

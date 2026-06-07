@@ -4,7 +4,7 @@ import { LogOut, Menu, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
 import { ThemeToggle } from '@/components/shared/ThemeToggle'
-import { SITE_NAME } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 interface MobileMenuProps {
@@ -30,6 +29,7 @@ interface MobileMenuProps {
     text?: string | null
     link?: string | null
   } | null
+  siteName?: string
 }
 
 function shouldShow(showWhen: string | null | undefined, user: any): boolean {
@@ -40,14 +40,14 @@ function shouldShow(showWhen: string | null | undefined, user: any): boolean {
   return true
 }
 
-export function MobileMenu({ user, navigation, ctaButton }: MobileMenuProps) {
+export function MobileMenu({ user, navigation, ctaButton, siteName = 'NEET Counselling' }: MobileMenuProps) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
   const visibleItems = navigation.filter((item) => shouldShow(item.showWhen, user))
 
-  async function handleLogout() {
+  const handleLogout = useCallback(async () => {
     try {
       await fetch('/api/users/logout', {
         method: 'POST',
@@ -59,7 +59,9 @@ export function MobileMenu({ user, navigation, ctaButton }: MobileMenuProps) {
     } catch {
       // ignore
     }
-  }
+  }, [router])
+
+  const closeMenu = useCallback(() => setOpen(false), [])
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -83,7 +85,7 @@ export function MobileMenu({ user, navigation, ctaButton }: MobileMenuProps) {
               <Sparkles className="h-4 w-4 text-button-gold" aria-hidden="true" />
             </span>
             <SheetTitle className="font-display text-base font-bold tracking-tight text-primary">
-              {SITE_NAME}
+              {siteName}
             </SheetTitle>
           </div>
         </SheetHeader>
@@ -121,7 +123,7 @@ export function MobileMenu({ user, navigation, ctaButton }: MobileMenuProps) {
                 <li key={item.link}>
                   <Link
                     href={item.link}
-                    onClick={() => setOpen(false)}
+                    onClick={closeMenu}
                     aria-current={isActive ? 'page' : undefined}
                     className={cn(
                       'flex items-center justify-between rounded-2xl px-3 py-2.5',
@@ -163,7 +165,7 @@ export function MobileMenu({ user, navigation, ctaButton }: MobileMenuProps) {
           ) : (
             <div className="flex flex-col gap-2">
               <Button variant="outline" asChild className="w-full rounded-full">
-                <Link href="/login" onClick={() => setOpen(false)}>
+                <Link href="/login" onClick={closeMenu}>
                   Log in
                 </Link>
               </Button>
@@ -171,7 +173,7 @@ export function MobileMenu({ user, navigation, ctaButton }: MobileMenuProps) {
                 asChild
                 className="w-full rounded-full bg-button-gold font-bold text-primary shadow-sm hover:bg-button-gold-hover"
               >
-                <Link href={ctaButton?.link || '/signup'} onClick={() => setOpen(false)}>
+                <Link href={ctaButton?.link || '/signup'} onClick={closeMenu}>
                   {ctaButton?.text || 'Sign up'}
                 </Link>
               </Button>

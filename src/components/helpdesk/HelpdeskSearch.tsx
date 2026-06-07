@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useTransition } from 'react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Input } from '@/components/ui/input'
 
@@ -28,6 +28,7 @@ function getAnswerText(answer: any): string {
 
 export function HelpdeskSearch({ items }: HelpdeskSearchProps) {
   const [search, setSearch] = useState('')
+  const [, startTransition] = useTransition()
 
   const filtered = useMemo(() => {
     if (!search.trim()) return items

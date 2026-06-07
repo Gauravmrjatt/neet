@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -8,7 +9,7 @@ interface VideoCardProps {
   video: any
 }
 
-export function VideoCard({ video }: VideoCardProps) {
+export const VideoCard = memo(function VideoCard({ video }: VideoCardProps) {
   return (
     <Link href={`/videos/${video.slug}`}>
       <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden">
@@ -28,4 +29,4 @@ export function VideoCard({ video }: VideoCardProps) {
       </Card>
     </Link>
   )
-}
+})

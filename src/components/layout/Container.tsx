@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { cn } from '@/lib/utils'
 
 interface ContainerProps {
@@ -5,7 +6,7 @@ interface ContainerProps {
   className?: string
 }
 
-export function Container({ children, className }: ContainerProps) {
+export const Container = memo(function Container({ children, className }: ContainerProps) {
   return (
     <div
       className={cn(
@@ -16,4 +17,4 @@ export function Container({ children, className }: ContainerProps) {
       {children}
     </div>
   )
-}
+})

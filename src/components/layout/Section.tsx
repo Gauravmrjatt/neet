@@ -1,11 +1,9 @@
+import { memo } from 'react'
 import { cn } from '@/lib/utils'
-import * as React from 'react'
 
 type SectionProps = React.HTMLAttributes<HTMLElement> & {
   children: React.ReactNode
-  /** Background tone for the section. */
   tone?: 'default' | 'cream' | 'navy' | 'muted'
-  /** Trim vertical padding when nesting inside other spaced layouts. */
   density?: 'normal' | 'tight' | 'roomy'
 }
 
@@ -22,7 +20,7 @@ const DENSITY_CLASSES: Record<NonNullable<SectionProps['density']>, string> = {
   roomy: 'py-20 md:py-24 lg:py-28',
 }
 
-export function Section({
+export const Section = memo(function Section({
   children,
   className,
   tone = 'default',
@@ -30,11 +28,8 @@ export function Section({
   ...props
 }: SectionProps) {
   return (
-    <section
-      className={cn(TONE_CLASSES[tone], DENSITY_CLASSES[density], className)}
-      {...props}
-    >
+    <section className={cn(TONE_CLASSES[tone], DENSITY_CLASSES[density], className)} {...props}>
       {children}
     </section>
   )
-}
+})

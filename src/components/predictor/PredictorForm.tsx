@@ -1,14 +1,20 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect, useMemo } from 'react'
+import Link from 'next/link'
+import { Loader2, AlertTriangle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { PredictorResults } from './PredictorResults'
 import type { PredictResponse } from '@/lib/predictor/types'
 import type { FilterOptions } from '@/lib/predictor/filters'
+import dynamic from 'next/dynamic'
+
+const PredictorResults = dynamic(() => import('./PredictorResults').then((m) => ({ default: m.PredictorResults })), {
+  ssr: false,
+})
+import { PredictorLeaveWarning, useLeaveWarning } from './PredictorLeaveWarning'
 
 interface PredictorFormProps {
   filterOptions: FilterOptions
@@ -22,10 +28,41 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
   const [quota, setQuota] = useState('')
   const [state, setState] = useState('')
   const [course, setCourse] = useState('')
+  const [phase, setPhase] = useState('')
 
   const [status, setStatus] = useState<FormStatus>('idle')
   const [error, setError] = useState('')
   const [response, setResponse] = useState<PredictResponse | null>(null)
+  const [predictorUsed, setPredictorUsed] = useState(false)
+  const [showLeaveWarning, setShowLeaveWarning] = useState(false)
+
+  const hasResults = response !== null
+  useLeaveWarning(hasResults)
+
+  useEffect(() => {
+    if (!hasResults) return
+
+    window.history.pushState(null, '', window.location.href)
+
+    const handlePopState = () => {
+      setShowLeaveWarning(true)
+    }
+
+    window.addEventListener('popstate', handlePopState)
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState)
+    }
+  }, [hasResults])
+
+  const handleConfirmLeave = useCallback(() => {
+    setShowLeaveWarning(false)
+    setResponse(null)
+  }, [])
+
+  const handleCancelLeave = useCallback(() => {
+    setShowLeaveWarning(false)
+  }, [])
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -33,6 +70,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
       setStatus('loading')
       setError('')
       setResponse(null)
+      setPredictorUsed(false)
 
       const rankNum = parseInt(rank, 10)
       if (!rank || isNaN(rankNum) || rankNum < 1) {
@@ -47,6 +85,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
         if (quota) body.quota = quota
         if (state) body.state = state
         if (course) body.course = course
+        if (phase) body.phase = parseInt(phase, 10)
 
         const res = await fetch('/api/predict', {
           method: 'POST',
@@ -56,6 +95,11 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
 
         if (!res.ok) {
           const data = await res.json().catch(() => ({}))
+          if (res.status === 403 && data.code === 'PREDICTOR_ALREADY_USED') {
+            setPredictorUsed(true)
+            setStatus('idle')
+            return
+          }
           throw new Error(data.error || 'Failed to get predictions.')
         }
 
@@ -67,53 +111,112 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
         setStatus('idle')
       }
     },
-    [rank, category, quota, state, course],
+    [rank, category, quota, state, course, phase],
   )
 
   const handleReset = useCallback(() => {
     setResponse(null)
     setError('')
     setStatus('idle')
+    setPredictorUsed(false)
   }, [])
 
-  const selectClasses =
-    'flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
+  const selectClasses = useMemo(
+    () => 'flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+    [],
+  )
 
-  if (!response) {
+  if (predictorUsed) {
     return (
       <div className="rounded-xl border border-border bg-card shadow-lg">
-        <div className="flex items-center gap-2 border-b border-border bg-primary-navy/5 px-5 py-3">
-          <span className="text-xl" role="img" aria-label="predictor">🎯</span>
+        <div className="flex flex-col items-center gap-4 px-6 py-12 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-3xl">
+            ⏳
+          </div>
           <div>
-            <h2 className="text-base font-bold text-primary-navy">
-              Enter Your NEET Details
+            <h2 className="text-xl font-bold text-primary-navy">
+              Prediction Already Used
             </h2>
-            <p className="text-xs text-muted-foreground">
-              Fill in the fields below to predict your college admission chances.
+            <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+              You have already used your one-time college prediction. To predict again, please
+              purchase a new plan.
             </p>
           </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button
+              asChild
+              className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-bold"
+            >
+              <Link href="/pricing">View Plans</Link>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleReset}
+              className="border-primary-navy/30 text-primary-navy hover:bg-primary-navy/5"
+            >
+              Try Again
+            </Button>
+          </div>
         </div>
+      </div>
+    )
+  }
 
-        <form onSubmit={handleSubmit} className="p-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
-            <div>
-              <Label htmlFor="rank" className="text-xs font-semibold text-primary-navy">
-                Rank (AIR) <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="rank"
-                type="number"
-                min="1"
-                max="2000000"
-                placeholder="e.g. 50000"
+  if (response) {
+    return (
+      <>
+        <PredictorLeaveWarning
+          open={showLeaveWarning}
+          onOpenChange={(open) => {
+            if (!open) handleCancelLeave()
+          }}
+          onConfirmLeave={handleConfirmLeave}
+        />
+        <PredictorResults response={response} onReset={handleReset} />
+      </>
+    )
+  }
+
+  return (
+    <div className="rounded-xl border border-border bg-card shadow-lg">
+      <div className="flex items-center gap-3 border-b border-border bg-primary-navy/[0.04] px-6 py-4">
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-button-gold/20 text-lg">
+          🎯
+        </span>
+        <div>
+          <h2 className="text-lg font-bold text-primary-navy">
+            Enter Your NEET Details
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Enter your rank and filters to predict your college admission chances.
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="p-6">
+        <div className="mb-6">
+          <Label htmlFor="rank" className="text-sm font-semibold text-primary-navy">
+            NEET All India Rank <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="rank"
+            type="number"
+            min="1"
+            max="2000000"
+            placeholder="Enter your AIR (e.g. 50000)"
                 value={rank}
-                onChange={(e) => setRank(e.target.value)}
+                onChange={useCallback((e: React.ChangeEvent<HTMLInputElement>) => setRank(e.target.value), [])}
                 className="mt-1 h-10 text-sm"
                 required
                 disabled={status === 'loading'}
-              />
-            </div>
+          />
+        </div>
 
+        <div className="mb-6">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Filters
+          </p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
               <Label htmlFor="category" className="text-xs font-semibold text-primary-navy">
                 Category
@@ -122,7 +225,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 id="category"
                 aria-label="Your category"
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value), [])}
                 className={cn(selectClasses, 'mt-1')}
                 disabled={status === 'loading'}
               >
@@ -141,8 +244,8 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 id="quota"
                 aria-label="Quota"
                 value={quota}
-                onChange={(e) => setQuota(e.target.value)}
-                className={cn(selectClasses, 'mt-1')}
+                onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setQuota(e.target.value), [])}
+                className={cn(selectClasses, 'mt-1.5')}
                 disabled={status === 'loading'}
               >
                 <option value="">All Quotas</option>
@@ -160,8 +263,8 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 id="state"
                 aria-label="State"
                 value={state}
-                onChange={(e) => setState(e.target.value)}
-                className={cn(selectClasses, 'mt-1')}
+                onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setState(e.target.value), [])}
+                className={cn(selectClasses, 'mt-1.5')}
                 disabled={status === 'loading'}
               >
                 <option value="">All States</option>
@@ -179,8 +282,8 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 id="course"
                 aria-label="Course"
                 value={course}
-                onChange={(e) => setCourse(e.target.value)}
-                className={cn(selectClasses, 'mt-1')}
+                onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setCourse(e.target.value), [])}
+                className={cn(selectClasses, 'mt-1.5')}
                 disabled={status === 'loading'}
               >
                 <option value="">All Courses</option>
@@ -189,34 +292,53 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 ))}
               </select>
             </div>
-          </div>
 
-          {error && (
-            <div className="mt-3 rounded-md border border-destructive/30 bg-destructive/10 p-2.5 text-sm text-destructive" role="alert">
-              {error}
+            <div>
+              <Label htmlFor="phase" className="text-xs font-semibold text-primary-navy">
+                Counselling Phase
+              </Label>
+              <select
+                id="phase"
+                aria-label="Counselling phase"
+                value={phase}
+                onChange={(e) => setPhase(e.target.value)}
+                className={cn(selectClasses, 'mt-1.5')}
+                disabled={status === 'loading'}
+              >
+                <option value="">All Phases</option>
+                {filterOptions.phases.map((p) => (
+                  <option key={p} value={p}>Phase {p}</option>
+                ))}
+              </select>
             </div>
-          )}
-
-          <div className="mt-4">
-            <Button
-              type="submit"
-              disabled={status === 'loading'}
-              className="h-10 w-full bg-button-gold hover:bg-button-gold-hover text-primary-navy font-bold text-sm sm:w-auto sm:px-8"
-            >
-              {status === 'loading' ? (
-                <span className="flex items-center justify-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  Predicting...
-                </span>
-              ) : (
-                'Predict My College'
-              )}
-            </Button>
           </div>
-        </form>
-      </div>
-    )
-  }
+        </div>
 
-  return <PredictorResults response={response} onReset={handleReset} />
+        {error && (
+          <div
+            className="mb-4 flex items-start gap-2.5 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+            role="alert"
+          >
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <Button
+          type="submit"
+          disabled={status === 'loading'}
+          className="h-12 w-full bg-button-gold text-sm font-bold text-primary-navy hover:bg-button-gold-hover sm:w-auto sm:px-10"
+        >
+          {status === 'loading' ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              Predicting...
+            </span>
+          ) : (
+            'Predict My College'
+          )}
+        </Button>
+      </form>
+    </div>
+  )
 }

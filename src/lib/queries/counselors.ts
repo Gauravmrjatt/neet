@@ -1,13 +1,14 @@
+import { cache } from 'react'
 import { getPayloadClient } from '../payload'
 import type { Counselor } from '@/payload-types'
 
-export async function getCounselors({
+export const getCounselors = cache(async ({
   specialization,
   status = 'active',
 }: {
   specialization?: 'jee' | 'neet' | 'josaa' | 'general'
   status?: 'active' | 'inactive'
-} = {}) {
+} = {}) => {
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: status } }
   if (specialization) where['specializations.specialization'] = { equals: specialization }
@@ -17,9 +18,9 @@ export async function getCounselors({
     where,
     sort: 'order',
   })
-}
+})
 
-export async function getCounselorBySlug(slug: string): Promise<Counselor | null> {
+export const getCounselorBySlug = cache(async (slug: string): Promise<Counselor | null> => {
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'counselors',
@@ -27,4 +28,4 @@ export async function getCounselorBySlug(slug: string): Promise<Counselor | null
     limit: 1,
   })
   return result.docs[0] || null
-}
+})

@@ -1,2 +1,2 @@
-export const SITE_NAME = "NEET Counselling"
-export const SITE_DESCRIPTION = "Expert NEET and JOSAA counselling services"
+// Constants are now managed via Payload CMS SiteSettings global.
+// Use getSiteSettings() from '@/lib/queries/globals' to fetch site name and description.

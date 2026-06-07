@@ -34,16 +34,6 @@ export const Header: GlobalConfig = {
       },
     },
     {
-      name: 'hindiTitle',
-      type: 'text',
-      defaultValue: 'नीट काउंसलिंग',
-    },
-    {
-      name: 'englishTitle',
-      type: 'text',
-      defaultValue: 'NEET Counselling',
-    },
-    {
       name: 'tagline',
       type: 'text',
       defaultValue: 'Expert NEET and JOSAA Counselling Services',

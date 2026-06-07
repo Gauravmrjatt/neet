@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -8,7 +9,7 @@ interface BlogCardProps {
   blog: any
 }
 
-export function BlogCard({ blog }: BlogCardProps) {
+export const BlogCard = memo(function BlogCard({ blog }: BlogCardProps) {
   return (
     <Link href={`/blog/${blog.slug}`}>
       <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden">
@@ -32,4 +33,4 @@ export function BlogCard({ blog }: BlogCardProps) {
       </Card>
     </Link>
   )
-}
+})

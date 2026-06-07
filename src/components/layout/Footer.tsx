@@ -1,6 +1,6 @@
 import { Mail, Phone } from 'lucide-react'
 import Link from 'next/link'
-import { getFooter } from '@/lib/queries/globals'
+import { getFooter, getSiteSettings } from '@/lib/queries/globals'
 import { MediaImage } from '@/components/shared/MediaImage'
 import { cn } from '@/lib/utils'
 
@@ -13,7 +13,11 @@ const PLATFORM_ICONS: Record<string, { letter: string; label: string }> = {
 }
 
 export async function Footer() {
-  const footerData = await getFooter()
+  const [footerData, settings] = await Promise.all([
+    getFooter(),
+    getSiteSettings(),
+  ])
+  const siteName = (settings as any)?.siteName || 'NEET Counselling'
   const currentYear = new Date().getFullYear()
   const lastUpdated = new Date().toLocaleDateString('en-IN', {
     day: 'numeric',
@@ -61,7 +65,7 @@ export async function Footer() {
                   <div className="overflow-hidden rounded-2xl bg-white p-2 shadow-sm ring-1 ring-border">
                     <MediaImage
                       media={footerData.logo}
-                      alt="NEET Counselling Logo"
+                      alt={`${siteName} Logo`}
                       width={120}
                       height={40}
                       className="h-8 w-auto"
@@ -74,7 +78,7 @@ export async function Footer() {
                 )}
               </div>
               <h3 className="font-display text-lg font-bold tracking-tight text-primary">
-                NEET Counselling
+                {siteName}
               </h3>
               <p className="mt-2 text-sm font-medium leading-relaxed text-primary/75">
                 {footerData.description ||
@@ -172,11 +176,11 @@ export async function Footer() {
           <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-center sm:flex-row sm:text-left sm:px-6 lg:px-8">
             <p className="text-xs font-medium text-primary/70">
               {footerData.creditsText ||
-                'Content Owned and Maintained by NEET Counselling'}
+                `Content Owned and Maintained by ${siteName}`}
             </p>
             <p className="text-xs font-medium text-primary/70">
               {footerData.copyright ||
-                `© ${currentYear} NEET Counselling. All rights reserved.`}
+                `© ${currentYear} ${siteName}. All rights reserved.`}
             </p>
             <p className="text-xs font-medium text-primary/70">
               <span className="text-button-gold" aria-hidden="true">

@@ -6,8 +6,12 @@ import { getCurrentUser } from '@/lib/auth'
 import { getUserSubscription } from '@/lib/queries'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
+import dynamic from 'next/dynamic'
 import { CounselorCard } from '@/components/shared/CounselorCard'
-import { BlockRenderer } from '@/components/blocks'
+
+const BlockRenderer = dynamic(() => import('@/components/blocks').then((m) => ({ default: m.BlockRenderer })), {
+  ssr: true,
+})
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'

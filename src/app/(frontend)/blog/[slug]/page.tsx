@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getBlogBySlug, getRecentBlogs } from '@/lib/queries'
+import { getPayloadClient } from '@/lib/payload'
 import { generateBlogMetadata } from '@/lib/seo'
 import { generateBlogPostingSchema, generateBreadcrumbSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -37,13 +38,23 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  const blog = await getBlogBySlug(slug)
+
+  const [blog, { docs: recentBlogs }] = await Promise.all([
+    getBlogBySlug(slug),
+    getRecentBlogs(3),
+  ])
 
   if (!blog) notFound()
 
+  const payload = await getPayloadClient()
+  let siteName = 'NEET Counselling'
+  try {
+    const settings = await payload.findGlobal({ slug: 'site-settings' })
+    if (settings?.siteName) siteName = settings.siteName
+  } catch {}
+
   const featuredImage = typeof blog.featuredImage === 'object' ? blog.featuredImage as Media : null
   const author = typeof blog.author === 'object' ? blog.author as User : null
-  const { docs: recentBlogs } = await getRecentBlogs(3)
   const relatedBlogs = recentBlogs.filter((b: any) => b.id !== blog.id).slice(0, 2)
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
@@ -57,7 +68,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         publishedAt: blog.publishedAt || undefined,
         updatedAt: blog.updatedAt,
         author: author ? { name: author.name || author.email } : undefined,
-      })} />
+      }, siteName)} />
       <JsonLd data={generateBreadcrumbSchema([
         { name: 'Home', url: siteUrl },
         { name: 'Blog', url: `${siteUrl}/blog` },

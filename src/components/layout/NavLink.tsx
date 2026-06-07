@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -11,7 +12,7 @@ interface NavLinkProps {
   variant?: 'default' | 'cta'
 }
 
-export function NavLink({ href, label, variant = 'default' }: NavLinkProps) {
+export const NavLink = memo(function NavLink({ href, label, variant = 'default' }: NavLinkProps) {
   const pathname = usePathname()
   const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href)
 
@@ -50,4 +51,4 @@ export function NavLink({ href, label, variant = 'default' }: NavLinkProps) {
       {label}
     </Link>
   )
-}
+})

@@ -1,7 +1,8 @@
+import { cache } from 'react'
 import { getPayloadClient } from '../payload'
 import type { PricingCard } from '@/payload-types'
 
-export async function getPricingCards(): Promise<PricingCard[]> {
+export const getPricingCards = cache(async (): Promise<PricingCard[]> => {
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'pricing-cards',
@@ -9,9 +10,9 @@ export async function getPricingCards(): Promise<PricingCard[]> {
     limit: 100,
   })
   return result.docs
-}
+})
 
-export async function getPricingCardById(id: string): Promise<PricingCard | null> {
+export const getPricingCardById = cache(async (id: string): Promise<PricingCard | null> => {
   try {
     const payload = await getPayloadClient()
     const result = await payload.findByID({
@@ -22,4 +23,4 @@ export async function getPricingCardById(id: string): Promise<PricingCard | null
   } catch {
     return null
   }
-}
+})

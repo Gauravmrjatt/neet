@@ -1,4 +1,10 @@
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+import { getSiteSettings } from '@/lib/queries/globals'
+
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getSiteSettings()
+  const siteName = (settings as any)?.siteName || 'NEET Counselling'
+  const siteDescription = (settings as any)?.siteDescription || 'Expert guidance for your medical career aspirations'
+
   return (
     <div className="flex min-h-screen">
       {/* Left branding panel - hidden on mobile */}
@@ -9,10 +15,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-white blur-3xl" />
         </div>
         <div className="relative z-10 text-center max-w-md">
-          <h1 className="text-4xl font-bold mb-4">NEET Counselling</h1>
-          <p className="text-xl text-white/80">
-            Expert guidance for your medical career aspirations
-          </p>
+          <h1 className="text-4xl font-bold mb-4">{siteName}</h1>
+          <p className="text-xl text-white/80">{siteDescription}</p>
         </div>
       </div>
       {/* Right form panel */}
