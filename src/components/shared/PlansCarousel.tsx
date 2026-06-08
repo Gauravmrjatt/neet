@@ -19,38 +19,51 @@ interface PlanData {
   popular?: boolean
 }
 
-const COLOR_MAP: Record<string, { border: string; bg: string; text: string; btn: string; badge: string }> = {
+interface TierColors {
+  text: string
+  price: string
+  check: string
+  badge: string
+  btn: string
+  shadow: string
+}
+
+const COLOR_MAP: Record<string, TierColors> = {
   popular: {
-    border: 'border-primary-navy',
-    bg: 'bg-card-bg',
     text: 'text-primary-navy',
-    btn: 'bg-button-gold hover:bg-button-gold-hover text-primary-navy',
-    badge: 'bg-primary-navy',
+    price: 'text-primary-navy',
+    check: 'bg-button-gold',
+    badge: 'bg-button-gold text-primary-navy',
+    btn: 'bg-button-gold hover:bg-button-gold-hover text-primary-navy shadow-md shadow-button-gold/20',
+    shadow: 'shadow-xl shadow-primary-navy/8',
   },
   premium: {
-    border: 'border-primary-navy/80',
-    bg: 'bg-card-bg',
     text: 'text-primary-navy',
-    btn: 'bg-button-gold hover:bg-button-gold-hover text-primary-navy',
-    badge: 'bg-primary-navy',
+    price: 'text-primary-navy',
+    check: 'bg-primary-navy',
+    badge: 'bg-primary-navy text-white',
+    btn: 'bg-primary-navy hover:bg-primary-navy-dark text-white shadow-md',
+    shadow: 'shadow-lg',
   },
   standard: {
-    border: 'border-primary-navy/60',
-    bg: 'bg-card-bg',
-    text: 'text-primary-navy',
-    btn: 'bg-button-gold hover:bg-button-gold-hover text-primary-navy',
-    badge: 'bg-primary-navy',
+    text: 'text-foreground/90',
+    price: 'text-primary-navy',
+    check: 'bg-primary-navy/50',
+    badge: 'bg-primary-navy/60 text-white',
+    btn: 'bg-primary-navy/80 hover:bg-primary-navy text-white shadow-sm',
+    shadow: 'shadow-md',
   },
   basic: {
-    border: 'border-primary-navy/40',
-    bg: 'bg-card-bg',
-    text: 'text-primary-navy',
-    btn: 'bg-button-gold hover:bg-button-gold-hover text-primary-navy',
-    badge: 'bg-primary-navy',
+    text: 'text-foreground/80',
+    price: 'text-foreground/80',
+    check: 'bg-foreground/15',
+    badge: 'bg-foreground/10 text-foreground/60',
+    btn: 'bg-foreground/10 hover:bg-foreground/20 text-foreground/70 shadow-sm',
+    shadow: 'shadow-sm',
   },
 }
 
-function getColors(scheme: string) {
+function getColors(scheme: string): TierColors {
   return COLOR_MAP[scheme] || COLOR_MAP.standard
 }
 
@@ -107,7 +120,7 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
 
   return (
     <div
-      className="plans-coverflow-shell max-w-5xl mx-auto mt-6 px-3 sm:px-10 md:px-12 rounded-2xl focus:outline-none"
+      className="plans-coverflow-shell relative max-w-6xl mx-auto mt-6 px-3 sm:px-10 md:px-12 rounded-2xl focus:outline-none"
       role="region"
       aria-roledescription="carousel"
       aria-label="Counselling plans"
@@ -118,7 +131,7 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
         onClick={() => go(active - 1)}
         aria-label="Previous plan"
       >
-        <ChevronLeft className="w-5 h-5" />
+        <ChevronLeft className="w-6 h-6" />
       </button>
       <button
         type="button"
@@ -126,7 +139,7 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
         onClick={() => go(active + 1)}
         aria-label="Next plan"
       >
-        <ChevronRight className="w-5 h-5" />
+        <ChevronRight className="w-6 h-6" />
       </button>
 
       <div ref={viewportRef} className="plans-coverflow-viewport">
@@ -152,53 +165,65 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
             else if (dist === 1) stateClass = 'plan-coverflow-card--near'
             else stateClass = 'plan-coverflow-card--far'
 
-            const colors = getColors(plan.colorScheme)
+            const c = getColors(plan.colorScheme)
 
             return (
               <article
                 key={plan.id}
-                className={`plan-coverflow-card relative border-2 ${colors.border} ${colors.bg} ${stateClass}`}
+                className={`plan-coverflow-card relative bg-card border border-border/60 ${c.shadow} ${stateClass}`}
                 role="listitem"
                 data-plan-index={index}
               >
+                {plan.popular && (
+                  <span className="plan-coverflow-popular">
+                    <span>★ Most Popular</span>
+                  </span>
+                )}
+
                 {plan.discount && (
-                  <span className={`absolute top-3 right-3 text-white text-xs font-bold px-2 py-0.5 rounded-full ${colors.badge}`}>
+                  <span className={`absolute -top-2.5 right-4 text-xs font-bold px-2.5 py-1 rounded-full ${c.badge}`}>
                     {plan.discount}
                   </span>
                 )}
                 {plan.badge && !plan.discount && (
-                  <span className={`absolute top-3 right-3 text-white text-xs font-bold px-2 py-0.5 rounded-full ${colors.badge}`}>
+                  <span className={`absolute -top-2.5 right-4 text-xs font-bold px-2.5 py-1 rounded-full ${c.badge}`}>
                     {plan.badge}
                   </span>
                 )}
-                {plan.popular && (
-                  <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${colors.text}`}>
-                    Most Popular
-                  </p>
-                )}
-                <h3 className="text-base sm:text-lg font-bold text-foreground leading-snug">
+
+                <h3 className={`text-base sm:text-lg font-bold leading-snug ${c.text}`}>
                   {plan.subtitle || plan.id}
                 </h3>
-                <p className={`text-3xl font-extrabold mt-2 ${colors.text}`}>
-                  {plan.price}
-                </p>
-                {plan.originalPrice && (
-                  <p className="text-xs text-muted-foreground/70 line-through">{plan.originalPrice}</p>
-                )}
+
+                <div className="mt-3 flex items-baseline gap-2">
+                  <span className={`text-3xl sm:text-4xl font-extrabold tracking-tight ${c.price}`}>
+                    {plan.price}
+                  </span>
+                  {plan.originalPrice && (
+                    <span className="text-sm text-muted-foreground/60 line-through">
+                      {plan.originalPrice}
+                    </span>
+                  )}
+                </div>
+
                 {plan.colleges && (
-                  <p className="text-xs text-muted-foreground mb-0">{plan.colleges}</p>
+                  <p className="text-xs text-muted-foreground mt-1.5">{plan.colleges}</p>
                 )}
-                <ul className="mt-3 space-y-1.5 text-xs text-foreground/80 flex-1">
+
+                <ul className="mt-4 space-y-2 text-sm text-foreground/70 flex-1">
                   {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-1.5">
-                      <Check className={`w-3.5 h-3.5 flex-shrink-0 ${colors.text}`} />
+                    <li key={i} className="flex items-start gap-2.5">
+                      <span className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${c.check}`}>
+                        <Check className="w-3 h-3 text-white" />
+                      </span>
                       {feature}
                     </li>
                   ))}
                 </ul>
+
                 <Link
                   href={plan.ctaLink || '#'}
-                  className={`mt-4 block text-center font-semibold text-sm py-2.5 rounded-xl shadow-md transition-colors ${colors.btn}`}
+                  className={`mt-5 block text-center font-semibold text-sm py-3 rounded-xl transition-all duration-200 ease-out ${c.btn}`}
                 >
                   {plan.ctaText || 'Get Started'}
                 </Link>
@@ -208,7 +233,7 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
         </div>
       </div>
 
-      <div className="flex justify-center items-center gap-2 mt-5" role="tablist" aria-label="Select a plan">
+      <div className="flex justify-center items-center gap-2 mt-6" role="tablist" aria-label="Select a plan">
         {plans.map((_, index) => (
           <button
             key={index}

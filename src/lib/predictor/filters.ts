@@ -26,9 +26,15 @@ export function getFilterOptions(): FilterOptions {
     phaseSet.add(rec.phase)
   }
 
+  const sortQuotas = (a: string, b: string) => {
+    if (a === 'All India') return -1
+    if (b === 'All India') return 1
+    return a.localeCompare(b)
+  }
+
   return {
     categories: Array.from(categorySet).sort(),
-    quotas: Array.from(quotaSet).sort(),
+    quotas: Array.from(quotaSet).sort(sortQuotas),
     states: Array.from(stateSet).sort(),
     courses: Array.from(courseSet).sort(),
     phases: Array.from(phaseSet).sort((a, b) => a - b),

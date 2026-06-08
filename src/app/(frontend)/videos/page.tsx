@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getVideos } from '@/lib/queries'
+import { getVideos, getVideoCategories } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
@@ -16,14 +16,6 @@ export async function generateMetadata(): Promise<Metadata> {
   })
 }
 
-const CATEGORIES = [
-  { label: 'All', value: undefined },
-  { label: 'Lectures', value: 'lecture' },
-  { label: 'Tips', value: 'tips' },
-  { label: 'Interviews', value: 'interview' },
-  { label: 'Other', value: 'other' },
-]
-
 export default async function VideosPage({
   searchParams,
 }: {
@@ -31,13 +23,21 @@ export default async function VideosPage({
 }) {
   const { category, page: pageParam } = await searchParams
   const currentPage = parseInt(pageParam || '1', 10)
-  const selectedCategory = category as 'lecture' | 'tips' | 'interview' | 'other' | undefined
+  const selectedCategory = category as string | undefined
 
-  const { docs: videos, totalPages } = await getVideos({
-    page: currentPage,
-    limit: 12,
-    category: selectedCategory,
-  })
+  const [{ docs: videos, totalPages }, { items }] = await Promise.all([
+    getVideos({
+      page: currentPage,
+      limit: 12,
+      category: selectedCategory as 'lecture' | 'tips' | 'interview' | 'other' | undefined,
+    }),
+    getVideoCategories(),
+  ])
+
+  const categories = [
+    { label: 'All', value: undefined as string | undefined },
+    ...(items ?? []).map((c) => ({ label: c.label, value: c.value })),
+  ]
 
   return (
     <>
@@ -48,7 +48,7 @@ export default async function VideosPage({
       <Section className="bg-navbar-bg/30">
         <Container>
           <div className="mb-8 flex flex-wrap justify-center gap-2">
-            {CATEGORIES.map((cat) => {
+            {categories.map((cat) => {
               const isActive = (cat.value === selectedCategory) || (!cat.value && !selectedCategory)
               return (
                 <Link

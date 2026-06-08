@@ -30,6 +30,7 @@ export default async function ContactPage() {
             contactEmail={settings?.contactEmail}
             phone={settings?.phone}
             address={settings?.address}
+            socialMedia={(settings as any)?.socialMedia}
           />
         </Container>
       </Section>

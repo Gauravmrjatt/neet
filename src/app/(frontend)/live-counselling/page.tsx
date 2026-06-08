@@ -1,14 +1,13 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 import { getUpcomingSessions } from '@/lib/queries'
-import { getCurrentUser } from '@/lib/auth'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
 import { formatDate } from '@/lib/utils'
 import { Counselor } from '@/payload-types'
+import { RichText } from '@/components/shared/RichText'
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateSEOMetadata({
@@ -19,11 +18,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function LiveCounsellingPage() {
-  const user = await getCurrentUser()
-  if (!user) {
-    redirect('/login?redirect=/live-counselling')
-  }
-
   const { docs: sessions } = await getUpcomingSessions()
 
   return (
@@ -60,6 +54,12 @@ export default async function LiveCounsellingPage() {
                         {isLive ? 'Live' : 'Upcoming'}
                       </span>
                     </div>
+
+                    {session.description && (
+                      <div className="mt-3 text-sm text-muted-foreground">
+                        <RichText content={session.description} />
+                      </div>
+                    )}
 
                     <div className="mt-4 space-y-2.5 text-sm text-muted-foreground">
                       <div className="flex items-center gap-2">

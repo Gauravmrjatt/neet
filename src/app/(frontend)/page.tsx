@@ -30,6 +30,7 @@ export default async function HomePage() {
 
   let siteName = 'NEET Counselling'
   let newsTickerItems: any[] = []
+  let notificationBar: any = null
   try {
     const [settings, ticker] = await Promise.all([
       payload.findGlobal({ slug: 'site-settings' }).catch(() => null),
@@ -37,6 +38,7 @@ export default async function HomePage() {
     ])
     if (settings?.siteName) siteName = settings.siteName
     newsTickerItems = ticker?.items?.filter((i: any) => i.isActive) || []
+    notificationBar = settings?.notificationBar || null
   } catch {}
 
   return (
@@ -44,9 +46,13 @@ export default async function HomePage() {
       <JsonLd data={generateOrganizationSchema(siteName)} />
       <NewsTicker items={newsTickerItems} />
       <HeroSection />
-      <BlogUpdateStrip />
-      <TrustBadges />
       <PlansCoverflow />
+      <BlogUpdateStrip
+        text={notificationBar?.text}
+        link={notificationBar?.link}
+        isEnabled={notificationBar?.isEnabled}
+      />
+      <TrustBadges />
       <WhyChooseUs />
       <TestimonialMarquee />
     </>

@@ -22,7 +22,7 @@ export async function Header() {
   const phone = (settings as any)?.phone || ''
   const hindiTitle = (settings as any)?.siteNameHindi || 'नीट काउंसलिंग'
   const englishTitle = (settings as any)?.siteName || 'NEET Counselling'
-  const tagline = headerData?.tagline || 'Expert NEET and JOSAA Counselling Services'
+  const tagline = (settings as any)?.siteDescription || headerData?.tagline || 'Expert NEET and JOSAA Counselling Services'
   const logo = headerData?.logo
   const emblem = headerData?.emblem
   const navigation = headerData?.navigation || []
@@ -58,10 +58,8 @@ export async function Header() {
         {/* Centered title block */}
         <div className="flex min-w-0 flex-1 flex-col items-center px-2 text-center">
           <div className="font-display text-balance text-base font-bold leading-tight tracking-tight text-primary sm:text-xl md:text-2xl">
-            <span lang="hi">{hindiTitle}</span>
-            <span className="mx-1.5 text-button-gold sm:mx-2" aria-hidden="true">
-              |
-            </span>
+            <span className=' text-black font-light' lang="hi"  >{hindiTitle}</span><br/>
+          
             <span className="text-primary">{englishTitle}</span>
           </div>
           <p className="mt-1 line-clamp-2 text-[11px] font-medium text-foreground/70 sm:text-sm">
@@ -90,9 +88,9 @@ export async function Header() {
               </span>
             )}
           </div>
-          <div className="hidden sm:block">
+          {/* <div className="hidden sm:block">
             <ThemeToggle />
-          </div>
+          </div> */}
           <div className="md:hidden">
             <MobileMenu user={user} navigation={navigation} ctaButton={ctaButton} siteName={englishTitle} />
           </div>

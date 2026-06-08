@@ -51,7 +51,7 @@ export async function PlansCoverflow() {
         )}
 
         <p className="text-center text-xs sm:text-sm text-foreground/60 mt-8">
-          Full details on{' '}
+          explore more on{' '}
           <Link
             href="/pricing"
             className="text-primary-navy underline decoration-button-gold decoration-2 underline-offset-4 hover:text-button-gold-hover font-semibold transition-colors duration-200 ease-out"

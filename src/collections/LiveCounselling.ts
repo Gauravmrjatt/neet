@@ -2,13 +2,8 @@ import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '../access/roles'
 
 const canReadLiveCounselling = ({ req: { user } }: { req: { user: any } }) => {
-  if (!user) return false
-  if (user.role === 'admin' || user.role === 'editor') return true
-  return {
-    status: {
-      in: ['scheduled', 'live'],
-    },
-  }
+  if (user?.role === 'admin' || user?.role === 'editor') return true
+  return true
 }
 
 export const LiveCounselling: CollectionConfig = {

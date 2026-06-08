@@ -28,7 +28,6 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
   const [quota, setQuota] = useState('')
   const [state, setState] = useState('')
   const [course, setCourse] = useState('')
-  const [phase, setPhase] = useState('')
 
   const [status, setStatus] = useState<FormStatus>('idle')
   const [error, setError] = useState('')
@@ -79,13 +78,17 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
         return
       }
 
+      if (!category) {
+        setError('Please select your category.')
+        setStatus('idle')
+        return
+      }
+
       try {
-        const body: Record<string, unknown> = { rank: rankNum }
-        if (category) body.category = category
+        const body: Record<string, unknown> = { rank: rankNum, category }
         if (quota) body.quota = quota
         if (state) body.state = state
         if (course) body.course = course
-        if (phase) body.phase = parseInt(phase, 10)
 
         const res = await fetch('/api/predict', {
           method: 'POST',
@@ -111,7 +114,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
         setStatus('idle')
       }
     },
-    [rank, category, quota, state, course, phase],
+    [rank, category, quota, state, course],
   )
 
   const handleReset = useCallback(() => {
@@ -125,6 +128,12 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
     () => 'flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
     [],
   )
+
+  const handleRankChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setRank(e.target.value), [])
+  const handleCategoryChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value), [])
+  const handleQuotaChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setQuota(e.target.value), [])
+  const handleStateChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setState(e.target.value), [])
+  const handleCourseChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setCourse(e.target.value), [])
 
   if (predictorUsed) {
     return (
@@ -205,7 +214,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
             max="2000000"
             placeholder="Enter your AIR (e.g. 50000)"
                 value={rank}
-                onChange={useCallback((e: React.ChangeEvent<HTMLInputElement>) => setRank(e.target.value), [])}
+                onChange={handleRankChange}
                 className="mt-1 h-10 text-sm"
                 required
                 disabled={status === 'loading'}
@@ -219,17 +228,18 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
               <Label htmlFor="category" className="text-xs font-semibold text-primary-navy">
-                Category
+                Category <span className="text-destructive">*</span>
               </Label>
               <select
                 id="category"
                 aria-label="Your category"
                 value={category}
-                onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value), [])}
+                onChange={handleCategoryChange}
                 className={cn(selectClasses, 'mt-1')}
                 disabled={status === 'loading'}
+                required
               >
-                <option value="">All Categories</option>
+                <option value="">Select Category</option>
                 {filterOptions.categories.map((cat) => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
@@ -244,7 +254,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 id="quota"
                 aria-label="Quota"
                 value={quota}
-                onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setQuota(e.target.value), [])}
+                onChange={handleQuotaChange}
                 className={cn(selectClasses, 'mt-1.5')}
                 disabled={status === 'loading'}
               >
@@ -263,7 +273,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 id="state"
                 aria-label="State"
                 value={state}
-                onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setState(e.target.value), [])}
+                onChange={handleStateChange}
                 className={cn(selectClasses, 'mt-1.5')}
                 disabled={status === 'loading'}
               >
@@ -282,32 +292,13 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 id="course"
                 aria-label="Course"
                 value={course}
-                onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setCourse(e.target.value), [])}
+                onChange={handleCourseChange}
                 className={cn(selectClasses, 'mt-1.5')}
                 disabled={status === 'loading'}
               >
                 <option value="">All Courses</option>
                 {filterOptions.courses.map((c) => (
                   <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <Label htmlFor="phase" className="text-xs font-semibold text-primary-navy">
-                Counselling Phase
-              </Label>
-              <select
-                id="phase"
-                aria-label="Counselling phase"
-                value={phase}
-                onChange={(e) => setPhase(e.target.value)}
-                className={cn(selectClasses, 'mt-1.5')}
-                disabled={status === 'loading'}
-              >
-                <option value="">All Phases</option>
-                {filterOptions.phases.map((p) => (
-                  <option key={p} value={p}>Phase {p}</option>
                 ))}
               </select>
             </div>

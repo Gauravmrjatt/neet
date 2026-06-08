@@ -21,18 +21,19 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<{ page?: string; sort?: string }>
 }) {
-  const { page: pageParam } = await searchParams
+  const { page: pageParam, sort: sortParam } = await searchParams
   const currentPage = parseInt(pageParam || '1', 10)
-  const { docs: blogs, totalPages, page: paginationPage } = await getBlogs({ page: currentPage, limit: 9 })
+  const sort = sortParam === 'oldest' ? 'publishedAt' : '-publishedAt'
+  const { docs: blogs, totalPages, page: paginationPage } = await getBlogs({ page: currentPage, limit: 9, sort })
 
   return (
     <>
       <PageHero
         badge="Insights & Guides"
         title="Blog"
-        subtitle="Latest articles, guides, and insights for NEET aspirants"
+        subtitle="Latest articles, guides, and insights for aspirants"
       />
 
       <Section tone="cream" className="relative">
@@ -44,9 +45,28 @@ export default async function BlogPage({
                   <BookOpen className="h-4 w-4 text-primary-navy" aria-hidden="true" />
                   Showing <span className="font-semibold text-primary-navy">{blogs.length}</span> of <span className="font-semibold text-primary-navy">{blogs.length * totalPages}</span> articles
                 </p>
-                <p className="text-sm text-foreground/60">
-                  Page <span className="font-semibold text-primary-navy">{paginationPage}</span> of <span className="font-semibold text-primary-navy">{totalPages}</span>
-                </p>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/blog?sort=newest${currentPage > 1 ? `&page=${currentPage}` : ''}`}
+                    className={`inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                      sort === '-publishedAt'
+                        ? 'bg-primary-navy text-white'
+                        : 'border border-border bg-card text-primary-navy hover:bg-primary-navy hover:text-white'
+                    }`}
+                  >
+                    Newest
+                  </Link>
+                  <Link
+                    href={`/blog?sort=oldest${currentPage > 1 ? `&page=${currentPage}` : ''}`}
+                    className={`inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                      sort === 'publishedAt'
+                        ? 'bg-primary-navy text-white'
+                        : 'border border-border bg-card text-primary-navy hover:bg-primary-navy hover:text-white'
+                    }`}
+                  >
+                    Oldest
+                  </Link>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-3">
@@ -122,7 +142,7 @@ export default async function BlogPage({
                 >
                   {currentPage > 1 ? (
                     <Link
-                      href={`/blog?page=${currentPage - 1}`}
+                      href={`/blog?page=${currentPage - 1}${sortParam ? `&sort=${sortParam}` : ''}`}
                       className="inline-flex items-center gap-1.5 rounded-2xl border border-border bg-card px-4 py-2 text-sm font-semibold text-primary-navy shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md"
                     >
                       <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -141,7 +161,7 @@ export default async function BlogPage({
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                     <Link
                       key={p}
-                      href={`/blog?page=${p}`}
+                      href={`/blog?page=${p}${sortParam ? `&sort=${sortParam}` : ''}`}
                       aria-current={p === currentPage ? 'page' : undefined}
                       className={cn(
                         'inline-flex h-10 min-w-10 items-center justify-center rounded-2xl px-3 text-sm font-semibold transition-all duration-200 ease-out',
@@ -156,7 +176,7 @@ export default async function BlogPage({
 
                   {currentPage < totalPages ? (
                     <Link
-                      href={`/blog?page=${currentPage + 1}`}
+                      href={`/blog?page=${currentPage + 1}${sortParam ? `&sort=${sortParam}` : ''}`}
                       className="inline-flex items-center gap-1.5 rounded-2xl border border-border bg-card px-4 py-2 text-sm font-semibold text-primary-navy shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md"
                     >
                       Next

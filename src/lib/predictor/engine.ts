@@ -4,11 +4,12 @@ import type { AllotmentRecord, PredictionResult, PredictRequest, Chance } from '
 const CHANCE_HIGH: Chance = 'High'
 const CHANCE_GOOD: Chance = 'Good'
 const CHANCE_LOW: Chance = 'Low'
-const CHANCE_THRESHOLD = 1.07
+const CHANCE_GOOD_THRESHOLD = 1.07
+const CHANCE_LOW_THRESHOLD = 1.15
 
 function classifyChance(rank: number, closingRank: number): Chance {
   if (rank <= closingRank) return CHANCE_HIGH
-  if (rank <= closingRank * CHANCE_THRESHOLD) return CHANCE_GOOD
+  if (rank <= closingRank * CHANCE_GOOD_THRESHOLD) return CHANCE_GOOD
   return CHANCE_LOW
 }
 
@@ -16,7 +17,7 @@ export function predict(request: PredictRequest): {
   results: PredictionResult[]
   summary: { high: number; good: number; low: number }
 } {
-  const { rank, category, quota, state, course, phase } = request
+  const { rank, category, quota, state, course } = request
 
   let filtered: AllotmentRecord[] = [...(allotmentData as AllotmentRecord[])]
 
@@ -36,9 +37,8 @@ export function predict(request: PredictRequest): {
     const c = course.toLowerCase()
     filtered = filtered.filter((r) => r.course.toLowerCase() === c)
   }
-  if (phase !== undefined && phase !== null) {
-    filtered = filtered.filter((r) => r.phase === phase)
-  }
+
+  filtered = filtered.filter((r) => rank <= r.rank * CHANCE_LOW_THRESHOLD)
 
   const results: PredictionResult[] = filtered
     .map((r) => ({
@@ -52,7 +52,7 @@ export function predict(request: PredictRequest): {
       phase: r.phase,
       chance: classifyChance(rank, r.rank),
     }))
-    .sort((a, b) => b.closingRank - a.closingRank)
+    .sort((a, b) => a.closingRank - b.closingRank)
 
   const high = results.filter((r) => r.chance === CHANCE_HIGH).length
   const good = results.filter((r) => r.chance === CHANCE_GOOD).length

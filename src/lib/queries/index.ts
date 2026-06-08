@@ -17,7 +17,7 @@ export {
   hasActiveOrPendingSubscription,
   markPredictorUsed,
 } from './subscriptions'
-export { getHeader, getFooter, getSiteSettings, getHomePageSEO } from './globals'
+export { getHeader, getFooter, getSiteSettings, getHomePageSEO, getVideoCategories } from './globals'
 export {
   findTransactionByRazorpayOrderId,
   findTransactionById,

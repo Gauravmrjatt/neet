@@ -19,6 +19,7 @@ export async function seedDefaultGlobals(payload: Payload): Promise<void> {
             { label: 'Blog', link: '/blog' },
             { label: 'Videos', link: '/videos' },
             { label: 'Counsellors', link: '/counsellors' },
+            { label: 'Live Counselling', link: '/live-counselling' },
             { label: 'Helpdesk', link: '/helpdesk' },
             { label: 'About', link: '/about' },
             { label: 'Contact', link: '/contact' },

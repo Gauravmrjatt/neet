@@ -28,9 +28,9 @@ export async function Navbar() {
   return (
     <nav
       aria-label="Primary"
-      className="sticky top-[88px] z-30 hidden w-full border-b border-border/70 bg-navbar-bg/95 text-primary shadow-sm backdrop-blur-md md:block lg:top-[96px]"
+      className="max-w-6xl mx-auto sticky top-[80px] z-30 hidden w-full border-b border-border/70 text-primary  backdrop-blur-md md:block lg:top-[9px]"
     >
-      <div className="mx-auto flex h-12 max-w-7xl items-center gap-1 overflow-x-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-12 max-w-6xl items-center gap-1 overflow-x-auto ">
         {visibleItems.map((item: any) => {
           if (item.link === '/logout') {
             return <LogoutButton key="logout" label={item.label} />

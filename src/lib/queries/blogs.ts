@@ -7,11 +7,13 @@ export const getBlogs = cache(async ({
   page = 1,
   category,
   status = 'published',
+  sort = '-publishedAt',
 }: {
   limit?: number
   page?: number
   category?: string
   status?: 'draft' | 'published'
+  sort?: string
 } = {}) => {
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: status } }
@@ -22,7 +24,7 @@ export const getBlogs = cache(async ({
     where,
     limit,
     page,
-    sort: '-publishedAt',
+    sort,
   })
 })
 

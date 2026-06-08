@@ -78,6 +78,7 @@ export interface Config {
     pages: Page;
     subscriptions: Subscription;
     transactions: Transaction;
+    'contact-submissions': ContactSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -96,6 +97,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     subscriptions: SubscriptionsSelect<false> | SubscriptionsSelect<true>;
     transactions: TransactionsSelect<false> | TransactionsSelect<true>;
+    'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -112,6 +114,7 @@ export interface Config {
     'home-page-seo': HomePageSeo;
     'news-ticker': NewsTicker;
     'about-page': AboutPage;
+    'video-categories': VideoCategory;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -120,6 +123,7 @@ export interface Config {
     'home-page-seo': HomePageSeoSelect<false> | HomePageSeoSelect<true>;
     'news-ticker': NewsTickerSelect<false> | NewsTickerSelect<true>;
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
+    'video-categories': VideoCategoriesSelect<false> | VideoCategoriesSelect<true>;
   };
   locale: null;
   widgets: {
@@ -686,6 +690,21 @@ export interface Transaction {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions".
+ */
+export interface ContactSubmission {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  subject?: string | null;
+  message: string;
+  submittedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -751,6 +770,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'transactions';
         value: string | Transaction;
+      } | null)
+    | ({
+        relationTo: 'contact-submissions';
+        value: string | ContactSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1124,6 +1147,20 @@ export interface TransactionsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions_select".
+ */
+export interface ContactSubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  subject?: T;
+  message?: T;
+  submittedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1298,6 +1335,14 @@ export interface SiteSetting {
     leftText?: string | null;
     rightText?: string | null;
   };
+  /**
+   * Homepage notification banner displayed below the hero section
+   */
+  notificationBar?: {
+    text?: string | null;
+    link?: string | null;
+    isEnabled?: boolean | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1463,6 +1508,22 @@ export interface AboutPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-categories".
+ */
+export interface VideoCategory {
+  id: string;
+  items?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1582,6 +1643,13 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         leftText?: T;
         rightText?: T;
       };
+  notificationBar?:
+    | T
+    | {
+        text?: T;
+        link?: T;
+        isEnabled?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1695,6 +1763,22 @@ export interface AboutPageSelect<T extends boolean = true> {
               id?: T;
             };
         noIndex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-categories_select".
+ */
+export interface VideoCategoriesSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

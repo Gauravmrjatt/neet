@@ -98,5 +98,21 @@ export const SiteSettings: GlobalConfig = {
         { name: 'rightText', type: 'text', defaultValue: 'शिक्षा मंत्रालय / Ministry of Education' },
       ],
     },
+    {
+      name: 'notificationBar',
+      type: 'group',
+      admin: {
+        description: 'Homepage notification banner displayed below the hero section',
+      },
+      fields: [
+        {
+          name: 'text',
+          type: 'text',
+          defaultValue: '📢  नवीनतम JOSAA अपडेट्स & गाइड्स के लिए हमारा ब्लॉग देखें  |  Visit our Blog for Latest NEET & JOSAA Updates',
+        },
+        { name: 'link', type: 'text', defaultValue: '/blog' },
+        { name: 'isEnabled', type: 'checkbox', defaultValue: true },
+      ],
+    },
   ],
 }

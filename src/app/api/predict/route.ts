@@ -61,17 +61,17 @@ export async function POST(request: Request) {
     const state = sanitize(body.state)
     const course = sanitize(body.course)
 
-    const phase =
-      typeof body.phase === 'number' && Number.isFinite(body.phase) && body.phase >= 0
-        ? Math.floor(body.phase)
-        : undefined
+    if (!category) {
+      return NextResponse.json(
+        { error: 'Category is required.' },
+        { status: 400 },
+      )
+    }
 
-    const filtered: PredictRequest = { rank: Math.floor(body.rank) }
-    if (category) filtered.category = category
+    const filtered: PredictRequest = { rank: Math.floor(body.rank), category }
     if (quota) filtered.quota = quota
     if (state) filtered.state = state
     if (course) filtered.course = course
-    if (phase !== undefined) filtered.phase = phase
 
     // --- Predict (engine already imports data at module scope) ---
     const { results, summary } = predict(filtered)

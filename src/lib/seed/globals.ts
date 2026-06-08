@@ -19,6 +19,7 @@ async function seedGlobals() {
         { label: 'Blog', link: '/blog', showWhen: 'always' },
         { label: 'Videos', link: '/videos', showWhen: 'always' },
         { label: 'Counsellors', link: '/counsellors', showWhen: 'always' },
+        { label: 'Live Counselling', link: '/live-counselling', showWhen: 'always' },
         { label: 'Helpdesk', link: '/helpdesk', showWhen: 'always' },
         { label: 'About', link: '/about', showWhen: 'always' },
         { label: 'Contact', link: '/contact', showWhen: 'always' },

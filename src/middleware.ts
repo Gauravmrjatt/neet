@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const cookieProtectedRoutes = ['/live-counselling', '/admin/custom']
+const cookieProtectedRoutes = ['/admin/custom']
 
 const DEBUG_AUTH =
   process.env.DEBUG_AUTH === 'true' || process.env.NODE_ENV !== 'production'

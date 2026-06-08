@@ -25,11 +25,10 @@ export interface PredictionResult {
 
 export interface PredictRequest {
   rank: number
-  category?: string
+  category: string
   quota?: string
   state?: string
   course?: string
-  phase?: number
 }
 
 export interface PredictResponse {

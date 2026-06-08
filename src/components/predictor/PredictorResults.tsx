@@ -1,12 +1,13 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import type { PredictResponse } from '@/lib/predictor/types'
+import type { PredictResponse, PredictionResult } from '@/lib/predictor/types'
+import { SecondaryFilters } from './SecondaryFilters'
 
 interface PredictorResultsProps {
   response: PredictResponse
@@ -120,6 +121,11 @@ const SummaryCard = React.memo(function SummaryCard({
 
 export const PredictorResults = React.memo(function PredictorResults({ response, onReset }: PredictorResultsProps) {
   const { results, summary, total, premium } = response
+  const [displayResults, setDisplayResults] = useState<PredictionResult[]>(results)
+
+  const handleFilterChange = useCallback((filtered: PredictionResult[]) => {
+    setDisplayResults(filtered)
+  }, [])
 
   if (results.length === 0) {
     return (
@@ -161,6 +167,8 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
           <SummaryCard key={card.label} {...card} />
         ))}
       </div>
+
+      <SecondaryFilters results={results} onFilterChange={handleFilterChange} />
 
       <div
         className={cn(
@@ -212,22 +220,32 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
               </tr>
             </thead>
             <tbody>
-              <ResultRow result={results[0]} index={0} />
+              {displayResults.length > 0 ? (
+                <>
+                  <ResultRow result={displayResults[0]} index={0} />
 
-              {!premium && total > 1 && (
-                <UnlockPremiumPanel total={total} />
+                  {!premium && displayResults.length > 1 && (
+                    <UnlockPremiumPanel total={displayResults.length} />
+                  )}
+
+                  {premium && displayResults.slice(1).map((result, i) => (
+                    <ResultRow key={`${result.institute}-${i}`} result={result} index={i + 1} />
+                  ))}
+                </>
+              ) : (
+                <tr>
+                  <td colSpan={8} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                    No colleges match your current filters. Try adjusting your filter selections.
+                  </td>
+                </tr>
               )}
-
-              {premium && results.slice(1).map((result, i) => (
-                <ResultRow key={`${result.institute}-${i}`} result={result} index={i + 1} />
-              ))}
             </tbody>
           </table>
         </div>
 
         {premium && (
           <div className="border-t border-border px-4 py-3 text-center text-xs text-muted-foreground">
-            Showing all {total.toLocaleString('en-IN')} result{total !== 1 ? 's' : ''}.
+            Showing all {displayResults.length.toLocaleString('en-IN')} of {total.toLocaleString('en-IN')} result{total !== 1 ? 's' : ''}.
           </div>
         )}
       </div>

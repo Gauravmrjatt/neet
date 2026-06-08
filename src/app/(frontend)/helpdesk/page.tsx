@@ -1,6 +1,6 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import { getHelpdeskItems } from '@/lib/queries'
+import { getHelpdeskItems, getSiteSettings } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateFAQSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -29,7 +29,10 @@ function getAnswerText(answer: any): string {
 }
 
 export default async function HelpdeskPage() {
-  const { docs: items } = await getHelpdeskItems()
+  const [{ docs: items }, settings] = await Promise.all([
+    getHelpdeskItems(),
+    getSiteSettings(),
+  ])
 
   const faqItems = items.map((item: any) => ({
     question: item.question,
@@ -53,7 +56,12 @@ export default async function HelpdeskPage() {
       <Section className="bg-card">
         <Container className="max-w-3xl">
           {items.length > 0 ? (
-            <HelpdeskSearch items={helpdeskItems} />
+            <HelpdeskSearch
+              items={helpdeskItems}
+              contactEmail={settings?.contactEmail}
+              phone={settings?.phone}
+              address={settings?.address}
+            />
           ) : (
             <div className="mx-auto max-w-md rounded-lg border border-dashed border-border bg-card p-12 text-center">
               <p className="text-lg font-semibold text-primary-navy">No help articles available yet</p>

@@ -1,6 +1,6 @@
 import { cache } from 'react'
 import { getPayloadClient } from '../payload'
-import type { Header, Footer, SiteSetting, HomePageSeo } from '@/payload-types'
+import type { Header, Footer, SiteSetting, HomePageSeo, VideoCategory } from '@/payload-types'
 
 export const getHeader = cache(async (): Promise<Header> => {
   const payload = await getPayloadClient()
@@ -20,4 +20,9 @@ export const getSiteSettings = cache(async (): Promise<SiteSetting> => {
 export const getHomePageSEO = cache(async (): Promise<HomePageSeo> => {
   const payload = await getPayloadClient()
   return payload.findGlobal({ slug: 'home-page-seo' })
+})
+
+export const getVideoCategories = cache(async (): Promise<VideoCategory> => {
+  const payload = await getPayloadClient()
+  return payload.findGlobal({ slug: 'video-categories' })
 })
