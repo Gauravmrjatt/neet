@@ -6,17 +6,18 @@ export const getCounselors = cache(async ({
   specialization,
   status = 'active',
 }: {
-  specialization?: 'jee' | 'neet' | 'josaa' | 'general'
+  specialization?: string
   status?: 'active' | 'inactive'
 } = {}) => {
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: status } }
-  if (specialization) where['specializations.specialization'] = { equals: specialization }
+  if (specialization) where['specializations.specialization.slug'] = { equals: specialization }
 
   return payload.find({
     collection: 'counselors',
     where,
     sort: 'order',
+    depth: 1,
   })
 })
 

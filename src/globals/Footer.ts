@@ -106,5 +106,15 @@ export const Footer: GlobalConfig = {
       type: 'text',
       defaultValue: 'Content Owned and Maintained by NEET Counselling',
     },
+    {
+      name: 'businessHours',
+      type: 'text',
+      defaultValue: 'Mon\u2013Sat, 10:00\u201318:00 IST',
+    },
+    {
+      name: 'supportEmail',
+      type: 'text',
+      defaultValue: 'support@neetcounselling.example',
+    },
   ],
 }

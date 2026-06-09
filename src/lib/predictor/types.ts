@@ -33,6 +33,7 @@ export interface PredictRequest {
 
 export interface PredictResponse {
   premium: boolean
+  creditsRemaining: number
   total: number
   summary: {
     high: number

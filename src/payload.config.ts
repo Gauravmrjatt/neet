@@ -17,6 +17,7 @@ import { Pages } from './collections/Pages'
 import { Subscriptions } from './collections/Subscriptions'
 import { Transactions } from './collections/Transactions'
 import { ContactSubmissions } from './collections/ContactSubmissions'
+import { Specializations } from './collections/Specializations'
 
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
@@ -25,6 +26,7 @@ import { HomePageSEO } from './globals/HomePageSEO'
 import { NewsTicker } from './globals/NewsTicker'
 import { AboutPage } from './globals/AboutPage'
 import { VideoCategories } from './globals/VideoCategories'
+import { Testimonials } from './globals/Testimonials'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -49,8 +51,9 @@ export default buildConfig({
     Subscriptions,
     Transactions,
     ContactSubmissions,
+    Specializations,
   ],
-  globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker, AboutPage, VideoCategories],
+  globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker, AboutPage, VideoCategories, Testimonials],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || (() => { throw new Error('PAYLOAD_SECRET environment variable is required') })(),
   typescript: {

@@ -120,7 +120,7 @@ const SummaryCard = React.memo(function SummaryCard({
 })
 
 export const PredictorResults = React.memo(function PredictorResults({ response, onReset }: PredictorResultsProps) {
-  const { results, summary, total, premium } = response
+  const { results, summary, total, premium, creditsRemaining } = response
   const [displayResults, setDisplayResults] = useState<PredictionResult[]>(results)
 
   const handleFilterChange = useCallback((filtered: PredictionResult[]) => {
@@ -182,9 +182,8 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
         <div className="flex-1">
           {premium ? (
             <>
-              <span className="font-semibold">Results are shown once.</span>{' '}
-              Do not refresh or leave this page — your data will be lost and you'll need to
-              purchase again.
+              <span className="font-semibold">{creditsRemaining} prediction{creditsRemaining !== 1 ? 's' : ''} remaining</span>{' '}
+              after this one. Do not refresh or leave this page — your current results will be lost.
             </>
           ) : (
             <>
@@ -267,7 +266,7 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
 
       <p className="text-center text-xs text-muted-foreground/70">
         Predictions are based on previous year closing ranks from official MCC data. Actual cutoffs
-        may vary. This is not a guarantee of admission.
+        may vary. This is not a guarantee of admission. Each prediction uses 1 credit.
       </p>
     </div>
   )

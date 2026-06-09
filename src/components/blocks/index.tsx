@@ -9,6 +9,9 @@ import { RichTextBlock } from './RichTextBlock'
 import { VideoBlock } from './VideoBlock'
 import { CounsellorBlock } from './CounsellorBlock'
 import { HelpdeskBlock } from './HelpdeskBlock'
+import { ImageBlock } from './ImageBlock'
+import { QuoteBlock } from './QuoteBlock'
+import { AlertBlock } from './AlertBlock'
 
 const blockComponents: Record<string, React.ComponentType<any>> = {
   hero: HeroBlock,
@@ -23,6 +26,13 @@ const blockComponents: Record<string, React.ComponentType<any>> = {
   'counsellor-block': CounsellorBlock,
   'helpdesk-block': HelpdeskBlock,
   'rich-text-block': RichTextBlock,
+  imageBlock: ImageBlock,
+  'quote-block': QuoteBlock,
+  quoteBlock: QuoteBlock,
+  'cta-block': CTABlock,
+  ctaBlock: CTABlock,
+  'alert-block': AlertBlock,
+  alertBlock: AlertBlock,
 }
 
 export function BlockRenderer({ blocks }: { blocks: any[] }) {

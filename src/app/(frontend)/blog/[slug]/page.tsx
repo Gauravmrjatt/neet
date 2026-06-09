@@ -8,6 +8,7 @@ import { generateBlogMetadata } from '@/lib/seo'
 import { generateBlogPostingSchema, generateBreadcrumbSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { RichText } from '@/components/shared/RichText'
+import { BlockRenderer } from '@/components/blocks'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { formatDate } from '@/lib/utils'
@@ -144,6 +145,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <div className="prose prose-lg max-w-none prose-headings:text-primary-navy prose-a:text-primary-navy prose-a:no-underline hover:prose-a:underline">
               <RichText content={blog.content} />
             </div>
+            {blog.blocks && blog.blocks.length > 0 && (
+              <div className="mt-8">
+                <BlockRenderer blocks={blog.blocks} />
+              </div>
+            )}
           </Container>
         </Section>
 

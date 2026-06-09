@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { getPayloadClient } from '@/lib/payload'
 import { getRazorpayInstance, getRazorpayKeyId } from '@/lib/razorpay'
-import { hasActiveOrPendingSubscription } from '@/lib/queries'
 import { getPricingCardById } from '@/lib/queries/pricing'
 
 export async function POST(request: Request) {
@@ -24,14 +23,6 @@ export async function POST(request: Request) {
     const plan = await getPricingCardById(planId)
     if (!plan) {
       return NextResponse.json({ error: 'Plan not found' }, { status: 404 })
-    }
-
-    const alreadyPurchased = await hasActiveOrPendingSubscription(user.id)
-    if (alreadyPurchased) {
-      return NextResponse.json(
-        { error: 'You already have an active or pending subscription' },
-        { status: 409 },
-      )
     }
 
     const payload = await getPayloadClient()

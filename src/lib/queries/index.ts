@@ -13,9 +13,11 @@ export { getPricingCards, getPricingCardById } from './pricing'
 export { getPageBySlug } from './pages'
 export {
   getUserSubscription,
-  getActiveSubscription,
+  getUserSubscriptions,
+  getActiveSubscriptions,
+  getTotalCredits,
+  decrementCredits,
   hasActiveOrPendingSubscription,
-  markPredictorUsed,
 } from './subscriptions'
 export { getHeader, getFooter, getSiteSettings, getHomePageSEO, getVideoCategories } from './globals'
 export {

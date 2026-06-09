@@ -79,6 +79,7 @@ export interface Config {
     subscriptions: Subscription;
     transactions: Transaction;
     'contact-submissions': ContactSubmission;
+    specializations: Specialization;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -98,6 +99,7 @@ export interface Config {
     subscriptions: SubscriptionsSelect<false> | SubscriptionsSelect<true>;
     transactions: TransactionsSelect<false> | TransactionsSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
+    specializations: SpecializationsSelect<false> | SpecializationsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -115,6 +117,7 @@ export interface Config {
     'news-ticker': NewsTicker;
     'about-page': AboutPage;
     'video-categories': VideoCategory;
+    testimonials: Testimonial;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -124,6 +127,7 @@ export interface Config {
     'news-ticker': NewsTickerSelect<false> | NewsTickerSelect<true>;
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
     'video-categories': VideoCategoriesSelect<false> | VideoCategoriesSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -233,6 +237,113 @@ export interface Blog {
     };
     [k: string]: unknown;
   } | null;
+  blocks?:
+    | (
+        | {
+            heading?: string | null;
+            body?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentBlock';
+          }
+        | {
+            image: string | Media;
+            caption?: string | null;
+            alignment?: ('left' | 'center' | 'right') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'imageBlock';
+          }
+        | {
+            title?: string | null;
+            videoUrl: string;
+            thumbnail?: (string | null) | Media;
+            description?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'videoBlock';
+          }
+        | {
+            quote: string;
+            author?: string | null;
+            style?: ('default' | 'highlight' | 'border') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'quoteBlock';
+          }
+        | {
+            heading: string;
+            description?: string | null;
+            buttonText: string;
+            buttonLink: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ctaBlock';
+          }
+        | {
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            type?: ('info' | 'warning' | 'success' | 'error') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'alertBlock';
+          }
+        | {
+            title?: string | null;
+            items?:
+              | {
+                  question: string;
+                  answer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqBlock';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  title: string;
+                  description?: string | null;
+                  icon?: (string | null) | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'features';
+          }
+      )[]
+    | null;
   featuredImage?: (string | null) | Media;
   author?: (string | null) | User;
   categories?:
@@ -280,6 +391,10 @@ export interface PricingCard {
    * Numeric price in paise for Razorpay (e.g., 239900 for ₹2399). 100 paise = ₹1.
    */
   priceInPaise: number;
+  /**
+   * Number of AI college predictions a user gets with this plan
+   */
+  predictionCredits: number;
   /**
    * Strikethrough price (e.g., "₹2999"). Leave empty for no strikethrough.
    */
@@ -397,7 +512,7 @@ export interface Counselor {
   image?: (string | null) | Media;
   specializations?:
     | {
-        specialization?: ('jee' | 'neet' | 'josaa' | 'general') | null;
+        specialization?: (string | null) | Specialization;
         id?: string | null;
       }[]
     | null;
@@ -412,6 +527,18 @@ export interface Counselor {
    */
   order?: number | null;
   status: 'active' | 'inactive';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "specializations".
+ */
+export interface Specialization {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -622,9 +749,13 @@ export interface Subscription {
    */
   assignedAt?: string | null;
   /**
-   * Auto-set after premium user uses their one-time AI college predictor
+   * Total credits granted with this plan (auto-set from plan on creation)
    */
-  predictorUsed?: boolean | null;
+  creditsTotal?: number | null;
+  /**
+   * Remaining prediction credits (decremented on each use)
+   */
+  creditsRemaining?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -774,6 +905,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'contact-submissions';
         value: string | ContactSubmission;
+      } | null)
+    | ({
+        relationTo: 'specializations';
+        value: string | Specialization;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -877,6 +1012,93 @@ export interface BlogsSelect<T extends boolean = true> {
   slug?: T;
   excerpt?: T;
   content?: T;
+  blocks?:
+    | T
+    | {
+        contentBlock?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              id?: T;
+              blockName?: T;
+            };
+        imageBlock?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              alignment?: T;
+              id?: T;
+              blockName?: T;
+            };
+        videoBlock?:
+          | T
+          | {
+              title?: T;
+              videoUrl?: T;
+              thumbnail?: T;
+              description?: T;
+              id?: T;
+              blockName?: T;
+            };
+        quoteBlock?:
+          | T
+          | {
+              quote?: T;
+              author?: T;
+              style?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ctaBlock?:
+          | T
+          | {
+              heading?: T;
+              description?: T;
+              buttonText?: T;
+              buttonLink?: T;
+              id?: T;
+              blockName?: T;
+            };
+        alertBlock?:
+          | T
+          | {
+              content?: T;
+              type?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqBlock?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        features?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    icon?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+      };
   featuredImage?: T;
   author?: T;
   categories?:
@@ -913,6 +1135,7 @@ export interface PricingCardsSelect<T extends boolean = true> {
   subtitle?: T;
   price?: T;
   priceInPaise?: T;
+  predictionCredits?: T;
   originalPrice?: T;
   discount?: T;
   badge?: T;
@@ -1119,7 +1342,8 @@ export interface SubscriptionsSelect<T extends boolean = true> {
   assignedPage?: T;
   purchasedAt?: T;
   assignedAt?: T;
-  predictorUsed?: T;
+  creditsTotal?: T;
+  creditsRemaining?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1156,6 +1380,17 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   subject?: T;
   message?: T;
   submittedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "specializations_select".
+ */
+export interface SpecializationsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1276,6 +1511,8 @@ export interface Footer {
     | null;
   copyright?: string | null;
   creditsText?: string | null;
+  businessHours?: string | null;
+  supportEmail?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1524,6 +1761,25 @@ export interface VideoCategory {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: string;
+  testimonials?:
+    | {
+        name: string;
+        quote: string;
+        image?: (string | null) | Media;
+        designation?: string | null;
+        rating: number;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1591,6 +1847,8 @@ export interface FooterSelect<T extends boolean = true> {
       };
   copyright?: T;
   creditsText?: T;
+  businessHours?: T;
+  supportEmail?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1778,6 +2036,25 @@ export interface VideoCategoriesSelect<T extends boolean = true> {
     | {
         label?: T;
         value?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  testimonials?:
+    | T
+    | {
+        name?: T;
+        quote?: T;
+        image?: T;
+        designation?: T;
+        rating?: T;
         id?: T;
       };
   updatedAt?: T;

@@ -86,6 +86,8 @@ async function seedGlobals() {
       ],
       copyright: '© 2025 NEET Counselling. All rights reserved.',
       creditsText: 'Content Owned and Maintained by NEET Counselling',
+      businessHours: 'Mon–Sat, 10:00–18:00 IST',
+      supportEmail: 'support@neetcounselling.example',
     },
   })
   console.log('✅ Footer seeded')

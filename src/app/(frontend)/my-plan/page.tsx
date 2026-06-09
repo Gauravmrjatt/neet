@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
-import { getUserSubscription } from '@/lib/queries'
+import { getUserSubscriptions } from '@/lib/queries'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import dynamic from 'next/dynamic'
@@ -16,11 +16,11 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
-import type { Counselor, Page, PricingCard } from '@/payload-types'
+import type { Counselor, Page, PricingCard, Subscription } from '@/payload-types'
 
 export const metadata: Metadata = {
   title: 'My Plan',
-  description: 'Your personalized counselling plan dashboard',
+  description: 'Your personalised counselling plan dashboard',
   robots: { index: false, follow: false },
 }
 
@@ -42,6 +42,101 @@ function isPage(value: unknown): value is Page {
   return typeof value === 'object' && value !== null && 'content' in value
 }
 
+function SubscriptionCard({ subscription }: { subscription: Subscription }) {
+  const plan = subscription.plan
+  const planName = getPlanName(plan)
+  const planSubtitle = getPlanSubtitle(plan)
+  const status = subscription.status
+  const purchasedAt = subscription.purchasedAt
+  const isActive = status === 'active'
+  const creditsTotal = subscription.creditsTotal || 0
+  const creditsRemaining = subscription.creditsRemaining || 0
+  const hasCredits = creditsRemaining > 0
+  const counselor = isCounselor(subscription.assignedCounselor) ? subscription.assignedCounselor : null
+  const assignedPage = isPage(subscription.assignedPage) ? subscription.assignedPage : null
+  const creditsUsed = creditsTotal - creditsRemaining
+  const creditsPercent = creditsTotal > 0 ? Math.round((creditsRemaining / creditsTotal) * 100) : 0
+
+  return (
+    <Card className="border-border bg-card shadow-md">
+      <CardHeader className="border-b border-border bg-primary-navy/[0.04]">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <CardTitle className="text-xl font-bold text-primary-navy">{planName}</CardTitle>
+            {planSubtitle && <p className="mt-1 text-sm text-muted-foreground">{planSubtitle}</p>}
+          </div>
+          <Badge
+            className={`shrink-0 border-0 px-3 py-1 text-xs font-semibold tracking-wider uppercase ${
+              isActive && hasCredits
+                ? 'bg-green-100 text-green-700 hover:bg-green-100'
+                : isActive
+                  ? 'bg-amber-100 text-amber-700 hover:bg-amber-100'
+                  : 'bg-button-gold/20 text-button-gold hover:bg-button-gold/20'
+            }`}
+          >
+            {isActive ? (hasCredits ? 'Active' : 'No Credits Left') : 'Pending'}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4 pt-6">
+        {purchasedAt && (
+          <p className="text-sm text-muted-foreground">
+            Purchased on {formatDate(purchasedAt)}
+          </p>
+        )}
+
+        {/* Credits display */}
+        <div className="rounded-lg border border-primary-navy/10 bg-primary-navy/[0.03] p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-semibold text-primary-navy">AI Predictions</span>
+            <span className="text-sm font-bold text-primary-navy">
+              {creditsRemaining} of {creditsTotal} remaining
+            </span>
+          </div>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-primary-navy/10">
+            <div
+              className="h-full rounded-full bg-button-gold transition-all"
+              style={{ width: `${creditsPercent}%` }}
+            />
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            {creditsUsed} prediction{creditsUsed !== 1 ? 's' : ''} used
+          </p>
+        </div>
+
+        {/* Counselor */}
+        {counselor && (
+          <div className="pt-2">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary-navy/70">
+              Your Counselor
+            </p>
+            <CounselorCard counselor={counselor} />
+          </div>
+        )}
+
+        {/* Assigned page content */}
+        {assignedPage?.content && assignedPage.content.length > 0 && (
+          <div className="pt-2">
+            <BlockRenderer blocks={assignedPage.content} />
+          </div>
+        )}
+
+        {/* Action buttons */}
+        <div className="flex flex-wrap gap-3 pt-2">
+          {isActive && hasCredits && (
+            <Button asChild className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-semibold">
+              <Link href="/predictor">Use Predictor</Link>
+            </Button>
+          )}
+          <Button asChild variant="outline" className="border-primary-navy/30 text-primary-navy">
+            <Link href="/pricing">Buy Another Plan</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 export default async function MyPlanPage() {
   const user = await getCurrentUser()
 
@@ -49,25 +144,11 @@ export default async function MyPlanPage() {
     redirect('/login?redirect=/my-plan')
   }
 
-  const subscription = await getUserSubscription(user.id)
-
-  // State B: No subscription
-  if (!subscription) {
-    redirect('/pricing?reason=no-plan')
-  }
-
-  const plan = subscription.plan
-  const planName = getPlanName(plan)
-  const planSubtitle = getPlanSubtitle(plan)
-  const status = subscription.status
-  const purchasedAt = subscription.purchasedAt
-  const isActive = status === 'active' && isCounselor(subscription.assignedCounselor)
-  const counselor = isCounselor(subscription.assignedCounselor) ? subscription.assignedCounselor : null
-  const assignedPage = isPage(subscription.assignedPage) ? subscription.assignedPage : null
+  const subscriptions = await getUserSubscriptions(user.id)
 
   return (
     <>
-      {/* Plan Info Banner - always visible */}
+      {/* Header Banner */}
       <section className="relative overflow-hidden bg-primary-navy py-12 sm:py-16 text-white">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-button-gold blur-3xl" />
@@ -76,20 +157,15 @@ export default async function MyPlanPage() {
         <Container className="relative">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <Badge
-                className={`mb-3 border-0 px-3 py-1 text-xs font-semibold tracking-wider uppercase ${
-                  isActive
-                    ? 'bg-green-300/20 text-green-200 hover:bg-green-300/20'
-                    : 'bg-button-gold/20 text-button-gold hover:bg-button-gold/20'
-                }`}
-              >
-                {isActive ? 'Active' : 'Pending Assignment'}
+              <Badge className="mb-3 border-0 bg-white/10 px-3 py-1 text-xs font-semibold tracking-wider uppercase hover:bg-white/10">
+                My Plans
               </Badge>
-              <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{planName}</h1>
-              {planSubtitle && <p className="mt-2 text-base text-white/80">{planSubtitle}</p>}
-              {purchasedAt && (
-                <p className="mt-3 text-sm text-white/60">
-                  Purchased on {formatDate(purchasedAt)}
+              <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+                {subscriptions.length > 0 ? 'Your Counselling Plans' : 'No Plans Yet'}
+              </h1>
+              {subscriptions.length > 0 && (
+                <p className="mt-2 text-base text-white/80">
+                  You have {subscriptions.length} plan{subscriptions.length !== 1 ? 's' : ''} purchased
                 </p>
               )}
             </div>
@@ -104,104 +180,38 @@ export default async function MyPlanPage() {
         </Container>
       </section>
 
-      {/* State C: Pending - waiting for assignment */}
-      {!isActive && (
-        <Section className="bg-navbar-bg/30">
-          <Container className="max-w-3xl">
+      <Section className="bg-navbar-bg/30">
+        <Container className="max-w-3xl">
+          {/* No subscriptions state */}
+          {subscriptions.length === 0 && (
             <Card className="border-border bg-card shadow-md">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-primary-navy">
-                  Your Counselor is Being Assigned
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-base leading-relaxed text-foreground/80">
-                  Thank you for purchasing the{' '}
-                  <strong className="text-primary-navy">{planName}</strong> plan. Our team is
-                  reviewing your purchase and will assign a dedicated counselor to you shortly.
+              <CardContent className="py-16 text-center">
+                <div className="mb-4 text-5xl">📋</div>
+                <CardTitle className="mb-2 text-xl text-primary-navy">No Plans Purchased Yet</CardTitle>
+                <p className="mx-auto mb-6 max-w-md text-sm leading-relaxed text-muted-foreground">
+                  You haven&apos;t purchased any counselling plans yet. Browse our plans to get started with
+                  personalised college predictions and dedicated counsellor support.
                 </p>
-                <p className="text-base leading-relaxed text-foreground/80">
-                  Once your counselor is assigned and your personalized plan page is ready, you&apos;ll
-                  have full access to:
-                </p>
-                <ul className="ml-2 space-y-2 text-sm text-foreground/80">
-                  <li className="flex items-start">
-                    <span className="mr-2 text-button-gold">✓</span>
-                    Your dedicated counselor&apos;s contact details
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2 text-button-gold">✓</span>
-                    Personalized plan content curated for you
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2 text-button-gold">✓</span>
-                    All premium resources and guidance
-                  </li>
-                </ul>
-                <div className="rounded-md border border-primary-navy/20 bg-primary-navy/5 p-4 text-sm text-foreground/80">
-                  <strong className="text-primary-navy">Need help?</strong> Contact our support team
-                  if you have any questions about your purchase.
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <Button
-                    asChild
-                    className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-semibold"
-                  >
-                    <Link href="/contact">Contact Support</Link>
-                  </Button>
-                  <Button asChild variant="outline" className="border-primary-navy/30 text-primary-navy">
-                    <Link href="/">Back to Home</Link>
-                  </Button>
-                </div>
+                <Button
+                  asChild
+                  className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-bold"
+                >
+                  <Link href="/pricing">Browse Plans</Link>
+                </Button>
               </CardContent>
             </Card>
-          </Container>
-        </Section>
-      )}
-
-      {/* State D: Active - render counselor + page content */}
-      {isActive && (
-        <>
-          {/* Counselor Section */}
-          {counselor && (
-            <Section className="bg-navbar-bg/30">
-              <Container>
-                <div className="mb-8">
-                  <Badge className="mb-3 border-0 bg-primary-navy/10 px-3 py-1 text-xs font-semibold tracking-wider text-primary-navy uppercase hover:bg-primary-navy/10">
-                    Your Dedicated Counselor
-                  </Badge>
-                  <h2 className="text-2xl font-bold tracking-tight text-primary-navy sm:text-3xl">
-                    Meet Your Counselor
-                  </h2>
-                  <p className="mt-2 text-base text-muted-foreground">
-                    Reach out to your counselor for personalized guidance and support.
-                  </p>
-                </div>
-                <div className="mx-auto max-w-md">
-                  <CounselorCard counselor={counselor} />
-                </div>
-              </Container>
-            </Section>
           )}
 
-          {/* Assigned Page Content - rendered via BlockRenderer */}
-          {assignedPage?.content && assignedPage.content.length > 0 && (
-            <BlockRenderer blocks={assignedPage.content} />
+          {/* Subscription cards */}
+          {subscriptions.length > 0 && (
+            <div className="space-y-6">
+              {subscriptions.map((sub) => (
+                <SubscriptionCard key={sub.id} subscription={sub} />
+              ))}
+            </div>
           )}
-
-          {/* If no page content blocks, show a fallback */}
-          {(!assignedPage?.content || assignedPage.content.length === 0) && (
-            <Section className="bg-card">
-              <Container className="max-w-3xl text-center">
-                <h2 className="text-2xl font-bold text-primary-navy">Your Plan is Ready</h2>
-                <p className="mt-3 text-base text-muted-foreground">
-                  Your personalized plan content will appear here once configured by the admin.
-                </p>
-              </Container>
-            </Section>
-          )}
-        </>
-      )}
+        </Container>
+      </Section>
     </>
   )
 }

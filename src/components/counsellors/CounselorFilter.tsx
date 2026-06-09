@@ -9,7 +9,7 @@ interface CounselorData {
   slug: string
   designation: string
   image?: (string | null) | Media
-  specializations?: { specialization?: string | null }[] | null
+  specializations?: { specialization?: { slug?: string | null; name?: string | null } | string | null; id?: string | null }[] | null
   experience?: number | null
 }
 
@@ -31,7 +31,11 @@ export function CounselorFilter({ counselors }: CounselorFilterProps) {
   const filtered = useMemo(() => {
     if (!selected) return counselors
     return counselors.filter((c) =>
-      c.specializations?.some((s) => s.specialization === selected)
+      c.specializations?.some((s) => {
+        const spec = s.specialization
+        if (typeof spec === 'object' && spec !== null) return spec.slug === selected
+        return spec === selected
+      })
     )
   }, [counselors, selected])
 
@@ -89,10 +93,12 @@ export function CounselorFilter({ counselors }: CounselorFilterProps) {
                   <div className="mt-3 flex flex-wrap justify-center gap-1.5">
                     {counselor.specializations.map((s, i) => (
                       <span
-                        key={i}
+                        key={s.id || i}
                         className="rounded-full bg-primary-navy/10 text-primary-navy px-2.5 py-0.5 text-xs font-medium capitalize"
                       >
-                        {s.specialization}
+                        {typeof s.specialization === 'object' && s.specialization !== null
+                          ? s.specialization.name
+                          : s.specialization}
                       </span>
                     ))}
                   </div>

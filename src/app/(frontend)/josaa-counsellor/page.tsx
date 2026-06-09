@@ -85,10 +85,12 @@ export default async function JosaaCounsellorPage() {
                       <div className="mt-3 flex flex-wrap justify-center gap-1.5">
                         {counselor.specializations.map((s: any, i: number) => (
                           <span
-                            key={i}
+                            key={s.id || i}
                             className="rounded-full bg-primary-navy/10 text-primary-navy px-2.5 py-0.5 text-xs font-medium capitalize"
                           >
-                            {s.specialization}
+                            {typeof s.specialization === 'object' && s.specialization !== null
+                              ? s.specialization.name
+                              : s.specialization}
                           </span>
                         ))}
                       </div>

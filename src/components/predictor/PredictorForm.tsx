@@ -32,7 +32,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
   const [status, setStatus] = useState<FormStatus>('idle')
   const [error, setError] = useState('')
   const [response, setResponse] = useState<PredictResponse | null>(null)
-  const [predictorUsed, setPredictorUsed] = useState(false)
+  const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null)
   const [showLeaveWarning, setShowLeaveWarning] = useState(false)
 
   const hasResults = response !== null
@@ -69,7 +69,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
       setStatus('loading')
       setError('')
       setResponse(null)
-      setPredictorUsed(false)
+      setCreditsRemaining(null)
 
       const rankNum = parseInt(rank, 10)
       if (!rank || isNaN(rankNum) || rankNum < 1) {
@@ -99,7 +99,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
         if (!res.ok) {
           const data = await res.json().catch(() => ({}))
           if (res.status === 403 && data.code === 'PREDICTOR_ALREADY_USED') {
-            setPredictorUsed(true)
+            setCreditsRemaining(0)
             setStatus('idle')
             return
           }
@@ -108,6 +108,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
 
         const data: PredictResponse = await res.json()
         setResponse(data)
+        setCreditsRemaining(data.creditsRemaining)
         setStatus('idle')
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unexpected error occurred.')
@@ -121,7 +122,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
     setResponse(null)
     setError('')
     setStatus('idle')
-    setPredictorUsed(false)
+    setCreditsRemaining(null)
   }, [])
 
   const selectClasses = useMemo(
@@ -135,7 +136,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
   const handleStateChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setState(e.target.value), [])
   const handleCourseChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setCourse(e.target.value), [])
 
-  if (predictorUsed) {
+  if (creditsRemaining !== null && creditsRemaining <= 0 && !response) {
     return (
       <div className="rounded-xl border border-border bg-card shadow-lg">
         <div className="flex flex-col items-center gap-4 px-6 py-12 text-center">
@@ -144,10 +145,10 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
           </div>
           <div>
             <h2 className="text-xl font-bold text-primary-navy">
-              Prediction Already Used
+              No Predictions Remaining
             </h2>
             <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
-              You have already used your one-time college prediction. To predict again, please
+              You have used all your prediction credits. To predict again, please
               purchase a new plan.
             </p>
           </div>
@@ -315,20 +316,27 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
           </div>
         )}
 
-        <Button
-          type="submit"
-          disabled={status === 'loading'}
-          className="h-12 w-full bg-button-gold text-sm font-bold text-primary-navy hover:bg-button-gold-hover sm:w-auto sm:px-10"
-        >
-          {status === 'loading' ? (
-            <span className="flex items-center justify-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-              Predicting...
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Button
+            type="submit"
+            disabled={status === 'loading'}
+            className="h-12 w-full bg-button-gold text-sm font-bold text-primary-navy hover:bg-button-gold-hover sm:w-auto sm:px-10"
+          >
+            {status === 'loading' ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                Predicting...
+              </span>
+            ) : (
+              'Predict My College'
+            )}
+          </Button>
+          {creditsRemaining !== null && creditsRemaining > 0 && (
+            <span className="text-xs text-muted-foreground">
+              {creditsRemaining} prediction{creditsRemaining !== 1 ? 's' : ''} remaining
             </span>
-          ) : (
-            'Predict My College'
           )}
-        </Button>
+        </div>
       </form>
     </div>
   )

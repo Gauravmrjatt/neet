@@ -68,13 +68,8 @@ export const Counselors: CollectionConfig = {
       fields: [
         {
           name: 'specialization',
-          type: 'select',
-          options: [
-            { label: 'JEE', value: 'jee' },
-            { label: 'NEET', value: 'neet' },
-            { label: 'JoSAA', value: 'josaa' },
-            { label: 'General', value: 'general' },
-          ],
+          type: 'relationship',
+          relationTo: 'specializations',
         },
       ],
     },

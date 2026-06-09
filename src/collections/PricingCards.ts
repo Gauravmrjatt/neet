@@ -48,6 +48,17 @@ export const PricingCards: CollectionConfig = {
       },
     },
     {
+      name: 'predictionCredits',
+      type: 'number',
+      defaultValue: 1,
+      min: 0,
+      required: true,
+      admin: {
+        description: 'Number of AI college predictions a user gets with this plan',
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'originalPrice',
       type: 'text',
       admin: {

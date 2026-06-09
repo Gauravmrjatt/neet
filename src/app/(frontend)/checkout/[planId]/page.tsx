@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { Check } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth'
-import { getPricingCardById, hasActiveOrPendingSubscription } from '@/lib/queries'
+import { getPricingCardById } from '@/lib/queries'
 import { getSiteSettings } from '@/lib/queries/globals'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { Container } from '@/components/layout/Container'
@@ -45,12 +45,6 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   if (!plan) {
     notFound()
-  }
-
-  // Prevent duplicate purchases
-  const alreadyPurchased = await hasActiveOrPendingSubscription(user.id)
-  if (alreadyPurchased) {
-    redirect('/my-plan?reason=already-purchased')
   }
 
   return (

@@ -37,26 +37,26 @@ export const Subscriptions: CollectionConfig = {
             data.user = req.user.id
           }
 
-          // Check for existing active/pending subscription
-          if (data.user) {
-            const existing = await req.payload.find({
-              collection: 'subscriptions',
-              where: {
-                and: [
-                  { user: { equals: data.user } },
-                  { status: { in: ['pending', 'active'] } },
-                ],
-              },
-              limit: 1,
-            })
-            if (existing.docs.length > 0) {
-              throw new Error('You already have an active or pending subscription')
-            }
-          }
-
           // Set purchasedAt
           if (!data.purchasedAt) {
             data.purchasedAt = new Date().toISOString()
+          }
+
+          // Auto-set credits from the plan's predictionCredits
+          if (data.plan) {
+            try {
+              const plan = await req.payload.findByID({
+                collection: 'pricing-cards',
+                id: data.plan,
+              })
+              const credits = (plan as any).predictionCredits ?? 1
+              data.creditsTotal = credits
+              data.creditsRemaining = credits
+            } catch {
+              // Plan not found — defaults will apply
+              data.creditsTotal = data.creditsTotal ?? 1
+              data.creditsRemaining = data.creditsRemaining ?? 1
+            }
           }
         }
 
@@ -158,12 +158,22 @@ export const Subscriptions: CollectionConfig = {
       },
     },
     {
-      name: 'predictorUsed',
-      type: 'checkbox',
-      defaultValue: false,
+      name: 'creditsTotal',
+      type: 'number',
+      defaultValue: 0,
       admin: {
         position: 'sidebar',
-        description: 'Auto-set after premium user uses their one-time AI college predictor',
+        description: 'Total credits granted with this plan (auto-set from plan on creation)',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'creditsRemaining',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        description: 'Remaining prediction credits (decremented on each use)',
         readOnly: true,
       },
     },

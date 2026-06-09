@@ -21,7 +21,7 @@ export const NavLink = memo(function NavLink({ href, label, variant = 'default' 
       <Link
         href={href}
         className={cn(
-          'inline-flex items-center gap-1.5 rounded-full px-4 py-1.5',
+          'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-1.5',
           'bg-button-gold text-primary shadow-sm',
           'text-sm font-bold tracking-wide',
           'transition-all duration-200 ease-out',
@@ -39,7 +39,7 @@ export const NavLink = memo(function NavLink({ href, label, variant = 'default' 
       href={href}
       aria-current={isActive ? 'page' : undefined}
       className={cn(
-        'group relative inline-flex items-center rounded-full px-3.5 py-1.5',
+        'group relative inline-flex items-center whitespace-nowrap rounded-full px-3.5 py-1.5',
         'text-xs font-semibold tracking-wide sm:text-sm',
         'transition-all duration-200 ease-out',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-navbar-bg',

@@ -5,7 +5,7 @@ import { getHeader, getSiteSettings } from '@/lib/queries/globals'
 import { MediaImage } from '@/components/shared/MediaImage'
 import { CallButton } from '@/components/shared/CallButton'
 import { ThemeToggle } from '@/components/shared/ThemeToggle'
-import { MobileMenu } from './MobileMenu'
+
 import { cn } from '@/lib/utils'
 
 export async function Header() {
@@ -74,7 +74,7 @@ export async function Header() {
 
         {/* Right emblem */}
         <div className="flex flex-shrink-0 items-center gap-3">
-          <div className="hidden h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-primary shadow-sm ring-1 ring-primary/10 sm:flex sm:h-16 sm:w-16">
+          <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-primary shadow-sm ring-1 ring-primary/10 sm:h-16 sm:w-16">
             {emblem ? (
               <MediaImage
                 media={emblem}
@@ -91,9 +91,6 @@ export async function Header() {
           {/* <div className="hidden sm:block">
             <ThemeToggle />
           </div> */}
-          <div className="md:hidden">
-            <MobileMenu user={user} navigation={navigation} ctaButton={ctaButton} siteName={englishTitle} />
-          </div>
         </div>
       </div>
 

@@ -9,7 +9,7 @@ interface CounsellorData {
   slug?: string
   designation?: string
   image?: (string | null) | Media
-  specializations?: { specialization?: string | null }[] | null
+  specializations?: { specialization?: { slug?: string | null; name?: string | null } | string | null; id?: string | null }[] | null
 }
 
 interface CounsellorBlockProps {
@@ -57,8 +57,10 @@ export function CounsellorBlock({ title, subtitle, counsellors }: CounsellorBloc
                 {counsellor.specializations && counsellor.specializations.length > 0 && (
                   <div className="mt-3 flex flex-wrap justify-center gap-2">
                     {counsellor.specializations.map((s, i) => (
-                      <span key={i} className="rounded-full bg-muted px-2 py-1 text-xs capitalize">
-                        {s.specialization}
+                      <span key={s.id || i} className="rounded-full bg-muted px-2 py-1 text-xs capitalize">
+                        {typeof s.specialization === 'object' && s.specialization !== null
+                          ? s.specialization.name
+                          : s.specialization}
                       </span>
                     ))}
                   </div>

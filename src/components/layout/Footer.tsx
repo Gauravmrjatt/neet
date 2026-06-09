@@ -205,12 +205,12 @@ export async function Footer() {
               <ul className="mt-4 space-y-3 text-sm text-primary/80">
                 <li className="flex items-start gap-2.5">
                   <Phone className="mt-0.5 h-4 w-4 shrink-0 text-button-gold" aria-hidden="true" />
-                  <span className="font-medium">Mon&ndash;Sat, 10:00&ndash;18:00 IST</span>
+                  <span className="font-medium">{(footerData as any).businessHours || 'Mon\u2013Sat, 10:00\u201318:00 IST'}</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <Mail className="mt-0.5 h-4 w-4 shrink-0 text-button-gold" aria-hidden="true" />
                   <span className="break-all font-medium">
-                    support@neetcounselling.example
+                    {(footerData as any).supportEmail || 'support@neetcounselling.example'}
                   </span>
                 </li>
               </ul>

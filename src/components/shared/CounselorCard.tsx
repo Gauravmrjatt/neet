@@ -26,9 +26,9 @@ export const CounselorCard = memo(function CounselorCard({ counselor }: Counselo
           </div>
         )}
         <div className="flex flex-wrap gap-1">
-          {counselor.specializations?.map((spec: string) => (
-            <Badge key={spec} variant="secondary" className="text-xs">
-              {spec}
+          {counselor.specializations?.map((s: any) => (
+            <Badge key={s.id} variant="secondary" className="text-xs">
+              {typeof s.specialization === 'object' ? s.specialization?.name : s.specialization}
             </Badge>
           ))}
         </div>

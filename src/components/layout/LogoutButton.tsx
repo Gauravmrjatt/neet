@@ -33,7 +33,7 @@ export function LogoutButton({ label = 'Logout' }: LogoutButtonProps) {
       onClick={handleLogout}
       disabled={loading}
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5',
+        'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5',
         'text-xs font-semibold tracking-wide text-primary/85 sm:text-sm',
         'transition-all duration-200 ease-out',
         'hover:bg-navbar-hover hover:text-primary',

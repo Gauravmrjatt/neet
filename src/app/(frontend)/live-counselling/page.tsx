@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { getUpcomingSessions } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { Container } from '@/components/layout/Container'
@@ -35,9 +36,10 @@ export default async function LiveCounsellingPage() {
                 const counsellor = typeof session.counsellor === 'object' ? session.counsellor as Counselor : null
                 const isLive = session.status === 'live'
                 return (
-                  <div
+                  <Link
                     key={session.id}
-                    className="rounded-xl border border-border bg-card p-6 transition hover:shadow-lg"
+                    href={`/live-counselling/${session.id}`}
+                    className="block rounded-xl border border-border bg-card p-6 transition hover:shadow-lg"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <h2 className="text-lg font-bold text-primary-navy">{session.title}</h2>
@@ -98,7 +100,7 @@ export default async function LiveCounsellingPage() {
                         </a>
                       </div>
                     )}
-                  </div>
+                  </Link>
                 )
               })}
             </div>

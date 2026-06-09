@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { getPayloadClient } from '@/lib/payload'
 import { verifyPaymentSignature } from '@/lib/razorpay'
-import { findTransactionById, hasActiveOrPendingSubscription } from '@/lib/queries'
+import { findTransactionById } from '@/lib/queries'
 
 export async function POST(request: Request) {
   try {
@@ -73,12 +73,6 @@ export async function POST(request: Request) {
         paidAt: new Date().toISOString(),
       },
     })
-
-    // Check for duplicate subscription one more time
-    const alreadyHasSub = await hasActiveOrPendingSubscription(user.id)
-    if (alreadyHasSub) {
-      return NextResponse.json({ error: 'You already have a subscription' }, { status: 409 })
-    }
 
     // Create subscription
     const planId = typeof transaction.plan === 'object' ? transaction.plan?.id : transaction.plan

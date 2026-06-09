@@ -31,14 +31,17 @@ export default async function HomePage() {
   let siteName = 'NEET Counselling'
   let newsTickerItems: any[] = []
   let notificationBar: any = null
+  let testimonials: any[] = []
   try {
-    const [settings, ticker] = await Promise.all([
+    const [settings, ticker, testimonialsData] = await Promise.all([
       payload.findGlobal({ slug: 'site-settings' }).catch(() => null),
       payload.findGlobal({ slug: 'news-ticker' }).catch(() => null),
+      payload.findGlobal({ slug: 'testimonials' }).catch(() => null),
     ])
     if (settings?.siteName) siteName = settings.siteName
     newsTickerItems = ticker?.items?.filter((i: any) => i.isActive) || []
     notificationBar = settings?.notificationBar || null
+    testimonials = testimonialsData?.testimonials || []
   } catch {}
 
   return (
@@ -54,7 +57,7 @@ export default async function HomePage() {
       />
       <TrustBadges />
       <WhyChooseUs />
-      <TestimonialMarquee />
+      <TestimonialMarquee testimonials={testimonials} />
     </>
   )
 }

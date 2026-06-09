@@ -2,47 +2,21 @@
 
 import { useRef, useEffect } from 'react'
 import { Star, Quote, Sparkles } from 'lucide-react'
+import { Media } from '@/payload-types'
 
-const TESTIMONIALS = [
-  {
-    quote: "NEET Counselling helped me get into my dream medical college. Their rank prediction was spot on!",
-    author: "Priya Sharma",
-    role: "MBBS Student, AIIMS Delhi",
-    rating: 5,
-  },
-  {
-    quote: "The counselors were available 24x7 during JOSAA rounds. Their guidance was invaluable for my son's admission.",
-    author: "Rajesh Kumar",
-    role: "Parent",
-    rating: 5,
-  },
-  {
-    quote: "I was confused between colleges, but the college predictor tool and counselor advice made it crystal clear.",
-    author: "Amit Patel",
-    role: "B.Tech Student, IIT Bombay",
-    rating: 5,
-  },
-  {
-    quote: "Best investment we made for our daughter's future. The personalized counselling plan was worth every rupee.",
-    author: "Sunita Devi",
-    role: "Parent",
-    rating: 5,
-  },
-  {
-    quote: "From choice filling to seat acceptance, they guided me at every step. Highly recommend!",
-    author: "Rohit Singh",
-    role: "MBBS Student, JIPMER",
-    rating: 5,
-  },
-  {
-    quote: "The Hindi medium support was a lifesaver for my parents. They understood everything clearly.",
-    author: "Anita Kumari",
-    role: "BDS Student",
-    rating: 5,
-  },
-]
+interface Testimonial {
+  name: string
+  quote: string
+  image?: (string | null) | Media
+  designation?: string | null
+  rating?: number | null
+}
 
-export function TestimonialMarquee() {
+interface TestimonialMarqueeProps {
+  testimonials?: Testimonial[] | null
+}
+
+export function TestimonialMarquee({ testimonials = [] }: TestimonialMarqueeProps) {
   const trackRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -82,7 +56,9 @@ export function TestimonialMarquee() {
     }
   }, [])
 
-  const duplicated = [...TESTIMONIALS, ...TESTIMONIALS]
+  if (!testimonials?.length) return null
+
+  const duplicated = [...testimonials, ...testimonials]
 
   return (
     <section aria-label="Student testimonials" className="relative py-16 sm:py-20 px-4 bg-card-bg overflow-hidden">
@@ -113,37 +89,57 @@ export function TestimonialMarquee() {
             className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-20 z-10 bg-linear-to-l from-card-bg to-transparent"
           />
           <div className="animate-marquee">
-            {duplicated.map((testimonial, index) => (
-              <article
-                key={index}
-                className="shrink-0 w-80 sm:w-96 mx-3 p-6 rounded-2xl border border-primary-navy/10 bg-card shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <span
-                    aria-hidden="true"
-                    className="inline-flex w-10 h-10 rounded-xl bg-button-gold/15 text-primary-navy items-center justify-center"
-                  >
-                    <Quote className="w-5 h-5" />
-                  </span>
-                  <div className="flex gap-0.5" aria-label={`${testimonial.rating} star rating`}>
-                    {Array.from({ length: testimonial.rating }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-4 h-4 fill-button-gold text-button-gold"
-                        aria-hidden="true"
-                      />
-                    ))}
+            {duplicated.map((testimonial, index) => {
+              const avatarUrl = typeof testimonial.image === 'object' ? testimonial.image?.url : null
+              return (
+                <article
+                  key={index}
+                  className="shrink-0 w-80 sm:w-96 mx-3 p-6 rounded-2xl border border-primary-navy/10 bg-card shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <span
+                      aria-hidden="true"
+                      className="inline-flex w-10 h-10 rounded-xl bg-button-gold/15 text-primary-navy items-center justify-center"
+                    >
+                      <Quote className="w-5 h-5" />
+                    </span>
+                    {testimonial.rating && (
+                      <div className="flex gap-0.5" aria-label={`${testimonial.rating} star rating`}>
+                        {Array.from({ length: testimonial.rating }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className="w-4 h-4 fill-button-gold text-button-gold"
+                            aria-hidden="true"
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-                <p className="text-sm text-foreground/80 leading-relaxed mb-5">
-                  &ldquo;{testimonial.quote}&rdquo;
-                </p>
-                <div className="pt-4 border-t border-primary-navy/10">
-                  <p className="font-semibold text-sm text-primary-navy">{testimonial.author}</p>
-                  <p className="text-xs text-foreground/60 mt-0.5">{testimonial.role}</p>
-                </div>
-              </article>
-            ))}
+                  <p className="text-sm text-foreground/80 leading-relaxed mb-5">
+                    &ldquo;{testimonial.quote}&rdquo;
+                  </p>
+                  <div className="pt-4 border-t border-primary-navy/10 flex items-center gap-3">
+                    {avatarUrl ? (
+                      <img
+                        src={avatarUrl}
+                        alt={testimonial.name}
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-button-gold/15 text-primary-navy text-sm font-semibold">
+                        {testimonial.name.charAt(0)}
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-semibold text-sm text-primary-navy">{testimonial.name}</p>
+                      {testimonial.designation && (
+                        <p className="text-xs text-foreground/60 mt-0.5">{testimonial.designation}</p>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              )
+            })}
           </div>
         </div>
       </div>
