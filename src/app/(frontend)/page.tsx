@@ -32,12 +32,14 @@ export default async function HomePage() {
   let newsTickerItems: any[] = []
   let notificationBar: any = null
   let testimonials: any[] = []
+  let settings: any = null
   try {
-    const [settings, ticker, testimonialsData] = await Promise.all([
+    const [s, ticker, testimonialsData] = await Promise.all([
       payload.findGlobal({ slug: 'site-settings' }).catch(() => null),
       payload.findGlobal({ slug: 'news-ticker' }).catch(() => null),
       payload.findGlobal({ slug: 'testimonials' }).catch(() => null),
     ])
+    settings = s
     if (settings?.siteName) siteName = settings.siteName
     newsTickerItems = ticker?.items?.filter((i: any) => i.isActive) || []
     notificationBar = settings?.notificationBar || null
@@ -57,7 +59,10 @@ export default async function HomePage() {
       />
       <TrustBadges />
       <WhyChooseUs />
-      <TestimonialMarquee testimonials={testimonials} />
+      <TestimonialMarquee
+        testimonials={testimonials}
+        studentCount={settings?.stats?.students || '17,000+'}
+      />
     </>
   )
 }

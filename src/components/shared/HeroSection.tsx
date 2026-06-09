@@ -75,7 +75,7 @@ export async function HeroSection() {
             asChild
             size="lg"
             variant="outline"
-            className="rounded-2xl bg-primary-navy hover:bg-primary-navy-dark text-white border-primary-navy font-bold shadow-md hover:shadow-lg transition-all duration-200 ease-out px-7 py-6 text-base"
+            className="rounded-2xl bg-primary-navy hover:bg-primary-navy-dark hover:text-white text-white border-primary-navy font-bold shadow-md hover:shadow-lg transition-all duration-200 ease-out px-7 py-6 text-base"
           >
             <Link href={secondaryCtaLink}>{secondaryCtaText}</Link>
           </Button>

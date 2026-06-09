@@ -6,7 +6,7 @@ export const getHelpdeskItems = cache(async ({
   category,
   status = 'active',
 }: {
-  category?: 'admission' | 'exam' | 'counselling' | 'technical' | 'other'
+  category?: 'admission' | 'exam' | 'counselling' | 'pricing' | 'technical' | 'other'
   status?: 'active' | 'inactive'
 } = {}) => {
   const payload = await getPayloadClient()

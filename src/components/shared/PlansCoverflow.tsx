@@ -1,10 +1,15 @@
 import Link from 'next/link'
 import { getPricingCards } from '@/lib/queries/pricing'
+import { getSiteSettings } from '@/lib/queries/globals'
 import { PlansCarousel } from './PlansCarousel'
 import { Sparkles } from 'lucide-react'
 
 export async function PlansCoverflow() {
-  const cards = await getPricingCards()
+  const [cards, settings] = await Promise.all([
+    getPricingCards(),
+    getSiteSettings().catch(() => ({ stats: { students: '17,000+' } })),
+  ])
+  const studentCount = (settings as any)?.stats?.students || '17,000+'
 
   const plans = cards.map((card: any) => {
     const planId = String(typeof card.id === 'object' ? card.id?.id || card.planName : (card.id || card.planName))
@@ -38,7 +43,9 @@ export async function PlansCoverflow() {
             Choose Your Plan
           </h2>
           <p className="text-sm sm:text-base text-foreground/70 max-w-2xl mx-auto">
-            Trusted by 17,000+ students — compare all counselling options below
+            Trusted by{' '}
+            <span className="text-button-gold font-bold">{studentCount}</span>
+            {' '}students — compare all counselling options below
           </p>
         </div>
 

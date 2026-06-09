@@ -564,7 +564,7 @@ export interface Helpdesk {
     };
     [k: string]: unknown;
   };
-  category?: ('admission' | 'exam' | 'counselling' | 'technical' | 'other') | null;
+  category?: ('admission' | 'exam' | 'counselling' | 'pricing' | 'technical' | 'other') | null;
   /**
    * Lower numbers appear first
    */

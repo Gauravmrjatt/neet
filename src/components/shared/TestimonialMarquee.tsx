@@ -14,9 +14,10 @@ interface Testimonial {
 
 interface TestimonialMarqueeProps {
   testimonials?: Testimonial[] | null
+  studentCount?: string
 }
 
-export function TestimonialMarquee({ testimonials = [] }: TestimonialMarqueeProps) {
+export function TestimonialMarquee({ testimonials = [], studentCount = '17,000+' }: TestimonialMarqueeProps) {
   const trackRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -72,7 +73,9 @@ export function TestimonialMarquee({ testimonials = [] }: TestimonialMarqueeProp
             What Students Say
           </h2>
           <p className="text-sm sm:text-base text-foreground/70 max-w-xl mx-auto">
-            Trusted by 17,000+ students across India
+            Trusted by{' '}
+            <span className="text-button-gold font-bold">{studentCount}</span>
+            {' '}students across India
           </p>
         </div>
 

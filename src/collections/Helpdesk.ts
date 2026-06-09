@@ -40,6 +40,7 @@ export const Helpdesk: CollectionConfig = {
         { label: 'Admission', value: 'admission' },
         { label: 'Exam', value: 'exam' },
         { label: 'Counselling', value: 'counselling' },
+        { label: 'Pricing', value: 'pricing' },
         { label: 'Technical', value: 'technical' },
         { label: 'Other', value: 'other' },
       ],

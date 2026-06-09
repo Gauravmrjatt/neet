@@ -1,11 +1,13 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Check } from 'lucide-react'
+import { Check, Users, BarChart3, Handshake, Shield } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { PricingCard } from '@/payload-types'
 import { getPricingCards } from '@/lib/queries'
+import { getHelpdeskItems } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { RichText } from '@/components/shared/RichText'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
@@ -159,54 +161,31 @@ const TRUST_POINTS = [
   {
     title: 'Expert Counsellors',
     description: 'Personal guidance from IIT/NIT alumni with 500+ successful admissions.',
-    icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-    ),
+    icon: Users,
   },
   {
     title: 'Data-Driven Insights',
     description: 'Real cutoffs, previous year trends & seat matrices updated for 2025-26.',
-    icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-    ),
+    icon: BarChart3,
   },
   {
     title: 'End-to-End Support',
     description: 'From choice filling to seat allotment — we are with you at every step.',
-    icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-    ),
+    icon: Handshake,
   },
   {
     title: 'Money-Back Guarantee',
     description: 'Not satisfied? Get a full refund within 7 days, no questions asked.',
-    icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-    ),
-  },
-]
-
-const FAQS = [
-  {
-    q: 'Can I switch plans later?',
-    a: 'Yes. You can upgrade to a higher plan at any time and pay the difference. Downgrades take effect at the next billing cycle.',
-  },
-  {
-    q: 'Do you offer refunds?',
-    a: 'Every plan comes with a 7-day money-back guarantee. If you are not satisfied, contact support for a full refund.',
-  },
-  {
-    q: 'Are the college cutoffs updated?',
-    a: 'All cutoffs, seat matrices and college data are refreshed before every counselling round for the current academic year.',
-  },
-  {
-    q: 'Is one-on-one counselling included?',
-    a: 'The Premium and Complete plans include scheduled one-on-one sessions with senior counsellors. Basic plans have access to group sessions.',
+    icon: Shield,
   },
 ]
 
 export default async function PricingPage() {
-  const cards = await getPricingCards()
+  const [cards, faqResult] = await Promise.all([
+    getPricingCards(),
+    getHelpdeskItems({ category: 'pricing' }).catch(() => ({ docs: [] })),
+  ])
+  const faqs = faqResult.docs
 
   return (
     <>
@@ -249,28 +228,31 @@ export default async function PricingPage() {
       <Section className="bg-background">
         <Container>
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-primary-navy sm:text-4xl">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-navy mb-3 sm:mb-4 leading-tight tracking-tight">
               Why Thousands Trust Us
             </h2>
-            <p className="mt-4 text-base sm:text-lg text-muted-foreground">
+            <p className="text-foreground/70 max-w-2xl mx-auto mb-10 sm:mb-14 text-sm sm:text-base leading-relaxed">
               Built by IIT alumni. Battle-tested across 5 counselling seasons.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {TRUST_POINTS.map((point) => (
-              <div
-                key={point.title}
-                className="rounded-xl border border-border bg-card p-6 transition hover:border-primary-navy/40 hover:shadow-md"
-              >
-                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary-navy/10 text-primary-navy">
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    {point.icon}
-                  </svg>
+            {TRUST_POINTS.map((point) => {
+              const Icon = point.icon
+              return (
+                <div
+                  key={point.title}
+                  className="glass-card rounded-2xl p-6 shadow-sm bg-card-bg border border-primary-navy/10 hover:shadow-md hover:-translate-y-0.5 hover:border-primary-navy/20 transition-all duration-200 ease-out group"
+                >
+                  <span className="inline-flex w-12 h-12 rounded-2xl bg-button-gold/15 text-primary-navy items-center justify-center mb-4 group-hover:bg-button-gold/25 transition-colors duration-200 ease-out">
+                    <Icon className="w-6 h-6" aria-hidden="true" />
+                  </span>
+                  <h3 className="font-display font-bold text-primary-navy text-lg lg:text-xl mb-2 tracking-tight">
+                    {point.title}
+                  </h3>
+                  <p className="text-sm text-foreground/70 leading-relaxed">{point.description}</p>
                 </div>
-                <h3 className="text-base font-bold text-primary-navy">{point.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{point.description}</p>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </Container>
       </Section>
@@ -278,26 +260,32 @@ export default async function PricingPage() {
       <Section className="bg-navbar-bg/30">
         <Container className="max-w-3xl">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-primary-navy sm:text-4xl">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-navy mb-3 sm:mb-4 leading-tight tracking-tight">
               Frequently Asked Questions
             </h2>
           </div>
-          <Accordion type="single" collapsible className="w-full">
-            {FAQS.map((faq, i) => (
-              <AccordionItem
-                key={i}
-                value={`faq-${i}`}
-                className="rounded-lg border border-border bg-card px-5 mb-3 last:mb-0"
-              >
-                <AccordionTrigger className="text-base font-semibold text-primary-navy hover:no-underline">
-                  {faq.q}
-                </AccordionTrigger>
-                <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                  {faq.a}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          {faqs.length > 0 ? (
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.map((faq, i) => (
+                <AccordionItem
+                  key={faq.id || i}
+                  value={faq.id || `faq-${i}`}
+                  className="glass-card rounded-2xl px-5 mb-3 last:mb-0 border border-primary-navy/10 shadow-sm"
+                >
+                  <AccordionTrigger className="text-base font-semibold text-primary-navy hover:no-underline">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm leading-relaxed text-foreground/70">
+                    <RichText content={faq.answer} />
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          ) : (
+            <p className="text-center text-sm text-foreground/60 py-8">
+              No pricing FAQs available yet. Check back later.
+            </p>
+          )}
         </Container>
       </Section>
 
