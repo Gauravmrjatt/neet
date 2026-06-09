@@ -22,6 +22,7 @@ export async function PlansCoverflow() {
       badge: card.badge || undefined,
       colorScheme: card.colorScheme || 'standard',
       colleges: card.colleges || undefined,
+      description: card.description || undefined,
       features: (card.features || []).map((f: any) => String(f?.feature || f || '')),
       ctaText: card.ctaText || 'Get Started',
       ctaLink: `/checkout/${planId}`,

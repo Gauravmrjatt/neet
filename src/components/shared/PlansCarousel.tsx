@@ -13,6 +13,7 @@ interface PlanData {
   badge?: string
   colorScheme: string
   colleges?: string
+  description?: string
   features: string[]
   ctaText: string
   ctaLink: string
@@ -208,6 +209,10 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
 
                 {plan.colleges && (
                   <p className="text-xs text-muted-foreground mt-1.5">{plan.colleges}</p>
+                )}
+
+                {plan.description && (
+                  <p className="text-xs text-foreground/60 mt-3 leading-relaxed">{plan.description}</p>
                 )}
 
                 <ul className="mt-4 space-y-2 text-sm text-foreground/70 flex-1">
