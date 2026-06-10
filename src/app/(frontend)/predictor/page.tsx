@@ -9,9 +9,9 @@ import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateSEOMetadata({
-    title: 'AI College Predictor',
+    title: 'NEET College Predictor — MBBS, BDS, AYUSH & Veterinary',
     description:
-      'Predict your NEET college admission chances. Enter your rank, category, and preferences to see which colleges you can get into.',
+      'Predict your NEET college admission chances for MBBS, BDS, BAMS, BHMS, BUMS, BSMS & BVSc colleges. Enter your rank, category, and preferences to get Safe, Likely & Risky predictions based on official MCC, AACCC & VCI data.',
     path: '/predictor',
   })
 }
@@ -22,9 +22,9 @@ export default function PredictorPage() {
   return (
     <>
       <PageHero
-        badge="AI College Predictor"
-        title="Predict Your NEET College"
-        subtitle="Enter your NEET rank and details to see which colleges you can get into — based on official MCC allotment data."
+        badge="NEET College Predictor"
+        title="Predict Your College"
+        subtitle="Select your course stream — MBBS/BDS, AYUSH or Veterinary — enter your rank and get personalized admission predictions with Safe, Likely &amp; Risky probability analysis based on official allotment data."
       />
 
       <Section className="bg-navbar-bg/30">
@@ -36,7 +36,7 @@ export default function PredictorPage() {
       <section className="bg-primary-navy py-12 text-center text-white">
         <Container>
           <p className="text-sm text-white/60">
-            Based on official MCC NEET UG counselling data. Predictions are estimates and do not
+            Based on official MCC, AACCC &amp; VCI NEET UG counselling data. Predictions are estimates and do not
             guarantee admission.
           </p>
         </Container>

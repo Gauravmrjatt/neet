@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import type { PredictResponse, PredictionResult } from '@/lib/predictor/types'
+import type { PredictResponse, PredictionResult, Chance } from '@/lib/predictor/types'
 import { SecondaryFilters } from './SecondaryFilters'
 
 interface PredictorResultsProps {
@@ -14,19 +14,18 @@ interface PredictorResultsProps {
   onReset: () => void
 }
 
-const ChanceBadge = React.memo(function ChanceBadge({ chance }: { chance: string }) {
-  const styles: Record<string, string> = {
-    High: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100',
-    Good: 'bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100',
-    Low: 'bg-red-100 text-red-800 border-red-200 hover:bg-red-100',
-  }
+const CHANCE_STYLES: Record<Chance, { badge: string; bg: string; border: string; icon: string }> = {
+  Safe: { badge: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100', bg: 'bg-green-50', border: 'border-green-200', icon: '🟢' },
+  Likely: { badge: 'bg-amber-100 text-amber-800 border-amber-200 hover:bg-amber-100', bg: 'bg-amber-50', border: 'border-amber-200', icon: '🟡' },
+  Risky: { badge: 'bg-red-100 text-red-800 border-red-200 hover:bg-red-100', bg: 'bg-red-50', border: 'border-red-200', icon: '🔴' },
+}
 
+const ChanceBadge = React.memo(function ChanceBadge({ chance, probability }: { chance: Chance; probability: number }) {
+  const s = CHANCE_STYLES[chance]
   return (
-    <Badge variant="outline" className={cn('border-0 px-2.5 py-1 text-xs font-semibold', styles[chance] || 'bg-gray-100 text-gray-800')}>
-      {chance === 'High' && <span className="mr-1">🟢</span>}
-      {chance === 'Good' && <span className="mr-1">🟡</span>}
-      {chance === 'Low' && <span className="mr-1">🔴</span>}
-      {chance}
+    <Badge variant="outline" className={cn('border-0 px-2.5 py-1 text-xs font-semibold', s.badge)}>
+      <span className="mr-1">{s.icon}</span>
+      {chance} {probability}%
     </Badge>
   )
 })
@@ -34,7 +33,7 @@ const ChanceBadge = React.memo(function ChanceBadge({ chance }: { chance: string
 const UnlockPremiumPanel = React.memo(function UnlockPremiumPanel({ total }: { total: number }) {
   return (
     <tr>
-      <td colSpan={8} className="px-0 py-0">
+      <td colSpan={9} className="px-0 py-0">
         <div className="relative overflow-hidden">
           <div className="flex flex-col items-center gap-3 bg-gradient-to-b from-button-gold/[0.07] to-button-gold/[0.12] px-6 py-10 text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-button-gold/20 text-3xl">
@@ -77,21 +76,32 @@ const ResultRow = React.memo(function ResultRow({
   result: PredictResponse['results'][number]
   index: number
 }) {
+  const isFreePreview = index === 0
   return (
-    <tr className="border-b border-border transition-colors hover:bg-muted/40">
+    <tr
+      className={cn(
+        'border-b border-border transition-colors hover:bg-muted/40 result-row',
+        !isFreePreview && 'opacity-0',
+      )}
+    >
       <td className="px-4 py-3 text-sm text-muted-foreground">{index + 1}</td>
       <td className="min-w-[200px] px-4 py-3 text-sm font-medium text-primary-navy">
         {result.institute}
       </td>
-      <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">{result.state}</td>
+      <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">{result.state || '—'}</td>
       <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">{result.course}</td>
       <td className="hidden px-4 py-3 text-sm text-muted-foreground lg:table-cell">{result.quota}</td>
-      <td className="hidden px-4 py-3 text-sm text-muted-foreground sm:table-cell">{result.allottedCategory}</td>
+      <td className="hidden px-4 py-3 text-right text-sm tabular-nums text-muted-foreground lg:table-cell">
+        {result.openingRank > 0 ? result.openingRank.toLocaleString('en-IN') : '—'}
+      </td>
       <td className="px-4 py-3 text-right text-sm tabular-nums text-foreground">
         {result.closingRank.toLocaleString('en-IN')}
       </td>
+      <td className="hidden px-4 py-3 text-sm text-muted-foreground sm:table-cell">
+        {result.expectedRound}
+      </td>
       <td className="px-4 py-3 text-right">
-        <ChanceBadge chance={result.chance} />
+        <ChanceBadge chance={result.chance} probability={result.probability} />
       </td>
     </tr>
   )
@@ -112,7 +122,7 @@ const SummaryCard = React.memo(function SummaryCard({
     <div className={cn('rounded-xl border p-4 shadow-sm', color)}>
       <div className="flex items-center justify-between">
         <span className="text-2xl">{icon}</span>
-        <span className="text-2xl font-bold">{typeof value === 'number' ? value.toLocaleString('en-IN') : value}</span>
+        <span className="text-2xl font-bold tabular-nums">{typeof value === 'number' ? value.toLocaleString('en-IN') : value}</span>
       </div>
       <p className="mt-1 text-xs font-medium">{label}</p>
     </div>
@@ -155,9 +165,9 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
 
   const summaryCards = [
     { label: 'Total Colleges', value: total, color: 'bg-card border-primary-navy/20', icon: '🎓' },
-    { label: 'High Chance', value: summary.high, color: 'bg-green-50 border-green-200', icon: '🟢' },
-    { label: 'Good Chance', value: summary.good, color: 'bg-yellow-50 border-yellow-200', icon: '🟡' },
-    { label: 'Low Chance', value: summary.low, color: 'bg-red-50 border-red-200', icon: '🔴' },
+    { label: 'Safe', value: summary.safe, color: 'bg-green-50 border-green-200', icon: '🟢' },
+    { label: 'Likely', value: summary.likely, color: 'bg-amber-50 border-amber-200', icon: '🟡' },
+    { label: 'Risky', value: summary.risky, color: 'bg-red-50 border-red-200', icon: '🔴' },
   ]
 
   return (
@@ -203,6 +213,26 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
         )}
       </div>
 
+      <style jsx>{`
+        @keyframes rowFadeIn {
+          from { opacity: 0; transform: translateY(4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .result-row {
+          animation: rowFadeIn 300ms ease-out forwards;
+        }
+        .result-row:nth-child(1) { animation-delay: 0ms; }
+        .result-row:nth-child(2) { animation-delay: 40ms; }
+        .result-row:nth-child(3) { animation-delay: 80ms; }
+        .result-row:nth-child(4) { animation-delay: 120ms; }
+        .result-row:nth-child(5) { animation-delay: 160ms; }
+        .result-row:nth-child(6) { animation-delay: 200ms; }
+        .result-row:nth-child(7) { animation-delay: 240ms; }
+        .result-row:nth-child(8) { animation-delay: 280ms; }
+        .result-row:nth-child(9) { animation-delay: 320ms; }
+        .result-row:nth-child(10) { animation-delay: 360ms; }
+      `}</style>
+
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -213,8 +243,9 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
                 <th className="hidden px-4 py-3 md:table-cell">State</th>
                 <th className="hidden px-4 py-3 md:table-cell">Course</th>
                 <th className="hidden px-4 py-3 lg:table-cell">Quota</th>
-                <th className="hidden px-4 py-3 sm:table-cell">Allotted Cat.</th>
+                <th className="hidden px-4 py-3 text-right lg:table-cell">Opening Rank</th>
                 <th className="px-4 py-3 text-right">Closing Rank</th>
+                <th className="hidden px-4 py-3 sm:table-cell">Exp. Round</th>
                 <th className="px-4 py-3 text-right">Chance</th>
               </tr>
             </thead>
@@ -233,7 +264,7 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
                 </>
               ) : (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                  <td colSpan={9} className="px-4 py-8 text-center text-sm text-muted-foreground">
                     No colleges match your current filters. Try adjusting your filter selections.
                   </td>
                 </tr>
@@ -265,7 +296,7 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
       </div>
 
       <p className="text-center text-xs text-muted-foreground/70">
-        Predictions are based on previous year closing ranks from official MCC data. Actual cutoffs
+        Predictions are based on previous year closing ranks from official allotment data. Actual cutoffs
         may vary. This is not a guarantee of admission. Each prediction uses 1 credit.
       </p>
     </div>

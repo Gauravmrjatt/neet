@@ -5,43 +5,40 @@ import { Search, ChevronDown, ChevronUp, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import type { PredictionResult } from '@/lib/predictor/types'
+import type { PredictionResult, Chance } from '@/lib/predictor/types'
 
 interface SecondaryFiltersProps {
   results: PredictionResult[]
   onFilterChange: (filtered: PredictionResult[]) => void
 }
 
-type FilterTab = 'state' | 'course' | 'allottedCategory' | 'quota' | 'phase' | 'chance'
+type FilterTab = 'state' | 'course' | 'quota' | 'collegeType' | 'chance'
 
 interface FilterState {
   state: string[]
   course: string[]
-  allottedCategory: string[]
   quota: string[]
-  phase: number[]
+  collegeType: string[]
   chance: string[]
 }
 
 const TABS: { id: FilterTab; label: string }[] = [
   { id: 'state', label: 'State' },
   { id: 'course', label: 'Course' },
-  { id: 'allottedCategory', label: 'Allotted Category' },
   { id: 'quota', label: 'Quota' },
-  { id: 'phase', label: 'Phase' },
+  { id: 'collegeType', label: 'College Type' },
   { id: 'chance', label: 'Chance' },
 ]
 
-const CHANCE_OPTIONS = ['High', 'Good', 'Low']
+const CHANCE_OPTIONS: Chance[] = ['Safe', 'Likely', 'Risky']
 
 export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersProps) {
   const [activeTab, setActiveTab] = useState<FilterTab>('state')
   const [selectedFilters, setSelectedFilters] = useState<FilterState>({
     state: [],
     course: [],
-    allottedCategory: [],
     quota: [],
-    phase: [],
+    collegeType: [],
     chance: [],
   })
   const [stateSearch, setStateSearch] = useState('')
@@ -51,28 +48,25 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
   const filterOptions = useMemo(() => {
     const stateSet = new Set<string>()
     const courseSet = new Set<string>()
-    const allottedCategorySet = new Set<string>()
     const quotaSet = new Set<string>()
-    const phaseSet = new Set<number>()
+    const collegeTypeSet = new Set<string>()
 
     for (const r of results) {
-      stateSet.add(r.state)
-      courseSet.add(r.course)
-      allottedCategorySet.add(r.allottedCategory)
-      quotaSet.add(r.quota)
-      phaseSet.add(r.phase)
+      if (r.state) stateSet.add(r.state)
+      if (r.course) courseSet.add(r.course)
+      if (r.quota) quotaSet.add(r.quota)
+      if (r.collegeType) collegeTypeSet.add(r.collegeType)
     }
 
     return {
       states: Array.from(stateSet).sort(),
       courses: Array.from(courseSet).sort(),
-      allottedCategories: Array.from(allottedCategorySet).sort(),
-      quotas: Array.from(quotaSet).sort((a, b) => {
+      quotas: Array.from(quotaSet).sort((a: string, b: string) => {
         if (a === 'All India') return -1
         if (b === 'All India') return 1
         return a.localeCompare(b)
       }),
-      phases: Array.from(phaseSet).sort((a, b) => a - b),
+      collegeTypes: Array.from(collegeTypeSet).sort(),
     }
   }, [results])
 
@@ -97,9 +91,8 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
     const filtered = results.filter((r) => {
       if (selectedFilters.state.length > 0 && !selectedFilters.state.includes(r.state)) return false
       if (selectedFilters.course.length > 0 && !selectedFilters.course.includes(r.course)) return false
-      if (selectedFilters.allottedCategory.length > 0 && !selectedFilters.allottedCategory.includes(r.allottedCategory)) return false
       if (selectedFilters.quota.length > 0 && !selectedFilters.quota.includes(r.quota)) return false
-      if (selectedFilters.phase.length > 0 && !selectedFilters.phase.includes(r.phase)) return false
+      if (selectedFilters.collegeType.length > 0 && !selectedFilters.collegeType.includes(r.collegeType)) return false
       if (selectedFilters.chance.length > 0 && !selectedFilters.chance.includes(r.chance)) return false
       return true
     })
@@ -119,9 +112,8 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
     setPendingFilters((prev) => {
       const options = tab === 'state' ? filterOptions.states
         : tab === 'course' ? filterOptions.courses
-        : tab === 'allottedCategory' ? filterOptions.allottedCategories
         : tab === 'quota' ? filterOptions.quotas
-        : tab === 'phase' ? filterOptions.phases
+        : tab === 'collegeType' ? filterOptions.collegeTypes
         : CHANCE_OPTIONS
       const current = prev[tab] as (string | number)[]
       const allSelected = current.length === options.length
@@ -133,9 +125,8 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
     setPendingFilters({
       state: [],
       course: [],
-      allottedCategory: [],
       quota: [],
-      phase: [],
+      collegeType: [],
       chance: [],
     })
   }, [])
@@ -171,7 +162,6 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
             className="h-4 w-4 rounded border-gray-300 text-primary-navy focus:ring-primary-navy/20"
           />
           <span className="flex-1 truncate">{value}</span>
-          {tab === 'phase' && <span className="text-xs text-muted-foreground">Phase</span>}
         </label>
       )
     })
@@ -206,9 +196,8 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
             {TABS.map((tab) => {
               const count = tab.id === 'state' ? pendingFilters.state.length
                 : tab.id === 'course' ? pendingFilters.course.length
-                : tab.id === 'allottedCategory' ? pendingFilters.allottedCategory.length
                 : tab.id === 'quota' ? pendingFilters.quota.length
-                : tab.id === 'phase' ? pendingFilters.phase.length
+                : tab.id === 'collegeType' ? pendingFilters.collegeType.length
                 : pendingFilters.chance.length
               return (
                 <button
@@ -281,25 +270,6 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
               </div>
             )}
 
-            {activeTab === 'allottedCategory' && (
-              <div>
-                <div className="mb-3 flex justify-end">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleAll('allottedCategory')}
-                    className="text-xs"
-                  >
-                    {pendingFilters.allottedCategory.length === filterOptions.allottedCategories.length ? 'Deselect All' : 'Select All'}
-                  </Button>
-                </div>
-                <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-                  {renderCheckboxItems(filterOptions.allottedCategories, pendingFilters.allottedCategory, 'allottedCategory')}
-                </div>
-              </div>
-            )}
-
             {activeTab === 'quota' && (
               <div>
                 <div className="mb-3 flex justify-end">
@@ -319,21 +289,21 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
               </div>
             )}
 
-            {activeTab === 'phase' && (
+            {activeTab === 'collegeType' && (
               <div>
                 <div className="mb-3 flex justify-end">
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => toggleAll('phase')}
+                    onClick={() => toggleAll('collegeType')}
                     className="text-xs"
                   >
-                    {pendingFilters.phase.length === filterOptions.phases.length ? 'Deselect All' : 'Select All'}
+                    {pendingFilters.collegeType.length === filterOptions.collegeTypes.length ? 'Deselect All' : 'Select All'}
                   </Button>
                 </div>
-                <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-                  {renderCheckboxItems(filterOptions.phases, pendingFilters.phase, 'phase')}
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+                  {renderCheckboxItems(filterOptions.collegeTypes, pendingFilters.collegeType, 'collegeType')}
                 </div>
               </div>
             )}

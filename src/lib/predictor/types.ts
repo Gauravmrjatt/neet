@@ -3,24 +3,31 @@ export interface AllotmentRecord {
   state: string
   course: string
   quota: string
-  candidateCategory: string
-  allottedCategory: string
-  rank: number
-  phase: number
+  category: string
+  openingRank: number
+  closingRank: number
+  round: number
+  year: number
+  collegeType: string
+  fees: number
 }
 
-export type Chance = 'High' | 'Good' | 'Low'
+export type Chance = 'Safe' | 'Likely' | 'Risky'
 
 export interface PredictionResult {
   institute: string
   state: string
   course: string
   quota: string
-  candidateCategory: string
-  allottedCategory: string
+  category: string
+  openingRank: number
   closingRank: number
-  phase: number
+  expectedRound: string
+  collegeType: string
+  fees: number
+  year: number
   chance: Chance
+  probability: number
 }
 
 export interface PredictRequest {
@@ -36,9 +43,9 @@ export interface PredictResponse {
   creditsRemaining: number
   total: number
   summary: {
-    high: number
-    good: number
-    low: number
+    safe: number
+    likely: number
+    risky: number
   }
   results: PredictionResult[]
 }

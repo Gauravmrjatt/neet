@@ -2,10 +2,11 @@
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { Loader2, AlertTriangle } from 'lucide-react'
+import { Loader2, AlertTriangle, Stethoscope, Leaf, PawPrint } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import type { PredictResponse } from '@/lib/predictor/types'
 import type { FilterOptions } from '@/lib/predictor/filters'
@@ -22,7 +23,28 @@ interface PredictorFormProps {
 
 type FormStatus = 'idle' | 'loading' | 'error'
 
+type CourseGroup = 'mcc' | 'ayush' | 'vet'
+
+const COURSE_GROUPS: { id: CourseGroup; label: string; icon: React.ElementType; courses: string[] }[] = [
+  { id: 'mcc', label: 'MBBS & BDS', icon: Stethoscope, courses: ['MBBS', 'BDS', 'B.Sc. Nursing'] },
+  { id: 'ayush', label: 'AYUSH', icon: Leaf, courses: ['BAMS', 'BUMS', 'BSMS'] },
+  { id: 'vet', label: 'Veterinary', icon: PawPrint, courses: ['BVSc & AH'] },
+]
+
 export function PredictorForm({ filterOptions }: PredictorFormProps) {
+  const [courseGroup, setCourseGroup] = useState<CourseGroup>('mcc')
+
+  const COURSE_CATEGORIES: Record<CourseGroup, string[]> = {
+    mcc: ['General', 'General PwD', 'OBC-NCL', 'OBC-NCL PwD', 'EWS', 'EWS PwD', 'Scheduled Caste', 'Scheduled Caste PwD', 'Scheduled Tribe', 'Scheduled Tribe PwD', 'OP'],
+    ayush: ['GEN', 'OBC', 'EWS', 'SC', 'ST'],
+    vet: ['GEN', 'OBC', 'EWS', 'SC', 'ST'],
+  }
+
+  const COURSE_QUOTAS: Record<CourseGroup, string[]> = {
+    mcc: ['All India', 'AIQ', 'Deemed/Paid Seats', 'NRI', 'AMU Quota', 'Delhi University', 'ESI', 'IP University', 'Open Seat'],
+    ayush: ['AIQ', 'Central', 'Management', 'Minority'],
+    vet: ['AIQ'],
+  }
   const [rank, setRank] = useState('')
   const [category, setCategory] = useState('')
   const [quota, setQuota] = useState('')
@@ -53,6 +75,32 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
       window.removeEventListener('popstate', handlePopState)
     }
   }, [hasResults])
+
+  useEffect(() => {
+    setCategory('')
+    setQuota('')
+    setCourse('')
+  }, [courseGroup])
+
+  const availableCourses = useMemo(
+    () => COURSE_GROUPS.find((g) => g.id === courseGroup)?.courses ?? [],
+    [courseGroup],
+  )
+
+  const availableCategories = useMemo(
+    () => COURSE_CATEGORIES[courseGroup],
+    [courseGroup],
+  )
+
+  const availableQuotas = useMemo(
+    () => COURSE_QUOTAS[courseGroup],
+    [courseGroup],
+  )
+
+  const availableStates = useMemo(() => {
+    if (courseGroup === 'ayush' || courseGroup === 'vet') return []
+    return filterOptions.states
+  }, [courseGroup, filterOptions.states])
 
   const handleConfirmLeave = useCallback(() => {
     setShowLeaveWarning(false)
@@ -135,10 +183,11 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
   const handleQuotaChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setQuota(e.target.value), [])
   const handleStateChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setState(e.target.value), [])
   const handleCourseChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setCourse(e.target.value), [])
+  const handleCourseGroupChange = useCallback((value: string) => setCourseGroup(value as CourseGroup), [])
 
   if (creditsRemaining !== null && creditsRemaining <= 0 && !response) {
     return (
-      <div className="rounded-xl border border-border bg-card shadow-lg">
+      <div className="rounded-2xl border border-border bg-card shadow-lg">
         <div className="flex flex-col items-center gap-4 px-6 py-12 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-3xl">
             ⏳
@@ -188,22 +237,41 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-lg">
-      <div className="flex items-center gap-3 border-b border-border bg-primary-navy/[0.04] px-6 py-4">
-        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-button-gold/20 text-lg">
-          🎯
-        </span>
-        <div>
-          <h2 className="text-lg font-bold text-primary-navy">
-            Enter Your NEET Details
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            Enter your rank and filters to predict your college admission chances.
-          </p>
+    <div className="rounded-2xl border border-border bg-card shadow-lg">
+      <div className="flex flex-col gap-3 border-b border-border bg-primary-navy/[0.04] px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-button-gold/20 text-lg">
+            🎯
+          </span>
+          <div>
+            <h2 className="text-balance text-lg font-bold text-primary-navy">
+              Enter Your NEET Details
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Enter your rank and filters to predict your college admission chances.
+            </p>
+          </div>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6">
+      <div className="px-6 pt-5">
+        <Tabs value={courseGroup} onValueChange={handleCourseGroupChange}>
+          <TabsList className="w-full">
+            {COURSE_GROUPS.map((group) => {
+              const Icon = group.icon
+              return (
+                <TabsTrigger key={group.id} value={group.id} className="flex-1 gap-1.5 text-xs sm:text-sm">
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span className="hidden sm:inline">{group.label}</span>
+                  <span className="sm:hidden">{group.label.replace(' & BDS', '')}</span>
+                </TabsTrigger>
+              )
+            })}
+          </TabsList>
+        </Tabs>
+      </div>
+
+      <form onSubmit={handleSubmit} className="p-6 pt-4">
         <div className="mb-6">
           <Label htmlFor="rank" className="text-sm font-semibold text-primary-navy">
             NEET All India Rank <span className="text-destructive">*</span>
@@ -214,11 +282,11 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
             min="1"
             max="2000000"
             placeholder="Enter your AIR (e.g. 50000)"
-                value={rank}
-                onChange={handleRankChange}
-                className="mt-1 h-10 text-sm"
-                required
-                disabled={status === 'loading'}
+            value={rank}
+            onChange={handleRankChange}
+            className="mt-1 h-10 text-sm"
+            required
+            disabled={status === 'loading'}
           />
         </div>
 
@@ -241,46 +309,8 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 required
               >
                 <option value="">Select Category</option>
-                {filterOptions.categories.map((cat) => (
+                {availableCategories.map((cat) => (
                   <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <Label htmlFor="quota" className="text-xs font-semibold text-primary-navy">
-                Quota
-              </Label>
-              <select
-                id="quota"
-                aria-label="Quota"
-                value={quota}
-                onChange={handleQuotaChange}
-                className={cn(selectClasses, 'mt-1.5')}
-                disabled={status === 'loading'}
-              >
-                <option value="">All Quotas</option>
-                {filterOptions.quotas.map((q) => (
-                  <option key={q} value={q}>{q}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <Label htmlFor="state" className="text-xs font-semibold text-primary-navy">
-                State
-              </Label>
-              <select
-                id="state"
-                aria-label="State"
-                value={state}
-                onChange={handleStateChange}
-                className={cn(selectClasses, 'mt-1.5')}
-                disabled={status === 'loading'}
-              >
-                <option value="">All States</option>
-                {filterOptions.states.map((s) => (
-                  <option key={s} value={s}>{s}</option>
                 ))}
               </select>
             </div>
@@ -298,11 +328,51 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 disabled={status === 'loading'}
               >
                 <option value="">All Courses</option>
-                {filterOptions.courses.map((c) => (
+                {availableCourses.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
             </div>
+
+            <div>
+              <Label htmlFor="quota" className="text-xs font-semibold text-primary-navy">
+                Quota
+              </Label>
+              <select
+                id="quota"
+                aria-label="Quota"
+                value={quota}
+                onChange={handleQuotaChange}
+                className={cn(selectClasses, 'mt-1.5')}
+                disabled={status === 'loading'}
+              >
+                <option value="">All Quotas</option>
+                {availableQuotas.map((q) => (
+                  <option key={q} value={q}>{q}</option>
+                ))}
+              </select>
+            </div>
+
+            {courseGroup === 'mcc' && (
+              <div>
+                <Label htmlFor="state" className="text-xs font-semibold text-primary-navy">
+                  State
+                </Label>
+                <select
+                  id="state"
+                  aria-label="State"
+                  value={state}
+                  onChange={handleStateChange}
+                  className={cn(selectClasses, 'mt-1.5')}
+                  disabled={status === 'loading'}
+                >
+                  <option value="">All States</option>
+                  {availableStates.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
 
@@ -320,7 +390,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
           <Button
             type="submit"
             disabled={status === 'loading'}
-            className="h-12 w-full bg-button-gold text-sm font-bold text-primary-navy hover:bg-button-gold-hover sm:w-auto sm:px-10"
+            className="h-12 w-full bg-button-gold text-sm font-bold text-primary-navy hover:bg-button-gold-hover active:scale-[0.96] sm:w-auto sm:px-10"
           >
             {status === 'loading' ? (
               <span className="flex items-center justify-center gap-2">
