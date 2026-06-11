@@ -51,7 +51,7 @@ export function PurchaseButton({
   userName,
   userEmail,
   userPhone,
-  siteName = 'NEET Counselling',
+  siteName = 'Neet Counselors',
 }: PurchaseButtonProps) {
   const router = useRouter()
   const [step, setStep] = useState<Step>('idle')

@@ -118,6 +118,8 @@ export interface Config {
     'about-page': AboutPage;
     'video-categories': VideoCategory;
     testimonials: Testimonial;
+    'predictor-page': PredictorPage;
+    'pricing-page': PricingPage;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -128,6 +130,8 @@ export interface Config {
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
     'video-categories': VideoCategoriesSelect<false> | VideoCategoriesSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    'predictor-page': PredictorPageSelect<false> | PredictorPageSelect<true>;
+    'pricing-page': PricingPageSelect<false> | PricingPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1779,6 +1783,333 @@ export interface Testimonial {
   createdAt?: string | null;
 }
 /**
+ * Content for the /predictor page
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "predictor-page".
+ */
+export interface PredictorPage {
+  id: string;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Prevent search engines from indexing this page
+     */
+    noIndex?: boolean | null;
+  };
+  hero: {
+    badge?: string | null;
+    title: string;
+    subtitle?: string | null;
+  };
+  /**
+   * Optional content sections displayed before the predictor form
+   */
+  beforeForm?:
+    | (
+        | {
+            heading?: string | null;
+            body?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentBlock';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  title: string;
+                  description?: string | null;
+                  icon?: (string | null) | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'features';
+          }
+        | {
+            title?: string | null;
+            items?:
+              | {
+                  question: string;
+                  answer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqBlock';
+          }
+        | {
+            image: string | Media;
+            caption?: string | null;
+            alignment?: ('left' | 'center' | 'right') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'imageBlock';
+          }
+        | {
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            type?: ('info' | 'warning' | 'success' | 'error') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'alertBlock';
+          }
+        | {
+            quote: string;
+            author?: string | null;
+            style?: ('default' | 'highlight' | 'border') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'quoteBlock';
+          }
+      )[]
+    | null;
+  /**
+   * Optional content sections displayed after the predictor form
+   */
+  afterForm?:
+    | (
+        | {
+            heading?: string | null;
+            body?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentBlock';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  title: string;
+                  description?: string | null;
+                  icon?: (string | null) | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'features';
+          }
+        | {
+            heading?: string | null;
+            testimonials?:
+              | {
+                  name: string;
+                  quote: string;
+                  image?: (string | null) | Media;
+                  designation?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testimonials';
+          }
+        | {
+            heading: string;
+            description?: string | null;
+            buttonText: string;
+            buttonLink: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ctaBlock';
+          }
+        | {
+            title?: string | null;
+            items?:
+              | {
+                  question: string;
+                  answer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqBlock';
+          }
+        | {
+            image: string | Media;
+            caption?: string | null;
+            alignment?: ('left' | 'center' | 'right') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'imageBlock';
+          }
+        | {
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            type?: ('info' | 'warning' | 'success' | 'error') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'alertBlock';
+          }
+        | {
+            quote: string;
+            author?: string | null;
+            style?: ('default' | 'highlight' | 'border') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'quoteBlock';
+          }
+      )[]
+    | null;
+  disclaimer?: {
+    text?: string | null;
+    /**
+     * Show/hide the disclaimer bar at the bottom of the page
+     */
+    isEnabled?: boolean | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Content for the /pricing page
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing-page".
+ */
+export interface PricingPage {
+  id: string;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Prevent search engines from indexing this page
+     */
+    noIndex?: boolean | null;
+  };
+  hero: {
+    badge?: string | null;
+    title: string;
+    subtitle?: string | null;
+  };
+  ctaBanner?: {
+    /**
+     * Optional text above the button
+     */
+    text?: string | null;
+    buttonText?: string | null;
+    buttonLink?: string | null;
+    /**
+     * Show/hide this banner
+     */
+    isEnabled?: boolean | null;
+  };
+  trustSection: {
+    heading: string;
+    items?:
+      | {
+          title: string;
+          description: string;
+          icon:
+            | 'Award'
+            | 'Target'
+            | 'BookOpen'
+            | 'Headphones'
+            | 'Heart'
+            | 'Users'
+            | 'BarChart3'
+            | 'Handshake'
+            | 'Shield'
+            | 'Star'
+            | 'Zap'
+            | 'GraduationCap'
+            | 'TrendingUp'
+            | 'Clock';
+          id?: string | null;
+        }[]
+      | null;
+  };
+  faqSection?: {
+    heading?: string | null;
+  };
+  bottomCta?: {
+    heading?: string | null;
+    description?: string | null;
+    buttonText?: string | null;
+    buttonLink?: string | null;
+    /**
+     * Show/hide this section
+     */
+    isEnabled?: boolean | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -2056,6 +2387,267 @@ export interface TestimonialsSelect<T extends boolean = true> {
         designation?: T;
         rating?: T;
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "predictor-page_select".
+ */
+export interface PredictorPageSelect<T extends boolean = true> {
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        noIndex?: T;
+      };
+  hero?:
+    | T
+    | {
+        badge?: T;
+        title?: T;
+        subtitle?: T;
+      };
+  beforeForm?:
+    | T
+    | {
+        contentBlock?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              id?: T;
+              blockName?: T;
+            };
+        features?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    icon?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        faqBlock?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        imageBlock?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              alignment?: T;
+              id?: T;
+              blockName?: T;
+            };
+        alertBlock?:
+          | T
+          | {
+              content?: T;
+              type?: T;
+              id?: T;
+              blockName?: T;
+            };
+        quoteBlock?:
+          | T
+          | {
+              quote?: T;
+              author?: T;
+              style?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  afterForm?:
+    | T
+    | {
+        contentBlock?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              id?: T;
+              blockName?: T;
+            };
+        features?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    icon?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        testimonials?:
+          | T
+          | {
+              heading?: T;
+              testimonials?:
+                | T
+                | {
+                    name?: T;
+                    quote?: T;
+                    image?: T;
+                    designation?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        ctaBlock?:
+          | T
+          | {
+              heading?: T;
+              description?: T;
+              buttonText?: T;
+              buttonLink?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqBlock?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        imageBlock?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              alignment?: T;
+              id?: T;
+              blockName?: T;
+            };
+        alertBlock?:
+          | T
+          | {
+              content?: T;
+              type?: T;
+              id?: T;
+              blockName?: T;
+            };
+        quoteBlock?:
+          | T
+          | {
+              quote?: T;
+              author?: T;
+              style?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  disclaimer?:
+    | T
+    | {
+        text?: T;
+        isEnabled?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing-page_select".
+ */
+export interface PricingPageSelect<T extends boolean = true> {
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        noIndex?: T;
+      };
+  hero?:
+    | T
+    | {
+        badge?: T;
+        title?: T;
+        subtitle?: T;
+      };
+  ctaBanner?:
+    | T
+    | {
+        text?: T;
+        buttonText?: T;
+        buttonLink?: T;
+        isEnabled?: T;
+      };
+  trustSection?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              icon?: T;
+              id?: T;
+            };
+      };
+  faqSection?:
+    | T
+    | {
+        heading?: T;
+      };
+  bottomCta?:
+    | T
+    | {
+        heading?: T;
+        description?: T;
+        buttonText?: T;
+        buttonLink?: T;
+        isEnabled?: T;
       };
   updatedAt?: T;
   createdAt?: T;

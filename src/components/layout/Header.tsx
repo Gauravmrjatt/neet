@@ -39,7 +39,7 @@ export async function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
         {/* Left logo / emblem */}
         <div className="flex flex-shrink-0 items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-primary shadow-sm ring-1 ring-primary/10 sm:h-16 sm:w-16">
+          <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl sm:h-16 sm:w-16">
             {logo ? (
               <MediaImage
                 media={logo}
@@ -74,7 +74,7 @@ export async function Header() {
 
         {/* Right emblem */}
         <div className="flex flex-shrink-0 items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-primary shadow-sm ring-1 ring-primary/10 sm:h-16 sm:w-16">
+          <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl   sm:h-16 sm:w-16">
             {emblem ? (
               <MediaImage
                 media={emblem}

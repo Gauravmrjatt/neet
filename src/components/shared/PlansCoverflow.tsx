@@ -15,7 +15,8 @@ export async function PlansCoverflow() {
     const planId = String(typeof card.id === 'object' ? card.id?.id || card.planName : (card.id || card.planName))
     return {
       id: planId,
-      subtitle: String(card.subtitle || card.planName || ''),
+      planName: String(card.planName || ''),
+      subtitle: String(card.subtitle || ''),
       price: String(card.price || '').startsWith('₹') ? String(card.price) : `₹${card.price}`,
       originalPrice: card.originalPrice || undefined,
       discount: card.discount || undefined,

@@ -1,12 +1,14 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useRef, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-react'
+import { TurnstileWidget } from '@/components/shared/TurnstileWidget'
+import type { TurnstileWidgetHandle } from '@/components/shared/TurnstileWidget'
 
 function LoginForm() {
   const searchParams = useSearchParams()
@@ -17,13 +19,38 @@ function LoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileAwaiting, setTurnstileAwaiting] = useState(false)
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null)
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError('')
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token)
+  }, [])
+
+  useEffect(() => {
+    if (turnstileAwaiting && turnstileToken) {
+      setTurnstileAwaiting(false)
+      handleSubmitWithToken(turnstileToken)
+    }
+  }, [turnstileAwaiting, turnstileToken])
+
+  async function handleSubmitWithToken(token: string) {
     setLoading(true)
 
     try {
+      const verifyRes = await fetch('/api/validate-turnstile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      })
+      const verifyData = await verifyRes.json()
+      if (!verifyRes.ok || !verifyData.success) {
+        setError(verifyData.error || 'Security check failed. Please refresh and try again.')
+        turnstileRef.current?.reset()
+        setLoading(false)
+        return
+      }
+
       const res = await fetch('/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -34,6 +61,7 @@ function LoginForm() {
 
       if (!res.ok) {
         setError(data.errors?.[0]?.message || 'Invalid email or password')
+        turnstileRef.current?.reset()
         setLoading(false)
         return
       }
@@ -41,8 +69,24 @@ function LoginForm() {
       window.location.href = redirect
     } catch {
       setError('Something went wrong. Please try again.')
+      turnstileRef.current?.reset()
       setLoading(false)
     }
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (loading || turnstileAwaiting) return
+    setError('')
+
+    const token = turnstileToken || turnstileRef.current?.getToken()
+    if (!token) {
+      setTurnstileAwaiting(true)
+      turnstileRef.current?.execute()
+      return
+    }
+
+    await handleSubmitWithToken(token)
   }
 
   return (
@@ -100,9 +144,15 @@ function LoginForm() {
             />
           </div>
 
+          <TurnstileWidget
+            ref={turnstileRef}
+            onVerify={handleTurnstileVerify}
+            onError={() => setError('Security check unavailable. Please refresh and try again.')}
+          />
+
           <Button
             type="submit"
-            disabled={loading}
+            disabled={loading || turnstileAwaiting}
             className="w-full bg-button-gold hover:bg-button-gold-hover text-primary-navy font-semibold"
           >
             {loading ? (

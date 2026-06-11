@@ -1,11 +1,29 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Check, Users, BarChart3, Handshake, Shield } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import {
+  Check,
+  Users,
+  BarChart3,
+  Handshake,
+  Shield,
+  Award,
+  Target,
+  BookOpen,
+  Headphones,
+  Heart,
+  Star,
+  Zap,
+  GraduationCap,
+  TrendingUp,
+  Clock,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { PricingCard } from '@/payload-types'
 import { getPricingCards } from '@/lib/queries'
 import { getHelpdeskItems } from '@/lib/queries'
+import { getPricingPage } from '@/lib/queries/globals'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { RichText } from '@/components/shared/RichText'
 import { Container } from '@/components/layout/Container'
@@ -20,11 +38,32 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
+const iconMap: Record<string, LucideIcon> = {
+  Users,
+  BarChart3,
+  Handshake,
+  Shield,
+  Award,
+  Target,
+  BookOpen,
+  Headphones,
+  Heart,
+  Star,
+  Zap,
+  GraduationCap,
+  TrendingUp,
+  Clock,
+}
+
 export async function generateMetadata(): Promise<Metadata> {
+  const data = await getPricingPage()
+
   return generateSEOMetadata({
-    title: 'Pricing',
-    description:
-      'Transparent pricing for NEET & JOSAA counselling plans. Choose the plan that fits your admission journey.',
+    title: data?.seo?.metaTitle || 'Pricing',
+    description: data?.seo?.metaDescription || undefined,
+    ogImage: data?.seo?.ogImage ? { url: (data.seo.ogImage as any)?.url } : undefined,
+    keywords: data?.seo?.keywords?.map((k: any) => k.keyword).filter(Boolean) as string[] | undefined,
+    noIndex: data?.seo?.noIndex ?? undefined,
     path: '/pricing',
   })
 }
@@ -157,54 +196,46 @@ function PricingCardItem({ card }: { card: PricingCard }) {
   )
 }
 
-const TRUST_POINTS = [
-  {
-    title: 'Expert Counsellors',
-    description: 'Personal guidance from IIT/NIT alumni with 500+ successful admissions.',
-    icon: Users,
-  },
-  {
-    title: 'Data-Driven Insights',
-    description: 'Real cutoffs, previous year trends & seat matrices updated for 2025-26.',
-    icon: BarChart3,
-  },
-  {
-    title: 'End-to-End Support',
-    description: 'From choice filling to seat allotment — we are with you at every step.',
-    icon: Handshake,
-  },
-  {
-    title: 'Money-Back Guarantee',
-    description: 'Not satisfied? Get a full refund within 7 days, no questions asked.',
-    icon: Shield,
-  },
-]
-
 export default async function PricingPage() {
-  const [cards, faqResult] = await Promise.all([
+  const [cms, cards, faqResult] = await Promise.all([
+    getPricingPage(),
     getPricingCards(),
     getHelpdeskItems({ category: 'pricing' }).catch(() => ({ docs: [] })),
   ])
   const faqs = faqResult.docs
 
+  const hero = cms?.hero
+  const ctaBanner = cms?.ctaBanner
+  const trustSection = cms?.trustSection
+  const faqSection = cms?.faqSection
+  const bottomCta = cms?.bottomCta
+
   return (
     <>
       <PageHero
-        badge="Pricing Plans"
-        title="Choose the Plan That Gets You In"
-        subtitle="Transparent pricing. No hidden fees. Pick the counselling plan that matches your ambition — from single-round guidance to full admission coverage."
+        badge={hero?.badge || 'Pricing Plans'}
+        title={hero?.title || 'Choose the Plan That Gets You In'}
+        subtitle={hero?.subtitle || undefined}
       />
-      <div className="bg-primary-navy py-8 text-center -mt-px">
-        <Container>
-          <Button
-            asChild
-            size="lg"
-            className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-bold"
-          >
-            <Link href="#plans">View Plans</Link>
-          </Button>
-        </Container>
-      </div>
+
+      {ctaBanner?.isEnabled !== false && (
+        <div className="bg-primary-navy py-8 text-center -mt-px">
+          <Container>
+            {ctaBanner?.text && (
+              <p className="mb-4 text-sm text-white/80">{ctaBanner.text}</p>
+            )}
+            {ctaBanner?.buttonText && (
+              <Button
+                asChild
+                size="lg"
+                className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-bold"
+              >
+                <Link href={ctaBanner?.buttonLink || '#plans'}>{ctaBanner.buttonText}</Link>
+              </Button>
+            )}
+          </Container>
+        </div>
+      )}
 
       <Section id="plans" className="bg-navbar-bg/30">
         <Container>
@@ -225,43 +256,42 @@ export default async function PricingPage() {
         </Container>
       </Section>
 
-      <Section className="bg-background">
-        <Container>
-          <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-navy mb-3 sm:mb-4 leading-tight tracking-tight">
-              Why Thousands Trust Us
-            </h2>
-            <p className="text-foreground/70 max-w-2xl mx-auto mb-10 sm:mb-14 text-sm sm:text-base leading-relaxed">
-              Built by IIT alumni. Battle-tested across 5 counselling seasons.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {TRUST_POINTS.map((point) => {
-              const Icon = point.icon
-              return (
-                <div
-                  key={point.title}
-                  className="glass-card rounded-2xl p-6 shadow-sm bg-card-bg border border-primary-navy/10 hover:shadow-md hover:-translate-y-0.5 hover:border-primary-navy/20 transition-all duration-200 ease-out group"
-                >
-                  <span className="inline-flex w-12 h-12 rounded-2xl bg-button-gold/15 text-primary-navy items-center justify-center mb-4 group-hover:bg-button-gold/25 transition-colors duration-200 ease-out">
-                    <Icon className="w-6 h-6" aria-hidden="true" />
-                  </span>
-                  <h3 className="font-display font-bold text-primary-navy text-lg lg:text-xl mb-2 tracking-tight">
-                    {point.title}
-                  </h3>
-                  <p className="text-sm text-foreground/70 leading-relaxed">{point.description}</p>
-                </div>
-              )
-            })}
-          </div>
-        </Container>
-      </Section>
+      {trustSection?.items && trustSection.items.length > 0 && (
+        <Section className="bg-background">
+          <Container>
+            <div className="mb-12 text-center">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-navy mb-3 sm:mb-4 leading-tight tracking-tight">
+                {trustSection.heading || 'Why Thousands Trust Us'}
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {trustSection.items.map((point: any) => {
+                const Icon = iconMap[point.icon || 'Users']
+                return (
+                  <div
+                    key={point.id}
+                    className="glass-card rounded-2xl p-6 shadow-sm bg-card-bg border border-primary-navy/10 hover:shadow-md hover:-translate-y-0.5 hover:border-primary-navy/20 transition-all duration-200 ease-out group"
+                  >
+                    <span className="inline-flex w-12 h-12 rounded-2xl bg-button-gold/15 text-primary-navy items-center justify-center mb-4 group-hover:bg-button-gold/25 transition-colors duration-200 ease-out">
+                      <Icon className="w-6 h-6" aria-hidden="true" />
+                    </span>
+                    <h3 className="font-display font-bold text-primary-navy text-lg lg:text-xl mb-2 tracking-tight">
+                      {point.title}
+                    </h3>
+                    <p className="text-sm text-foreground/70 leading-relaxed">{point.description}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </Container>
+        </Section>
+      )}
 
       <Section className="bg-navbar-bg/30">
         <Container className="max-w-3xl">
           <div className="mb-12 text-center">
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-navy mb-3 sm:mb-4 leading-tight tracking-tight">
-              Frequently Asked Questions
+              {faqSection?.heading || 'Frequently Asked Questions'}
             </h2>
           </div>
           {faqs.length > 0 ? (
@@ -289,26 +319,31 @@ export default async function PricingPage() {
         </Container>
       </Section>
 
-      <section className="bg-primary-navy py-16 text-white">
-        <Container className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Still not sure which plan?
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-base sm:text-lg text-white/80">
-            Book a free 15-minute call with our counsellors and we will help you pick the right
-            plan.
-          </p>
-          <div className="mt-8">
-            <Button
-              asChild
-              size="lg"
-              className="h-12 rounded-md bg-button-gold hover:bg-button-gold-hover px-8 text-base font-bold text-primary-navy"
-            >
-              <Link href="/contact">Book a Free Call</Link>
-            </Button>
-          </div>
-        </Container>
-      </section>
+      {bottomCta?.isEnabled !== false && (
+        <section className="bg-primary-navy py-16 text-white">
+          <Container className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              {bottomCta?.heading || 'Still not sure which plan?'}
+            </h2>
+            {bottomCta?.description && (
+              <p className="mx-auto mt-4 max-w-xl text-base sm:text-lg text-white/80">
+                {bottomCta.description}
+              </p>
+            )}
+            {bottomCta?.buttonText && (
+              <div className="mt-8">
+                <Button
+                  asChild
+                  size="lg"
+                  className="h-12 rounded-md bg-button-gold hover:bg-button-gold-hover px-8 text-base font-bold text-primary-navy"
+                >
+                  <Link href={bottomCta?.buttonLink || '/contact'}>{bottomCta.buttonText}</Link>
+                </Button>
+              </div>
+            )}
+          </Container>
+        </section>
+      )}
     </>
   )
 }

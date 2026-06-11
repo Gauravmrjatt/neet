@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 
 interface PlanData {
   id: string
+  planName: string
   subtitle: string
   price: string
   originalPrice?: string
@@ -193,8 +194,11 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
                 )}
 
                 <h3 className={`text-base sm:text-lg font-bold leading-snug ${c.text}`}>
-                  {plan.subtitle || plan.id}
+                  {plan.planName || plan.subtitle || plan.id}
                 </h3>
+                {plan.subtitle && (
+                  <p className="text-xs text-muted-foreground mt-0.5">{plan.subtitle}</p>
+                )}
 
                 <div className="mt-3 flex items-baseline gap-2">
                   <span className={`text-3xl sm:text-4xl font-extrabold tracking-tight ${c.price}`}>

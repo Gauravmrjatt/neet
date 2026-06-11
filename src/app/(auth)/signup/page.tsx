@@ -1,12 +1,14 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-react'
+import { TurnstileWidget } from '@/components/shared/TurnstileWidget'
+import type { TurnstileWidgetHandle } from '@/components/shared/TurnstileWidget'
 
 function SignupForm() {
   const router = useRouter()
@@ -21,24 +23,38 @@ function SignupForm() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileAwaiting, setTurnstileAwaiting] = useState(false)
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null)
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError('')
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token)
+  }, [])
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match')
-      return
+  useEffect(() => {
+    if (turnstileAwaiting && turnstileToken) {
+      setTurnstileAwaiting(false)
+      handleSubmitWithToken(turnstileToken)
     }
+  }, [turnstileAwaiting, turnstileToken])
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters')
-      return
-    }
-
+  async function handleSubmitWithToken(token: string) {
     setLoading(true)
 
     try {
+      const verifyRes = await fetch('/api/validate-turnstile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      })
+      const verifyData = await verifyRes.json()
+      if (!verifyRes.ok || !verifyData.success) {
+        setError(verifyData.error || 'Security check failed. Please refresh and try again.')
+        turnstileRef.current?.reset()
+        setLoading(false)
+        return
+      }
+
       // Step 1: Create the user
       const res = await fetch('/api/users', {
         method: 'POST',
@@ -50,6 +66,7 @@ function SignupForm() {
 
       if (!res.ok) {
         setError(data.errors?.[0]?.message || 'Failed to create account')
+        turnstileRef.current?.reset()
         setLoading(false)
         return
       }
@@ -71,8 +88,34 @@ function SignupForm() {
       router.refresh()
     } catch {
       setError('Something went wrong. Please try again.')
+      turnstileRef.current?.reset()
       setLoading(false)
     }
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (loading || turnstileAwaiting) return
+    setError('')
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters')
+      return
+    }
+
+    const token = turnstileToken || turnstileRef.current?.getToken()
+    if (!token) {
+      setTurnstileAwaiting(true)
+      turnstileRef.current?.execute()
+      return
+    }
+
+    await handleSubmitWithToken(token)
   }
 
   return (
@@ -167,9 +210,15 @@ function SignupForm() {
             />
           </div>
 
+          <TurnstileWidget
+            ref={turnstileRef}
+            onVerify={handleTurnstileVerify}
+            onError={() => setError('Security check unavailable. Please refresh and try again.')}
+          />
+
           <Button
             type="submit"
-            disabled={loading}
+            disabled={loading || turnstileAwaiting}
             className="w-full bg-button-gold hover:bg-button-gold-hover text-primary-navy font-semibold"
           >
             {loading ? (

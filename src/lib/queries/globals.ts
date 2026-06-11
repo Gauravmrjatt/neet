@@ -26,3 +26,13 @@ export const getVideoCategories = cache(async (): Promise<VideoCategory> => {
   const payload = await getPayloadClient()
   return payload.findGlobal({ slug: 'video-categories' })
 })
+
+export const getPredictorPage = cache(async () => {
+  const payload = await getPayloadClient()
+  return payload.findGlobal({ slug: 'predictor-page' })
+})
+
+export const getPricingPage = cache(async () => {
+  const payload = await getPayloadClient()
+  return payload.findGlobal({ slug: 'pricing-page' })
+})

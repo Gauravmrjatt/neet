@@ -46,7 +46,7 @@ export const getActiveSubscriptions = cache(async (userId: string): Promise<Subs
         },
         {
           status: {
-            equals: 'active',
+            in: ['active', 'pending'],
           },
         },
       ],

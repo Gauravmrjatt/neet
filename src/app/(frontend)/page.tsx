@@ -58,7 +58,7 @@ export default async function HomePage() {
         isEnabled={notificationBar?.isEnabled}
       />
       <TrustBadges />
-      <WhyChooseUs />
+      <WhyChooseUs studentCount={settings?.stats?.students || '17,000+'} />
       <TestimonialMarquee
         testimonials={testimonials}
         studentCount={settings?.stats?.students || '17,000+'}

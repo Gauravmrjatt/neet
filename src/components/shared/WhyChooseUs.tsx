@@ -1,43 +1,43 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { ChevronDown, Target, Users, Clock, BookOpen, Shield, Headphones, Sparkles } from 'lucide-react'
 
-const REASONS = [
-  {
-    icon: Target,
-    title: 'Personalized Help',
-    description: 'Every student gets a customized counselling plan based on their rank, category, and preferences. We don\'t believe in one-size-fits-all.',
-  },
-  {
-    icon: Users,
-    title: 'Expert Counselors',
-    description: 'Our team consists of 50+ experienced counsellors who have guided thousands of students to their dream colleges.',
-  },
-  {
-    icon: Clock,
-    title: '24x7 Support',
-    description: 'Round-the-clock support via WhatsApp, call, and video sessions. We\'re always available when you need us.',
-  },
-  {
-    icon: BookOpen,
-    title: 'Comprehensive Resources',
-    description: 'Access to blog articles, video guides, college predictors, and rank analysis tools to make informed decisions.',
-  },
-  {
-    icon: Shield,
-    title: 'Proven Track Record',
-    description: '17,000+ students guided successfully. Our predictions have helped students get into top medical and engineering colleges.',
-  },
-  {
-    icon: Headphones,
-    title: 'Hindi & English',
-    description: 'Guidance available in both Hindi and English. We understand every student and parent, regardless of language preference.',
-  },
-]
-
-export function WhyChooseUs() {
+export function WhyChooseUs({ studentCount = '17,000+' }: { studentCount?: string }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
+
+  const REASONS = useMemo(() => [
+    {
+      icon: Target,
+      title: 'Personalized Help',
+      description: 'Every student gets a customized counselling plan based on their rank, category, and preferences. We don\'t believe in one-size-fits-all.',
+    },
+    {
+      icon: Users,
+      title: 'Expert Counselors',
+      description: 'Our team consists of 50+ experienced counsellors who have guided thousands of students to their dream colleges.',
+    },
+    {
+      icon: Clock,
+      title: '24x7 Support',
+      description: 'Round-the-clock support via WhatsApp, call, and video sessions. We\'re always available when you need us.',
+    },
+    {
+      icon: BookOpen,
+      title: 'Comprehensive Resources',
+      description: 'Access to blog articles, video guides, college predictors, and rank analysis tools to make informed decisions.',
+    },
+    {
+      icon: Shield,
+      title: 'Proven Track Record',
+      description: `${studentCount} students guided successfully. Our predictions have helped students get into top medical and engineering colleges.`,
+    },
+    {
+      icon: Headphones,
+      title: 'Hindi & English',
+      description: 'Guidance available in both Hindi and English. We understand every student and parent, regardless of language preference.',
+    },
+  ], [studentCount])
 
   return (
     <section
@@ -50,7 +50,7 @@ export function WhyChooseUs() {
           Why Us
         </p>
         <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-navy mb-3 sm:mb-4 leading-tight tracking-tight">
-          Why 17,000+ Students Trust Us
+          Why {studentCount} Students Trust Us
         </h2>
         <p className="text-foreground/70 max-w-2xl mx-auto mb-10 sm:mb-14 text-sm sm:text-base leading-relaxed">
           NEET Counselling is your one-stop guide for college admissions — made for every student, in every corner of India.

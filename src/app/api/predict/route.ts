@@ -87,7 +87,7 @@ export async function POST(request: Request) {
 
     if (isPremium && results.length > 0) {
       await decrementCredits(user!.id)
-      creditsRemaining = await getTotalCredits(user!.id)
+      creditsRemaining = Math.max(0, creditsRemaining - 1)
     }
 
     const response: PredictResponse = {
