@@ -120,6 +120,7 @@ export interface Config {
     testimonials: Testimonial;
     'predictor-page': PredictorPage;
     'pricing-page': PricingPage;
+    'why-choose-us': WhyChooseUs;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -132,6 +133,7 @@ export interface Config {
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     'predictor-page': PredictorPageSelect<false> | PredictorPageSelect<true>;
     'pricing-page': PricingPageSelect<false> | PricingPageSelect<true>;
+    'why-choose-us': WhyChooseUsSelect<false> | WhyChooseUsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -2111,6 +2113,39 @@ export interface PricingPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "why-choose-us".
+ */
+export interface WhyChooseUs {
+  id: string;
+  badge?: string | null;
+  heading?: string | null;
+  subheading?: string | null;
+  cards?:
+    | {
+        icon:
+          | 'Target'
+          | 'Users'
+          | 'Clock'
+          | 'BookOpen'
+          | 'Shield'
+          | 'Headphones'
+          | 'Star'
+          | 'Heart'
+          | 'CheckCircle'
+          | 'ThumbsUp'
+          | 'Award'
+          | 'Zap'
+          | 'Sparkles';
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -2648,6 +2683,26 @@ export interface PricingPageSelect<T extends boolean = true> {
         buttonText?: T;
         buttonLink?: T;
         isEnabled?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "why-choose-us_select".
+ */
+export interface WhyChooseUsSelect<T extends boolean = true> {
+  badge?: T;
+  heading?: T;
+  subheading?: T;
+  cards?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

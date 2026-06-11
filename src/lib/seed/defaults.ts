@@ -99,4 +99,62 @@ export async function seedDefaultGlobals(payload: Payload): Promise<void> {
   } catch (e) {
     payload.logger.warn('Could not seed footer: ' + e)
   }
+
+  // ── Why Choose Us ────────────────────────────────────────────────
+  try {
+    const wcu = await payload.findGlobal({ slug: 'why-choose-us' })
+
+    if (!wcu.cards || wcu.cards.length === 0) {
+      await payload.updateGlobal({
+        slug: 'why-choose-us',
+        data: {
+          badge: 'Why Us',
+          heading: 'Why 17,000+ Students Trust Us',
+          subheading:
+            'NEET Counselling is your one-stop guide for college admissions — made for every student, in every corner of India.',
+          cards: [
+            {
+              icon: 'Target',
+              title: 'Personalized Help',
+              description:
+                "Every student gets a customized counselling plan based on their rank, category, and preferences. We don't believe in one-size-fits-all.",
+            },
+            {
+              icon: 'Users',
+              title: 'Expert Counselors',
+              description:
+                'Our team consists of 50+ experienced counsellors who have guided thousands of students to their dream colleges.',
+            },
+            {
+              icon: 'Clock',
+              title: '24x7 Support',
+              description:
+                "Round-the-clock support via WhatsApp, call, and video sessions. We're always available when you need us.",
+            },
+            {
+              icon: 'BookOpen',
+              title: 'Comprehensive Resources',
+              description:
+                'Access to blog articles, video guides, college predictors, and rank analysis tools to make informed decisions.',
+            },
+            {
+              icon: 'Shield',
+              title: 'Proven Track Record',
+              description:
+                '17,000+ students guided successfully. Our predictions have helped students get into top medical and engineering colleges.',
+            },
+            {
+              icon: 'Headphones',
+              title: 'Hindi & English',
+              description:
+                'Guidance available in both Hindi and English. We understand every student and parent, regardless of language preference.',
+            },
+          ],
+        },
+      })
+      payload.logger.info('Seeded default why-choose-us cards')
+    }
+  } catch (e) {
+    payload.logger.warn('Could not seed why-choose-us: ' + e)
+  }
 }

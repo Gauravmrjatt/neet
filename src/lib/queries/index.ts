@@ -19,7 +19,7 @@ export {
   decrementCredits,
   hasActiveOrPendingSubscription,
 } from './subscriptions'
-export { getHeader, getFooter, getSiteSettings, getHomePageSEO, getVideoCategories } from './globals'
+export { getHeader, getFooter, getSiteSettings, getHomePageSEO, getVideoCategories, getWhyChooseUs } from './globals'
 export {
   findTransactionByRazorpayOrderId,
   findTransactionById,

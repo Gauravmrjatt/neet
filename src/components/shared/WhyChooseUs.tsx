@@ -1,43 +1,96 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { ChevronDown, Target, Users, Clock, BookOpen, Shield, Headphones, Sparkles } from 'lucide-react'
+import {
+  ChevronDown,
+  Target,
+  Users,
+  Clock,
+  BookOpen,
+  Shield,
+  Headphones,
+  Sparkles,
+  Star,
+  Heart,
+  CheckCircle,
+  ThumbsUp,
+  Award,
+  Zap,
+} from 'lucide-react'
 
-export function WhyChooseUs({ studentCount = '17,000+' }: { studentCount?: string }) {
+const ICON_MAP: Record<string, React.ComponentType<any>> = {
+  Target,
+  Users,
+  Clock,
+  BookOpen,
+  Shield,
+  Headphones,
+  Sparkles,
+  Star,
+  Heart,
+  CheckCircle,
+  ThumbsUp,
+  Award,
+  Zap,
+}
+
+function resolveIcon(name: string): React.ComponentType<any> {
+  return ICON_MAP[name] || Sparkles
+}
+
+export function WhyChooseUs({
+  studentCount = '17,000+',
+  data,
+}: {
+  studentCount?: string
+  data?: any
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
-  const REASONS = useMemo(() => [
-    {
-      icon: Target,
-      title: 'Personalized Help',
-      description: 'Every student gets a customized counselling plan based on their rank, category, and preferences. We don\'t believe in one-size-fits-all.',
-    },
-    {
-      icon: Users,
-      title: 'Expert Counselors',
-      description: 'Our team consists of 50+ experienced counsellors who have guided thousands of students to their dream colleges.',
-    },
-    {
-      icon: Clock,
-      title: '24x7 Support',
-      description: 'Round-the-clock support via WhatsApp, call, and video sessions. We\'re always available when you need us.',
-    },
-    {
-      icon: BookOpen,
-      title: 'Comprehensive Resources',
-      description: 'Access to blog articles, video guides, college predictors, and rank analysis tools to make informed decisions.',
-    },
-    {
-      icon: Shield,
-      title: 'Proven Track Record',
-      description: `${studentCount} students guided successfully. Our predictions have helped students get into top medical and engineering colleges.`,
-    },
-    {
-      icon: Headphones,
-      title: 'Hindi & English',
-      description: 'Guidance available in both Hindi and English. We understand every student and parent, regardless of language preference.',
-    },
-  ], [studentCount])
+  const cmsCards = data?.cards?.filter((c: any) => c.title && c.description) || []
+
+  const REASONS = useMemo(() => {
+    if (cmsCards.length > 0) {
+      return cmsCards.map((card: any) => ({
+        icon: resolveIcon(card.icon),
+        title: card.title,
+        description: card.description,
+      }))
+    }
+
+    return [
+      {
+        icon: Target,
+        title: 'Personalized Help',
+        description: 'Every student gets a customized counselling plan based on their rank, category, and preferences. We don\'t believe in one-size-fits-all.',
+      },
+      {
+        icon: Users,
+        title: 'Expert Counselors',
+        description: 'Our team consists of 50+ experienced counsellors who have guided thousands of students to their dream colleges.',
+      },
+      {
+        icon: Clock,
+        title: '24x7 Support',
+        description: 'Round-the-clock support via WhatsApp, call, and video sessions. We\'re always available when you need us.',
+      },
+      {
+        icon: BookOpen,
+        title: 'Comprehensive Resources',
+        description: 'Access to blog articles, video guides, college predictors, and rank analysis tools to make informed decisions.',
+      },
+      {
+        icon: Shield,
+        title: 'Proven Track Record',
+        description: `${studentCount} students guided successfully. Our predictions have helped students get into top medical and engineering colleges.`,
+      },
+      {
+        icon: Headphones,
+        title: 'Hindi & English',
+        description: 'Guidance available in both Hindi and English. We understand every student and parent, regardless of language preference.',
+      },
+    ]
+  }, [cmsCards, studentCount])
 
   return (
     <section
@@ -47,18 +100,18 @@ export function WhyChooseUs({ studentCount = '17,000+' }: { studentCount?: strin
       <div className="max-w-7xl mx-auto text-center">
         <p className="glass-pill inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full mb-4 tracking-wide uppercase shadow-sm">
           <Sparkles className="w-3 h-3 text-button-gold" aria-hidden="true" />
-          Why Us
+          {data?.badge || 'Why Us'}
         </p>
         <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-navy mb-3 sm:mb-4 leading-tight tracking-tight">
-          Why {studentCount} Students Trust Us
+          {data?.heading || `Why ${studentCount} Students Trust Us`}
         </h2>
         <p className="text-foreground/70 max-w-2xl mx-auto mb-10 sm:mb-14 text-sm sm:text-base leading-relaxed">
-          NEET Counselling is your one-stop guide for college admissions — made for every student, in every corner of India.
+          {data?.subheading || 'NEET Counselling is your one-stop guide for college admissions — made for every student, in every corner of India.'}
         </p>
 
         {/* Mobile: Accordion */}
         <div className="space-y-3 sm:hidden text-left">
-          {REASONS.map((reason, index) => {
+          {REASONS.map((reason: { icon: React.ComponentType<any>; title: string; description: string }, index: number) => {
             const Icon = reason.icon
             const isOpen = openIndex === index
             return (
@@ -95,7 +148,7 @@ export function WhyChooseUs({ studentCount = '17,000+' }: { studentCount?: strin
 
         {/* Desktop: Grid */}
         <div className="hidden sm:grid sm:grid-cols-3 sm:gap-5 lg:gap-6 text-left">
-          {REASONS.map((reason) => {
+          {REASONS.map((reason: { icon: React.ComponentType<any>; title: string; description: string }) => {
             const Icon = reason.icon
             return (
               <div

@@ -29,6 +29,7 @@ import { VideoCategories } from './globals/VideoCategories'
 import { Testimonials } from './globals/Testimonials'
 import { PredictorPage } from './globals/PredictorPage'
 import { PricingPage } from './globals/PricingPage'
+import { WhyChooseUs } from './globals/WhyChooseUs'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -55,7 +56,7 @@ export default buildConfig({
     ContactSubmissions,
     Specializations,
   ],
-  globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker, AboutPage, VideoCategories, Testimonials, PredictorPage, PricingPage],
+  globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker, AboutPage, VideoCategories, Testimonials, PredictorPage, PricingPage, WhyChooseUs],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || (() => { throw new Error('PAYLOAD_SECRET environment variable is required') })(),
   typescript: {

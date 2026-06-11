@@ -33,17 +33,20 @@ export default async function HomePage() {
   let notificationBar: any = null
   let testimonials: any[] = []
   let settings: any = null
+  let whyChooseUs: any = null
   try {
-    const [s, ticker, testimonialsData] = await Promise.all([
+    const [s, ticker, testimonialsData, wcu] = await Promise.all([
       payload.findGlobal({ slug: 'site-settings' }).catch(() => null),
       payload.findGlobal({ slug: 'news-ticker' }).catch(() => null),
       payload.findGlobal({ slug: 'testimonials' }).catch(() => null),
+      payload.findGlobal({ slug: 'why-choose-us' }).catch(() => null),
     ])
     settings = s
     if (settings?.siteName) siteName = settings.siteName
     newsTickerItems = ticker?.items?.filter((i: any) => i.isActive) || []
     notificationBar = settings?.notificationBar || null
     testimonials = testimonialsData?.testimonials || []
+    whyChooseUs = wcu
   } catch {}
 
   return (
@@ -58,7 +61,7 @@ export default async function HomePage() {
         isEnabled={notificationBar?.isEnabled}
       />
       <TrustBadges />
-      <WhyChooseUs studentCount={settings?.stats?.students || '17,000+'} />
+      <WhyChooseUs studentCount={settings?.stats?.students || '17,000+'} data={whyChooseUs} />
       <TestimonialMarquee
         testimonials={testimonials}
         studentCount={settings?.stats?.students || '17,000+'}

@@ -36,3 +36,8 @@ export const getPricingPage = cache(async () => {
   const payload = await getPayloadClient()
   return payload.findGlobal({ slug: 'pricing-page' })
 })
+
+export const getWhyChooseUs = cache(async () => {
+  const payload = await getPayloadClient()
+  return payload.findGlobal({ slug: 'why-choose-us' })
+})
