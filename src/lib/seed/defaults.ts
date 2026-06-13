@@ -16,6 +16,12 @@ export async function seedDefaultGlobals(payload: Payload): Promise<void> {
           tagline: 'Expert NEET and JOSAA Counselling Services',
           navigation: [
             { label: 'Home', link: '/' },
+            { label: 'Counselling', link: '/counselling', children: [
+              { label: 'All Guides', link: '/counselling' },
+              { label: 'State-Wise', link: '/counselling/state' },
+              { label: 'College Directory', link: '/colleges' },
+              { label: 'FAQs', link: '/faq' },
+            ]},
             { label: 'Blog', link: '/blog' },
             { label: 'Videos', link: '/videos' },
             { label: 'Counsellors', link: '/counsellors' },

@@ -12,6 +12,7 @@ import { HelpdeskBlock } from './HelpdeskBlock'
 import { ImageBlock } from './ImageBlock'
 import { QuoteBlock } from './QuoteBlock'
 import { AlertBlock } from './AlertBlock'
+import { ComparisonTableBlock } from './ComparisonTableBlock'
 
 const blockComponents: Record<string, React.ComponentType<any>> = {
   hero: HeroBlock,
@@ -33,6 +34,8 @@ const blockComponents: Record<string, React.ComponentType<any>> = {
   ctaBlock: CTABlock,
   'alert-block': AlertBlock,
   alertBlock: AlertBlock,
+  comparisonTable: ComparisonTableBlock,
+  'comparison-table': ComparisonTableBlock,
 }
 
 export function BlockRenderer({ blocks }: { blocks: any[] }) {

@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import Link from 'next/link'
 import { getPayloadClient } from '@/lib/payload'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateOrganizationSchema } from '@/lib/structured-data'
@@ -10,6 +11,9 @@ import { TrustBadges } from '@/components/shared/TrustBadge'
 import { PlansCoverflow } from '@/components/shared/PlansCoverflow'
 import { WhyChooseUs } from '@/components/shared/WhyChooseUs'
 import { TestimonialMarquee } from '@/components/shared/TestimonialMarquee'
+import { Section } from '@/components/layout/Section'
+import { Container } from '@/components/layout/Container'
+import { HelpCircle, BookText, GraduationCap, MapPin } from 'lucide-react'
 
 export async function generateMetadata(): Promise<Metadata> {
   const payload = await getPayloadClient()
@@ -68,6 +72,29 @@ export default async function HomePage() {
       />
       <TrustBadges />
       <WhyChooseUs studentCount={settings?.stats?.students || '17,000+'} data={whyChooseUs} />
+      <Section tone="cream">
+        <Container className="text-center">
+          <h2 className="text-2xl font-bold text-primary-navy mb-8">Popular Resources</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+            <Link href="/counselling" className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-6 hover:shadow-md transition-all hover:-translate-y-0.5">
+              <BookText className="h-8 w-8 text-primary-navy" />
+              <span className="text-sm font-semibold text-primary-navy">Counselling Guides</span>
+            </Link>
+            <Link href="/counselling/state" className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-6 hover:shadow-md transition-all hover:-translate-y-0.5">
+              <MapPin className="h-8 w-8 text-primary-navy" />
+              <span className="text-sm font-semibold text-primary-navy">State-Wise Info</span>
+            </Link>
+            <Link href="/colleges" className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-6 hover:shadow-md transition-all hover:-translate-y-0.5">
+              <GraduationCap className="h-8 w-8 text-primary-navy" />
+              <span className="text-sm font-semibold text-primary-navy">College Directory</span>
+            </Link>
+            <Link href="/faq" className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-6 hover:shadow-md transition-all hover:-translate-y-0.5">
+              <HelpCircle className="h-8 w-8 text-primary-navy" />
+              <span className="text-sm font-semibold text-primary-navy">FAQs</span>
+            </Link>
+          </div>
+        </Container>
+      </Section>
       <TestimonialMarquee
         testimonials={testimonials}
         studentCount={settings?.stats?.students || '17,000+'}

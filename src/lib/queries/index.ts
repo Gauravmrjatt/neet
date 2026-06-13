@@ -24,3 +24,18 @@ export {
   findTransactionByRazorpayOrderId,
   findTransactionById,
 } from './transactions'
+export {
+  getCounsellingPosts,
+  getCounsellingPostBySlug,
+  getRecentCounsellingPosts,
+  getCounsellingByCategory,
+  getCounsellingByState,
+} from './counselling'
+export { getStates, getStateBySlug, getStatesWithCounselling } from './states'
+export {
+  getColleges,
+  getCollegeBySlug,
+  getCollegesByState,
+  getCollegesByType,
+  getTopColleges,
+} from './colleges'

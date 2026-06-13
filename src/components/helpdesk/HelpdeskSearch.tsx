@@ -4,6 +4,7 @@ import React, { useState, useMemo, useTransition } from 'react'
 import Link from 'next/link'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Input } from '@/components/ui/input'
+import { getLexicalText } from '@/lib/lexical'
 
 interface HelpdeskItemData {
   id: string
@@ -19,16 +20,7 @@ interface HelpdeskSearchProps {
   address?: string | null
 }
 
-function getAnswerText(answer: any): string {
-  if (!answer?.root?.children) return ''
-  return answer.root.children
-    .map((node: any) => {
-      if (node.type === 'text') return node.text
-      if (node.children) return getAnswerText({ root: node })
-      return ''
-    })
-    .join(' ')
-}
+const getAnswerText = getLexicalText
 
 export function HelpdeskSearch({ items, contactEmail, phone, address }: HelpdeskSearchProps) {
   const [search, setSearch] = useState('')

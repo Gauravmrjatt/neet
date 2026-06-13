@@ -1,11 +1,14 @@
 import React from 'react'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { getCounselors } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
 import { CounselorFilter } from '@/components/counsellors/CounselorFilter'
+import { Card, CardContent } from '@/components/ui/card'
+import { INDIA_CITIES } from '@/lib/cities'
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateSEOMetadata({
@@ -37,6 +40,63 @@ export default async function CounsellorsPage() {
       <Section className="bg-navbar-bg/30">
         <Container>
           <CounselorFilter counselors={counselorData} />
+        </Container>
+      </Section>
+      <Section>
+        <Container>
+          <div className="rounded-xl border border-border bg-card p-6">
+            <h2 className="text-xl font-bold text-primary-navy mb-4">Find Counsellors in Your City</h2>
+            <div className="flex flex-wrap gap-2">
+              {INDIA_CITIES.slice(0, 10).map((city) => (
+                <Link
+                  key={city.slug}
+                  href={`/counsellors/${city.slug}`}
+                  className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-primary-navy hover:bg-muted transition-colors"
+                >
+                  {city.name}
+                </Link>
+              ))}
+              <Link
+                href="/counsellors/mumbai"
+                className="inline-flex items-center rounded-full bg-primary-navy px-4 py-2 text-sm font-medium text-white hover:bg-primary-navy-dark transition-colors"
+              >
+                View All Cities →
+              </Link>
+            </div>
+          </div>
+        </Container>
+      </Section>
+      <Section tone="cream">
+        <Container>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <h3 className="font-bold text-primary-navy mb-3">Counselling Guides</h3>
+                <p className="text-sm text-foreground/70 mb-4">Step-by-step guides for NEET counselling, AIQ, and state quota processes.</p>
+                <Link href="/counselling" className="text-sm font-semibold text-primary-navy hover:text-button-gold-hover transition-colors">
+                  Explore Guides →
+                </Link>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <h3 className="font-bold text-primary-navy mb-3">State-Wise Info</h3>
+                <p className="text-sm text-foreground/70 mb-4">State-specific counselling details, authorities, dates, and eligibility.</p>
+                <Link href="/counselling/state" className="text-sm font-semibold text-primary-navy hover:text-button-gold-hover transition-colors">
+                  View States →
+                </Link>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <h3 className="font-bold text-primary-navy mb-3">Medical Colleges</h3>
+                <p className="text-sm text-foreground/70 mb-4">Browse NMC-approved medical colleges with fees, cutoffs, and seats.</p>
+                <Link href="/colleges" className="text-sm font-semibold text-primary-navy hover:text-button-gold-hover transition-colors">
+                  Browse Colleges →
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
         </Container>
       </Section>
     </>

@@ -11,6 +11,8 @@
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "seed:globals": "cross-env NODE_OPTIONS=--no-deprecation tsx src/lib/seed/globals.ts",
+"seed:content": "cross-env NODE_OPTIONS=--no-deprecation tsx src/lib/seed/content.ts",
+"seed": "pnpm seed:globals && pnpm seed:content",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",

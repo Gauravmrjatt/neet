@@ -8,6 +8,7 @@ import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
 import { HelpdeskSearch } from '@/components/helpdesk/HelpdeskSearch'
+import { getLexicalText } from '@/lib/lexical'
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateSEOMetadata({
@@ -15,17 +16,6 @@ export async function generateMetadata(): Promise<Metadata> {
     description: 'Frequently asked questions and support',
     path: '/helpdesk',
   })
-}
-
-function getAnswerText(answer: any): string {
-  if (!answer?.root?.children) return ''
-  return answer.root.children
-    .map((node: any) => {
-      if (node.type === 'text') return node.text
-      if (node.children) return getAnswerText({ root: node })
-      return ''
-    })
-    .join(' ')
 }
 
 export default async function HelpdeskPage() {
@@ -36,7 +26,7 @@ export default async function HelpdeskPage() {
 
   const faqItems = items.map((item: any) => ({
     question: item.question,
-    answer: getAnswerText(item.answer) || 'See our documentation for more details.',
+    answer: getLexicalText(item.answer) || 'See our documentation for more details.',
   }))
 
   const helpdeskItems = items.map((item: any) => ({

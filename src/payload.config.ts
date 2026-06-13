@@ -18,6 +18,9 @@ import { Subscriptions } from './collections/Subscriptions'
 import { Transactions } from './collections/Transactions'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 import { Specializations } from './collections/Specializations'
+import { Counselling } from './collections/Counselling'
+import { States } from './collections/States'
+import { Colleges } from './collections/Colleges'
 
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
@@ -55,6 +58,9 @@ export default buildConfig({
     Transactions,
     ContactSubmissions,
     Specializations,
+    Counselling,
+    States,
+    Colleges,
   ],
   globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker, AboutPage, VideoCategories, Testimonials, PredictorPage, PricingPage, WhyChooseUs],
   editor: lexicalEditor(),

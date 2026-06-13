@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, ArrowLeft, Calendar, BookOpen } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Calendar, BookOpen, GraduationCap, MapPin, HelpCircle } from 'lucide-react'
 import { getBlogs } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { Container } from '@/components/layout/Container'
@@ -207,6 +207,31 @@ export default async function BlogPage({
               </p>
             </div>
           )}
+        </Container>
+      </Section>
+      <Section>
+        <Container>
+          <div className="rounded-xl border border-border bg-card p-8 text-center">
+            <h2 className="text-xl font-bold text-primary-navy mb-6">Need More Help?</h2>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link href="/counselling" className="inline-flex items-center gap-2 rounded-lg bg-primary-navy px-5 py-3 text-sm font-semibold text-white hover:bg-primary-navy-dark transition-colors">
+                <BookOpen className="h-4 w-4" />
+                Counselling Guides
+              </Link>
+              <Link href="/counselling/state" className="inline-flex items-center gap-2 rounded-lg border border-border px-5 py-3 text-sm font-semibold text-primary-navy hover:bg-muted transition-colors">
+                <MapPin className="h-4 w-4" />
+                State-Wise Info
+              </Link>
+              <Link href="/colleges" className="inline-flex items-center gap-2 rounded-lg border border-border px-5 py-3 text-sm font-semibold text-primary-navy hover:bg-muted transition-colors">
+                <GraduationCap className="h-4 w-4" />
+                College Directory
+              </Link>
+              <Link href="/faq" className="inline-flex items-center gap-2 rounded-lg border border-border px-5 py-3 text-sm font-semibold text-primary-navy hover:bg-muted transition-colors">
+                <HelpCircle className="h-4 w-4" />
+                FAQs
+              </Link>
+            </div>
+          </div>
         </Container>
       </Section>
     </>
