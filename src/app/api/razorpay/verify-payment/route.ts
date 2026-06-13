@@ -74,7 +74,7 @@ export async function POST(request: Request) {
       },
     })
 
-    // Create subscription
+    // Create subscription (auto-active since payment is verified)
     const planId = typeof transaction.plan === 'object' ? transaction.plan?.id : transaction.plan
 
     const subscription = await payload.create({
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
         user: user.id,
         plan: planId,
         transaction: transactionId,
-        status: 'pending',
+        status: 'active',
       },
     })
 

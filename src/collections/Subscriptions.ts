@@ -42,14 +42,14 @@ export const Subscriptions: CollectionConfig = {
             data.purchasedAt = new Date().toISOString()
           }
 
-          // Auto-set credits from the plan's predictionCredits
+          // Auto-set credits from the plan's predictionCredits (minimum 1 credit)
           if (data.plan) {
             try {
               const plan = await req.payload.findByID({
                 collection: 'pricing-cards',
                 id: data.plan,
               })
-              const credits = (plan as any).predictionCredits ?? 1
+              const credits = Math.max((plan as any).predictionCredits ?? 1, 1)
               data.creditsTotal = credits
               data.creditsRemaining = credits
             } catch {

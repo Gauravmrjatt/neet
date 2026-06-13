@@ -79,10 +79,14 @@ export async function POST(request: Request) {
     let isPremium = false
     let creditsRemaining = 0
     if (user) {
+      console.log(`[Predict] User ${user.id} authenticated, checking credits...`)
       creditsRemaining = await getTotalCredits(user.id)
+      console.log(`[Predict] User ${user.id} has ${creditsRemaining} credits remaining`)
       if (creditsRemaining > 0) {
         isPremium = true
       }
+    } else {
+      console.log('[Predict] No authenticated user, treating as anonymous')
     }
 
     if (isPremium && results.length > 0) {

@@ -59,7 +59,9 @@ export const getActiveSubscriptions = cache(async (userId: string): Promise<Subs
 
 export const getTotalCredits = cache(async (userId: string): Promise<number> => {
   const subscriptions = await getActiveSubscriptions(userId)
-  return subscriptions.reduce((sum, sub) => sum + (sub.creditsRemaining || 0), 0)
+  const total = subscriptions.reduce((sum, sub) => sum + (sub.creditsRemaining || 0), 0)
+  console.log(`[Credits] User ${userId}: ${subscriptions.length} active subscriptions, total credits: ${total}`)
+  return total
 })
 
 export async function decrementCredits(userId: string): Promise<boolean> {

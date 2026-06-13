@@ -79,14 +79,14 @@ export async function POST(request: Request) {
           },
         })
 
-        // Create subscription (webhook may not have user context)
+        // Create subscription (auto-active since payment is captured)
         const subscription = await payload.create({
           collection: 'subscriptions',
           data: {
             user: userId,
             plan: planId,
             transaction: transaction.id,
-            status: 'pending',
+            status: 'active',
           },
         })
 
