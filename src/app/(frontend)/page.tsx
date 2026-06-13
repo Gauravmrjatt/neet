@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
     seo = await payload.findGlobal({ slug: 'home-page-seo' })
   } catch {}
   return generateSEOMetadata({
-    title: seo?.metaTitle || 'NEET Counselling 2026 — College Predictor & Expert Guidance',
+    title: seo?.metaTitle || '2026 — College Predictor & Expert Guidance',
     description: seo?.metaDescription || 'Expert NEET and JOSAA counselling for 2026 admissions. Predict your college, get personalized guidance from experienced counsellors, and secure your seat.',
     ogImage: seo?.ogImage,
     keywords: seo?.keywords,
@@ -51,7 +51,13 @@ export default async function HomePage() {
 
   return (
     <>
-      <JsonLd data={generateOrganizationSchema(siteName)} />
+      <JsonLd data={generateOrganizationSchema(siteName, [
+        settings?.socialMedia?.facebook,
+        settings?.socialMedia?.twitter,
+        settings?.socialMedia?.instagram,
+        settings?.socialMedia?.youtube,
+        settings?.socialMedia?.linkedin,
+      ].filter(Boolean) as string[])} />
       <NewsTicker items={newsTickerItems} />
       <HeroSection />
       <PlansCoverflow />

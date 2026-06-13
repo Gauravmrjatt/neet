@@ -1,6 +1,6 @@
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
 
-export function generateOrganizationSchema(siteName = 'NEET Counselling') {
+export function generateOrganizationSchema(siteName = 'NEET Counselling', sameAs: string[] = []) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -12,7 +12,7 @@ export function generateOrganizationSchema(siteName = 'NEET Counselling') {
       telephone: '+91-XXXXXXXXXX',
       contactType: 'customer service',
     },
-    sameAs: [],
+    sameAs,
   }
 }
 

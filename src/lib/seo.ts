@@ -27,10 +27,12 @@ export async function generateMetadata({
     if (settings?.siteDescription) siteDescription = settings.siteDescription
   } catch {}
 
+  const ogImageUrl = ogImage?.url || `${siteUrl}/og-default.svg`
+
   const metadata: Metadata = {
     title: title || siteName,
     description: description || siteDescription,
-    keywords: keywords?.join(', '),
+    keywords: keywords && keywords.length > 0 ? keywords.join(', ') : undefined,
     robots: noIndex ? 'noindex, nofollow' : 'index, follow',
     openGraph: {
       title: title || siteName,
@@ -39,20 +41,17 @@ export async function generateMetadata({
       siteName,
       type: 'website',
       locale: 'en_IN',
+      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
       title: title || siteName,
       description: description || siteDescription,
+      images: [ogImageUrl],
     },
     alternates: {
       canonical: `${siteUrl}${path}`,
     },
-  }
-
-  if (ogImage?.url) {
-    metadata.openGraph!.images = [{ url: ogImage.url, width: 1200, height: 630 }]
-    metadata.twitter!.images = [ogImage.url]
   }
 
   return metadata
@@ -64,8 +63,10 @@ export async function generateBlogMetadata(blog: {
   excerpt?: string
   featuredImage?: { url?: string } | null
   slug?: string
+  publishedAt?: string
+  updatedAt?: string
 }): Promise<Metadata> {
-  return generateMetadata({
+  const meta = await generateMetadata({
     title: blog.seo?.metaTitle || blog.title,
     description: blog.seo?.metaDescription || blog.excerpt,
     ogImage: blog.seo?.ogImage || blog.featuredImage,
@@ -73,6 +74,17 @@ export async function generateBlogMetadata(blog: {
     noIndex: blog.seo?.noIndex,
     path: `/blog/${blog.slug}`,
   })
+  if (meta.openGraph) {
+    const og = meta.openGraph as any
+    og.type = 'article'
+    if (blog.publishedAt) {
+      og.publishedTime = blog.publishedAt
+    }
+    if (blog.updatedAt) {
+      og.modifiedTime = blog.updatedAt
+    }
+  }
+  return meta
 }
 
 export async function generateVideoMetadata(video: {

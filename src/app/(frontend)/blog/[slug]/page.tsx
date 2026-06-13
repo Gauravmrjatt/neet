@@ -34,6 +34,8 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     excerpt: blog.excerpt || undefined,
     featuredImage: featuredImage ? { url: featuredImage.url || undefined } : null,
     slug: blog.slug,
+    publishedAt: blog.publishedAt || undefined,
+    updatedAt: blog.updatedAt,
   })
 }
 

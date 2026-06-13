@@ -31,6 +31,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
+  const pages = await payload.find({
+    collection: 'pages',
+    where: { status: { equals: 'published' } },
+    limit: 1000,
+  })
+  const cmsPages = pages.docs.map((page: any) => ({
+    url: `${siteUrl}/${page.slug}`,
+    lastModified: new Date(page.updatedAt),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }))
+
   const videos = await payload.find({
     collection: 'videos',
     where: { status: { equals: 'published' } },
@@ -43,5 +55,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...staticPages, ...blogPages, ...videoPages]
+  return [...staticPages, ...blogPages, ...cmsPages, ...videoPages]
 }
