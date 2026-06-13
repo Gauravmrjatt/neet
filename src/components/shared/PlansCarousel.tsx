@@ -247,10 +247,12 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
           <button
             key={index}
             type="button"
+            role="tab"
             className="plans-coverflow-dot"
-            aria-current={index === active ? 'true' : 'false'}
-            onClick={() => go(index)}
+            aria-selected={index === active}
             aria-label={`Show plan ${index + 1}`}
+            tabIndex={index === active ? 0 : -1}
+            onClick={() => go(index)}
           />
         ))}
       </div>

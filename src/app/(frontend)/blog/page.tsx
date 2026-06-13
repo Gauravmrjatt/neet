@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { ArrowRight, ArrowLeft, Calendar, BookOpen, GraduationCap, MapPin, HelpCircle } from 'lucide-react'
 import { getBlogs } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { generateItemListSchema } from '@/lib/structured-data'
+import { JsonLd } from '@/components/shared/JsonLd'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
@@ -13,7 +15,7 @@ import { Media } from '@/payload-types'
 export async function generateMetadata(): Promise<Metadata> {
   return generateSEOMetadata({
     title: 'Blog',
-    description: 'Latest articles and guides for NEET aspirants',
+    description: 'NEET counselling guides, MBBS admission tips, college selection advice, and expert insights for medical aspirants in India',
     path: '/blog',
   })
 }
@@ -28,12 +30,21 @@ export default async function BlogPage({
   const sort = sortParam === 'oldest' ? 'publishedAt' : '-publishedAt'
   const { docs: blogs, totalPages, page: paginationPage } = await getBlogs({ page: currentPage, limit: 9, sort })
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+
   return (
     <>
+      <JsonLd data={generateItemListSchema(
+        blogs.map((blog: any, index: number) => ({
+          url: `${siteUrl}/blog/${blog.slug}`,
+          name: blog.title,
+        }))
+      )} />
+
       <PageHero
         badge="Insights & Guides"
         title="Blog"
-        subtitle="Latest articles, guides, and insights for aspirants"
+        subtitle="Latest articles, guides, and insights for aspiring doctors"
       />
 
       <Section tone="cream" className="relative">

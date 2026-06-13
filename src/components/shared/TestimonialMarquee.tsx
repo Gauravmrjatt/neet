@@ -74,7 +74,7 @@ export function TestimonialMarquee({ testimonials = [], studentCount = '17,000+'
           </h2>
           <p className="text-sm sm:text-base text-foreground/70 max-w-xl mx-auto">
             Trusted by{' '}
-            <span className="text-button-gold font-bold">{studentCount}</span>
+            <span className="text-primary-navy font-bold">{studentCount}</span>
             {' '}students across India
           </p>
         </div>
@@ -107,7 +107,7 @@ export function TestimonialMarquee({ testimonials = [], studentCount = '17,000+'
                       <Quote className="w-5 h-5" />
                     </span>
                     {testimonial.rating && (
-                      <div className="flex gap-0.5" aria-label={`${testimonial.rating} star rating`}>
+                      <div className="flex gap-0.5" role="img" aria-label={`${testimonial.rating} star rating`}>
                         {Array.from({ length: testimonial.rating }).map((_, i) => (
                           <Star
                             key={i}

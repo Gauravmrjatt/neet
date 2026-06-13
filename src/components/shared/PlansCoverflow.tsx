@@ -46,7 +46,7 @@ export async function PlansCoverflow() {
           </h2>
           <p className="text-sm sm:text-base text-foreground/70 max-w-2xl mx-auto">
             Trusted by{' '}
-            <span className="text-button-gold font-bold">{studentCount}</span>
+            <span className="text-primary-navy font-bold">{studentCount}</span>
             {' '}students — compare all counselling options below
           </p>
         </div>

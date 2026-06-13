@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 import { getBlogBySlug, getRecentBlogs } from '@/lib/queries'
 import { getPayloadClient } from '@/lib/payload'
 import { generateBlogMetadata } from '@/lib/seo'
-import { generateBlogPostingSchema, generateBreadcrumbSchema } from '@/lib/structured-data'
+import { generateBlogPostingSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { RichText } from '@/components/shared/RichText'
 import { BlockRenderer } from '@/components/blocks'
@@ -13,6 +13,19 @@ import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { formatDate } from '@/lib/utils'
 import { Media, User } from '@/payload-types'
+
+export const revalidate = 3600
+
+export async function generateStaticParams() {
+  const payload = await getPayloadClient()
+  const { docs: blogs } = await payload.find({
+    collection: 'blogs',
+    where: { status: { equals: 'published' } },
+    limit: 1000,
+    select: { slug: true },
+  })
+  return blogs.map((blog: any) => ({ slug: blog.slug }))
+}
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
@@ -62,6 +75,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
 
+  const faqItems = (blog.blocks || [])
+    .filter((b: any) => b.blockType === 'faqBlock')
+    .flatMap((b: any) => b.items || [])
+    .map((item: any) => ({ question: item.question, answer: item.answer }))
+
   return (
     <>
       <JsonLd data={generateBlogPostingSchema({
@@ -77,6 +95,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         { name: 'Blog', url: `${siteUrl}/blog` },
         { name: blog.title, url: `${siteUrl}/blog/${blog.slug}` },
       ])} />
+
+      {faqItems.length > 0 && (
+        <JsonLd data={generateFAQSchema(faqItems)} />
+      )}
 
       <article className="bg-card">
         {/* Article Header */}
@@ -133,7 +155,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <img
                   src={featuredImage.url}
                   alt={featuredImage.alt || blog.title}
-                  loading="lazy"
                   className="h-auto w-full"
                 />
               </div>
