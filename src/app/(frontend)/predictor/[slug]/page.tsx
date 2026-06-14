@@ -200,9 +200,9 @@ export default async function PredictorSlugPage({ params }: PageProps) {
             </h2>
             <div className="space-y-4">
               {variant.faqs.map((faq, i) => (
-                <div key={i} className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-                  <h3 className="font-semibold text-gray-900 dark:text-white">{faq.question}</h3>
-                  <p className="mt-2 text-gray-600 dark:text-gray-400">{faq.answer}</p>
+                <div key={i} className="rounded-xl border border-gray-200 bg-white p-6">
+                  <h3 className="font-semibold text-gray-900">{faq.question}</h3>
+                  <p className="mt-2 text-gray-600">{faq.answer}</p>
                 </div>
               ))}
             </div>

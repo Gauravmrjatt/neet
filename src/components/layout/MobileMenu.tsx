@@ -15,7 +15,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
-import { ThemeToggle } from '@/components/shared/ThemeToggle'
 import { cn } from '@/lib/utils'
 
 interface MobileMenuProps {
@@ -149,10 +148,6 @@ export function MobileMenu({ user, navigation, ctaButton, siteName = 'NEET Couns
         </nav>
 
         <div className="border-t border-border/70 bg-navbar-bg/50 px-5 py-4">
-          {/* <div className="mb-3 flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">Theme</span>
-            <ThemeToggle />
-          </div> */}
           {user ? (
             <div className="flex flex-col gap-1">
               <p className="text-xs font-medium text-muted-foreground">

@@ -4,7 +4,6 @@ import config from '@/payload.config'
 import { getHeader, getSiteSettings } from '@/lib/queries/globals'
 import { MediaImage } from '@/components/shared/MediaImage'
 import { CallButton } from '@/components/shared/CallButton'
-import { ThemeToggle } from '@/components/shared/ThemeToggle'
 
 import { cn } from '@/lib/utils'
 
@@ -88,9 +87,6 @@ export async function Header() {
               </span>
             )}
           </div>
-          {/* <div className="hidden sm:block">
-            <ThemeToggle />
-          </div> */}
         </div>
       </div>
 

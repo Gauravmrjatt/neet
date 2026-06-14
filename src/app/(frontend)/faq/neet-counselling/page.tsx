@@ -92,7 +92,7 @@ export default async function NEETCounsellingFAQPage() {
             {GEO_FAQS.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`}>
                 <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
-                <AccordionContent className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                <AccordionContent className="text-gray-600 leading-relaxed">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>

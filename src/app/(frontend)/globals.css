@@ -38,37 +38,6 @@
   --animate-accordion-up: accordion-up 0.2s ease-out;
 }
 
-/* Dark mode — applied when <html class="dark"> is set by next-themes.
-   Mirrors the @theme tokens with brand-aware overrides. */
-.dark {
-  --color-background: oklch(0.16 0.02 240);
-  --color-foreground: oklch(0.96 0.005 240);
-  --color-card: oklch(0.22 0.02 240);
-  --color-card-foreground: oklch(0.96 0.005 240);
-  --color-popover: oklch(0.22 0.02 240);
-  --color-popover-foreground: oklch(0.96 0.005 240);
-  --color-primary: #FBAC1A;
-  --color-primary-foreground: #041d45;
-  --color-secondary: oklch(0.25 0.02 240);
-  --color-secondary-foreground: oklch(0.96 0.005 240);
-  --color-muted: oklch(0.25 0.02 240);
-  --color-muted-foreground: oklch(0.7 0.02 240);
-  --color-accent: oklch(0.28 0.02 240);
-  --color-accent-foreground: oklch(0.96 0.005 240);
-  --color-destructive: oklch(0.55 0.22 27);
-  --color-destructive-foreground: oklch(0.98 0 0);
-  --color-border: oklch(0.32 0.02 240);
-  --color-input: oklch(0.32 0.02 240);
-  --color-ring: #FBAC1A;
-  --color-primary-navy: #FBAC1A;
-  --color-primary-navy-dark: #e09b18;
-  --color-button-gold: #FBAC1A;
-  --color-button-gold-hover: #FFD46B;
-  --color-card-bg: oklch(0.22 0.02 240);
-  --color-navbar-bg: oklch(0.2 0.02 240);
-  --color-navbar-hover: oklch(0.28 0.02 240);
-}
-
 @keyframes accordion-down {
   from { height: 0; }
   to { height: var(--radix-accordion-content-height); }
@@ -89,7 +58,7 @@
   }
 }
 
-/* Government dots background — adapts to dark mode via token. */
+/* Government dots background. */
 .gov-dots {
   background-color: var(--color-background);
   background-image: radial-gradient(

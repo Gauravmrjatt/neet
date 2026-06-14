@@ -95,12 +95,6 @@
   backdrop-filter: blur(6px);
 }
 
-/* Dark-mode flip for the glass pill — gold tint stays, text inverts to gold. */
-.dark .glass-pill {
-  color: var(--color-button-gold);
-  border-color: color-mix(in oklch, var(--color-button-gold) 30%, transparent);
-}
-
 /* ── Plans coverflow styles ── */
 .plans-coverflow-shell {
   position: relative;
