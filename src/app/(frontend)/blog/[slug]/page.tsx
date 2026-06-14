@@ -64,9 +64,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const payload = await getPayloadClient()
   let siteName = 'NEET Counselling'
+  let publisherName = 'NEET Counselling'
+  let authorFallback = 'Admin'
   try {
-    const settings = await payload.findGlobal({ slug: 'site-settings' })
+    const settings: any = await payload.findGlobal({ slug: 'site-settings' })
     if (settings?.siteName) siteName = settings.siteName
+    if (settings?.schema?.publisherName) publisherName = settings.schema.publisherName
   } catch {}
 
   const featuredImage = typeof blog.featuredImage === 'object' ? blog.featuredImage as Media : null
@@ -89,7 +92,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         publishedAt: blog.publishedAt || undefined,
         updatedAt: blog.updatedAt,
         author: author ? { name: author.name || author.email } : undefined,
-      }, siteName)} />
+      }, publisherName, authorFallback)} />
       <JsonLd data={generateBreadcrumbSchema([
         { name: 'Home', url: siteUrl },
         { name: 'Blog', url: `${siteUrl}/blog` },

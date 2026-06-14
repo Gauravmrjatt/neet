@@ -83,6 +83,10 @@ export interface Config {
     counselling: Counselling;
     states: State;
     colleges: College;
+    'cutoff-records': CutoffRecord;
+    'seat-matrix': SeatMatrix;
+    bonds: Bond;
+    stipends: Stipend;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -106,6 +110,10 @@ export interface Config {
     counselling: CounsellingSelect<false> | CounsellingSelect<true>;
     states: StatesSelect<false> | StatesSelect<true>;
     colleges: CollegesSelect<false> | CollegesSelect<true>;
+    'cutoff-records': CutoffRecordsSelect<false> | CutoffRecordsSelect<true>;
+    'seat-matrix': SeatMatrixSelect<false> | SeatMatrixSelect<true>;
+    bonds: BondsSelect<false> | BondsSelect<true>;
+    stipends: StipendsSelect<false> | StipendsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -343,6 +351,30 @@ export interface Blog {
             blockType: 'faqBlock';
           }
         | {
+            title?: string | null;
+            posts?:
+              | {
+                  post:
+                    | {
+                        relationTo: 'blogs';
+                        value: string | Blog;
+                      }
+                    | {
+                        relationTo: 'counselling';
+                        value: string | Counselling;
+                      }
+                    | {
+                        relationTo: 'pages';
+                        value: string | Page;
+                      };
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'relatedPostsBlock';
+          }
+        | {
             heading?: string | null;
             items?:
               | {
@@ -382,6 +414,393 @@ export interface Blog {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "counselling".
+ */
+export interface Counselling {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  blocks?:
+    | (
+        | {
+            heading?: string | null;
+            body?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentBlock';
+          }
+        | {
+            title?: string | null;
+            items?:
+              | {
+                  question: string;
+                  answer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqBlock';
+          }
+        | {
+            heading: string;
+            description?: string | null;
+            buttonText: string;
+            buttonLink: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ctaBlock';
+          }
+        | {
+            image: string | Media;
+            caption?: string | null;
+            alignment?: ('left' | 'center' | 'right') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'imageBlock';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  title: string;
+                  description?: string | null;
+                  icon?: (string | null) | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'features';
+          }
+        | {
+            title?: string | null;
+            posts?:
+              | {
+                  post:
+                    | {
+                        relationTo: 'blogs';
+                        value: string | Blog;
+                      }
+                    | {
+                        relationTo: 'counselling';
+                        value: string | Counselling;
+                      }
+                    | {
+                        relationTo: 'pages';
+                        value: string | Page;
+                      };
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'relatedPostsBlock';
+          }
+        | {
+            heading?: string | null;
+            rows?:
+              | {
+                  label: string;
+                  columnA?: string | null;
+                  columnB?: string | null;
+                  columnC?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'comparisonTable';
+          }
+      )[]
+    | null;
+  category: 'ug-counselling' | 'pg-counselling' | 'state-counselling' | 'abroad' | 'guide';
+  state?: (string | null) | State;
+  featuredImage?: (string | null) | Media;
+  author?: (string | null) | User;
+  publishedAt?: string | null;
+  /**
+   * Lower numbers appear first
+   */
+  order?: number | null;
+  status: 'draft' | 'published';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: string;
+  title: string;
+  slug: string;
+  content?:
+    | (
+        | {
+            heading: string;
+            subheading?: string | null;
+            backgroundImage?: (string | null) | Media;
+            ctaText?: string | null;
+            ctaLink?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            heading?: string | null;
+            body?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentBlock';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  title: string;
+                  description?: string | null;
+                  icon?: (string | null) | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'features';
+          }
+        | {
+            heading?: string | null;
+            testimonials?:
+              | {
+                  name: string;
+                  quote: string;
+                  image?: (string | null) | Media;
+                  designation?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testimonials';
+          }
+        | {
+            heading: string;
+            description?: string | null;
+            buttonText: string;
+            buttonLink: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta';
+          }
+      )[]
+    | null;
+  status: 'draft' | 'published';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Prevent search engines from indexing this page
+     */
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "states".
+ */
+export interface State {
+  id: string;
+  name: string;
+  slug: string;
+  /**
+   * State code (e.g., MH, KA, TN)
+   */
+  code?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Name of the counselling authority (e.g., DMER Maharashtra, KEA Karnataka)
+   */
+  counsellingAuthority?: string | null;
+  /**
+   * Official counselling website URL
+   */
+  counsellingWebsite?: string | null;
+  /**
+   * Brief description of how counselling works in this state
+   */
+  counsellingProcess?: string | null;
+  importantDates?:
+    | {
+        label: string;
+        date?: string | null;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  eligibilityNotes?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  documentRequirements?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  reservationPolicy?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  feeStructureNotes?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  featuredImage?: (string | null) | Media;
+  /**
+   * Lower numbers appear first
+   */
+  order?: number | null;
+  status: 'active' | 'inactive';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -541,6 +960,18 @@ export interface Counselor {
    */
   order?: number | null;
   status: 'active' | 'inactive';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    noIndex?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -584,6 +1015,18 @@ export interface Helpdesk {
    */
   order?: number | null;
   status: 'active' | 'inactive';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    noIndex?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -618,91 +1061,6 @@ export interface LiveCounselling {
   duration?: string | null;
   status: 'scheduled' | 'live' | 'completed' | 'cancelled';
   maxParticipants?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pages".
- */
-export interface Page {
-  id: string;
-  title: string;
-  slug: string;
-  content?:
-    | (
-        | {
-            heading: string;
-            subheading?: string | null;
-            backgroundImage?: (string | null) | Media;
-            ctaText?: string | null;
-            ctaLink?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'hero';
-          }
-        | {
-            heading?: string | null;
-            body?: {
-              root: {
-                type: string;
-                children: {
-                  type: any;
-                  version: number;
-                  [k: string]: unknown;
-                }[];
-                direction: ('ltr' | 'rtl') | null;
-                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                indent: number;
-                version: number;
-              };
-              [k: string]: unknown;
-            } | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'contentBlock';
-          }
-        | {
-            heading?: string | null;
-            items?:
-              | {
-                  title: string;
-                  description?: string | null;
-                  icon?: (string | null) | Media;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'features';
-          }
-        | {
-            heading?: string | null;
-            testimonials?:
-              | {
-                  name: string;
-                  quote: string;
-                  image?: (string | null) | Media;
-                  designation?: string | null;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'testimonials';
-          }
-        | {
-            heading: string;
-            description?: string | null;
-            buttonText: string;
-            buttonLink: string;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'cta';
-          }
-      )[]
-    | null;
-  status: 'draft' | 'published';
   seo?: {
     metaTitle?: string | null;
     metaDescription?: string | null;
@@ -713,14 +1071,10 @@ export interface Page {
           id?: string | null;
         }[]
       | null;
-    /**
-     * Prevent search engines from indexing this page
-     */
     noIndex?: boolean | null;
   };
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * Tracks user plan purchases and admin assignments
@@ -850,268 +1204,6 @@ export interface ContactSubmission {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "counselling".
- */
-export interface Counselling {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt?: string | null;
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  blocks?:
-    | (
-        | {
-            heading?: string | null;
-            body?: {
-              root: {
-                type: string;
-                children: {
-                  type: any;
-                  version: number;
-                  [k: string]: unknown;
-                }[];
-                direction: ('ltr' | 'rtl') | null;
-                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                indent: number;
-                version: number;
-              };
-              [k: string]: unknown;
-            } | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'contentBlock';
-          }
-        | {
-            title?: string | null;
-            items?:
-              | {
-                  question: string;
-                  answer: string;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'faqBlock';
-          }
-        | {
-            heading: string;
-            description?: string | null;
-            buttonText: string;
-            buttonLink: string;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'ctaBlock';
-          }
-        | {
-            image: string | Media;
-            caption?: string | null;
-            alignment?: ('left' | 'center' | 'right') | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'imageBlock';
-          }
-        | {
-            heading?: string | null;
-            items?:
-              | {
-                  title: string;
-                  description?: string | null;
-                  icon?: (string | null) | Media;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'features';
-          }
-        | {
-            heading?: string | null;
-            rows?:
-              | {
-                  label: string;
-                  columnA?: string | null;
-                  columnB?: string | null;
-                  columnC?: string | null;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'comparisonTable';
-          }
-      )[]
-    | null;
-  category: 'ug-counselling' | 'pg-counselling' | 'state-counselling' | 'abroad' | 'guide';
-  state?: (string | null) | State;
-  featuredImage?: (string | null) | Media;
-  author?: (string | null) | User;
-  publishedAt?: string | null;
-  /**
-   * Lower numbers appear first
-   */
-  order?: number | null;
-  status: 'draft' | 'published';
-  seo?: {
-    metaTitle?: string | null;
-    metaDescription?: string | null;
-    ogImage?: (string | null) | Media;
-    keywords?:
-      | {
-          keyword?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    noIndex?: boolean | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "states".
- */
-export interface State {
-  id: string;
-  name: string;
-  slug: string;
-  /**
-   * State code (e.g., MH, KA, TN)
-   */
-  code?: string | null;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Name of the counselling authority (e.g., DMER Maharashtra, KEA Karnataka)
-   */
-  counsellingAuthority?: string | null;
-  /**
-   * Official counselling website URL
-   */
-  counsellingWebsite?: string | null;
-  /**
-   * Brief description of how counselling works in this state
-   */
-  counsellingProcess?: string | null;
-  importantDates?:
-    | {
-        label: string;
-        date?: string | null;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  eligibilityNotes?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  documentRequirements?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  reservationPolicy?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  feeStructureNotes?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  featuredImage?: (string | null) | Media;
-  /**
-   * Lower numbers appear first
-   */
-  order?: number | null;
-  status: 'active' | 'inactive';
-  seo?: {
-    metaTitle?: string | null;
-    metaDescription?: string | null;
-    ogImage?: (string | null) | Media;
-    keywords?:
-      | {
-          keyword?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    noIndex?: boolean | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "colleges".
  */
 export interface College {
@@ -1204,6 +1296,148 @@ export interface College {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cutoff-records".
+ */
+export interface CutoffRecord {
+  id: string;
+  college: string | College;
+  course: 'MBBS' | 'BDS' | 'BAMS' | 'BUMS' | 'BSMS' | 'BVSc & AH' | 'B.Sc. Nursing' | 'Nursing';
+  year: number;
+  round: number;
+  quota:
+    | 'All India'
+    | 'State Quota'
+    | 'Management'
+    | 'NRI'
+    | 'Deemed'
+    | 'Deemed/Paid Seats'
+    | 'Central'
+    | 'Minority'
+    | 'ESI'
+    | 'Delhi University'
+    | 'AMU Quota'
+    | 'IP University'
+    | 'Open Seat';
+  category:
+    | 'General'
+    | 'General PwD'
+    | 'OBC-NCL'
+    | 'OBC-NCL PwD'
+    | 'SC'
+    | 'SC PwD'
+    | 'ST'
+    | 'ST PwD'
+    | 'EWS'
+    | 'EWS PwD'
+    | 'OP'
+    | 'GEN'
+    | 'OBC';
+  openingRank: number;
+  closingRank: number;
+  /**
+   * Type as it appeared in source data (e.g., Private, Government, Deemed)
+   */
+  collegeType?: string | null;
+  /**
+   * Annual fee from source data (if available)
+   */
+  fees?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seat-matrix".
+ */
+export interface SeatMatrix {
+  id: string;
+  college: string | College;
+  course: string;
+  year: number;
+  totalSeats?: number | null;
+  /**
+   * All India Quota seats
+   */
+  aiqSeats?: number | null;
+  /**
+   * State Quota seats
+   */
+  stateSeats?: number | null;
+  /**
+   * Management Quota seats
+   */
+  managementSeats?: number | null;
+  /**
+   * NRI Quota seats
+   */
+  nriSeats?: number | null;
+  /**
+   * Any other seat type breakdown
+   */
+  otherSeats?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bonds".
+ */
+export interface Bond {
+  id: string;
+  college: string | College;
+  course?: string | null;
+  /**
+   * Bond amount in INR
+   */
+  bondAmount?: number | null;
+  /**
+   * Number of years of service required
+   */
+  bondYears?: number | null;
+  /**
+   * Where the bond service must be served (e.g., Rural, State, Any)
+   */
+  serviceArea?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stipends".
+ */
+export interface Stipend {
+  id: string;
+  college: string | College;
+  course?: string | null;
+  /**
+   * e.g., First Year, Second Year, Internship Period
+   */
+  internYear?: string | null;
+  /**
+   * Stipend amount in INR
+   */
+  amount?: number | null;
+  frequency?: ('monthly' | 'yearly') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -1289,6 +1523,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'colleges';
         value: string | College;
+      } | null)
+    | ({
+        relationTo: 'cutoff-records';
+        value: string | CutoffRecord;
+      } | null)
+    | ({
+        relationTo: 'seat-matrix';
+        value: string | SeatMatrix;
+      } | null)
+    | ({
+        relationTo: 'bonds';
+        value: string | Bond;
+      } | null)
+    | ({
+        relationTo: 'stipends';
+        value: string | Stipend;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1463,6 +1713,19 @@ export interface BlogsSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        relatedPostsBlock?:
+          | T
+          | {
+              title?: T;
+              posts?:
+                | T
+                | {
+                    post?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
         features?:
           | T
           | {
@@ -1587,6 +1850,20 @@ export interface CounselorsSelect<T extends boolean = true> {
   phone?: T;
   order?: T;
   status?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        noIndex?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1600,6 +1877,20 @@ export interface HelpdeskSelect<T extends boolean = true> {
   category?: T;
   order?: T;
   status?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        noIndex?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1616,6 +1907,20 @@ export interface LiveCounsellingSelect<T extends boolean = true> {
   duration?: T;
   status?: T;
   maxParticipants?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        noIndex?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1842,6 +2147,19 @@ export interface CounsellingSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        relatedPostsBlock?:
+          | T
+          | {
+              title?: T;
+              posts?:
+                | T
+                | {
+                    post?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
         comparisonTable?:
           | T
           | {
@@ -1998,6 +2316,68 @@ export interface CollegesSelect<T extends boolean = true> {
             };
         noIndex?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cutoff-records_select".
+ */
+export interface CutoffRecordsSelect<T extends boolean = true> {
+  college?: T;
+  course?: T;
+  year?: T;
+  round?: T;
+  quota?: T;
+  category?: T;
+  openingRank?: T;
+  closingRank?: T;
+  collegeType?: T;
+  fees?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seat-matrix_select".
+ */
+export interface SeatMatrixSelect<T extends boolean = true> {
+  college?: T;
+  course?: T;
+  year?: T;
+  totalSeats?: T;
+  aiqSeats?: T;
+  stateSeats?: T;
+  managementSeats?: T;
+  nriSeats?: T;
+  otherSeats?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bonds_select".
+ */
+export interface BondsSelect<T extends boolean = true> {
+  college?: T;
+  course?: T;
+  bondAmount?: T;
+  bondYears?: T;
+  serviceArea?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stipends_select".
+ */
+export interface StipendsSelect<T extends boolean = true> {
+  college?: T;
+  course?: T;
+  internYear?: T;
+  amount?: T;
+  frequency?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2186,6 +2566,26 @@ export interface SiteSetting {
     text?: string | null;
     link?: string | null;
     isEnabled?: boolean | null;
+  };
+  /**
+   * Values used in JSON-LD structured data across the site
+   */
+  schema?: {
+    aggregateRating?: {
+      ratingValue?: string | null;
+      reviewCount?: string | null;
+    };
+    openingHours?: {
+      opens?: string | null;
+      closes?: string | null;
+      days?: string | null;
+    };
+    /**
+     * Logo used in Organization and LocalBusiness schema markup
+     */
+    logo?: (string | null) | Media;
+    credentialName?: string | null;
+    publisherName?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -2926,6 +3326,26 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         text?: T;
         link?: T;
         isEnabled?: T;
+      };
+  schema?:
+    | T
+    | {
+        aggregateRating?:
+          | T
+          | {
+              ratingValue?: T;
+              reviewCount?: T;
+            };
+        openingHours?:
+          | T
+          | {
+              opens?: T;
+              closes?: T;
+              days?: T;
+            };
+        logo?: T;
+        credentialName?: T;
+        publisherName?: T;
       };
   updatedAt?: T;
   createdAt?: T;

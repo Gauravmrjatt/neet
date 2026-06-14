@@ -110,5 +110,48 @@ export const Counselors: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    {
+      name: 'seo',
+      type: 'group',
+      label: 'SEO',
+      admin: {
+        position: 'sidebar',
+      },
+      fields: [
+        {
+          name: 'metaTitle',
+          type: 'text',
+          label: 'Meta Title',
+        },
+        {
+          name: 'metaDescription',
+          type: 'textarea',
+          label: 'Meta Description',
+        },
+        {
+          name: 'ogImage',
+          type: 'upload',
+          label: 'OG Image',
+          relationTo: 'media',
+        },
+        {
+          name: 'keywords',
+          type: 'array',
+          label: 'Keywords',
+          fields: [
+            {
+              name: 'keyword',
+              type: 'text',
+            },
+          ],
+        },
+        {
+          name: 'noIndex',
+          type: 'checkbox',
+          label: 'Prevent Indexing',
+          defaultValue: false,
+        },
+      ],
+    },
   ],
 }

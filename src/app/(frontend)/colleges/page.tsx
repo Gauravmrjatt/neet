@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getColleges, getStates } from '@/lib/queries'
+import { getColleges, getStates, getCutoffRecordsForColleges } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateBreadcrumbSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -11,6 +11,8 @@ import { PageHero } from '@/components/shared/PageHero'
 import { CollegeCard } from '@/components/colleges/CollegeCard'
 import { CollegeFilter } from '@/components/colleges/CollegeFilter'
 import { Pagination } from '@/components/shared/Pagination'
+
+export const revalidate = 3600
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSeoByPath('/colleges')
@@ -43,6 +45,9 @@ export default async function CollegesPage({
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
   const pageSeo = await getPageSeoByPath('/colleges')
 
+  const collegeIds = collegesData.docs.map((c: any) => c.id)
+  const cutoffMap = collegeIds.length > 0 ? await getCutoffRecordsForColleges(collegeIds) : new Map()
+
   return (
     <>
       <JsonLd data={generateBreadcrumbSchema([
@@ -67,7 +72,7 @@ export default async function CollegesPage({
           {collegesData.docs.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {collegesData.docs.map((college: any) => (
-                <CollegeCard key={college.id} college={college} />
+                <CollegeCard key={college.id} college={college} bestCutoff={cutoffMap.get(college.id) || null} />
               ))}
             </div>
           ) : (

@@ -48,7 +48,7 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-
+/logs/
 # OpenCode CodeGraph (sockets cause Turbopack to panic)
 /.codegraph/
 
@@ -57,3 +57,4 @@ node_modules/
 /.claude/
 AGENTS.md
 CLAUDE.md
+searched_with_rising-searches_IN_20260514-1523_20260614-1523.csv

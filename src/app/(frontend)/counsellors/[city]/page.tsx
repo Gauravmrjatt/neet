@@ -6,6 +6,7 @@ import { getCityBySlug, INDIA_CITIES } from '@/lib/cities'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateLocalBusinessSchema, generateBreadcrumbSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
+import { getPageSeoByPath } from '@/lib/page-seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
@@ -24,10 +25,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { city: citySlug } = await params
   const city = getCityBySlug(citySlug)
   if (!city) return { title: 'Not Found' }
+  const pageSeo = await getPageSeoByPath('/counsellors')
   return generateSEOMetadata({
     title: `Best NEET Counsellors in ${city.name} 2026 — MBBS Guidance`,
     description: `Find the best NEET counsellors in ${city.name} for 2026 admissions. Get expert guidance for MBBS, BDS, and medical college admission in ${city.name}, ${city.state}. Book a free consultation.`,
     path: `/counsellors/${city.slug}`,
+    ogImage: pageSeo?.ogImage || undefined,
   })
 }
 
@@ -38,6 +41,7 @@ export default async function CityCounsellorsPage({ params }: PageProps) {
 
   const { docs: counselors } = await getCounselors()
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+  const pageSeo = await getPageSeoByPath('/counsellors')
   const counselorData = counselors.map((c: any) => ({
     id: c.id,
     name: c.name,
@@ -58,7 +62,7 @@ export default async function CityCounsellorsPage({ params }: PageProps) {
       })} />
       <JsonLd data={generateBreadcrumbSchema([
         { name: 'Home', url: siteUrl },
-        { name: 'Counsellors', url: `${siteUrl}/counsellors` },
+        { name: pageSeo?.breadcrumbLabel || 'Counsellors', url: `${siteUrl}/counsellors` },
         { name: city.name, url: `${siteUrl}/counsellors/${city.slug}` },
       ])} />
 

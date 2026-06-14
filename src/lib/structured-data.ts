@@ -1,15 +1,15 @@
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
 
-export function generateOrganizationSchema(siteName = 'NEET Counselling', sameAs: string[] = []) {
+export function generateOrganizationSchema(siteName = 'NEET Counselling', sameAs: string[] = [], phone?: string, logoUrl?: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: siteName,
     url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
+    ...(logoUrl ? { logo: logoUrl } : {}),
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+91-9261858208',
+      telephone: phone || '+91-9261858208',
       contactType: 'customer service',
     },
     sameAs,
@@ -26,6 +26,7 @@ export function generateBlogPostingSchema(
     author?: { name?: string } | null
   },
   siteName = 'NEET Counselling',
+  authorFallback = 'Admin',
 ) {
   return {
     '@context': 'https://schema.org',
@@ -37,7 +38,7 @@ export function generateBlogPostingSchema(
     dateModified: blog.updatedAt,
     author: {
       '@type': 'Person',
-      name: blog.author?.name || 'Admin',
+      name: blog.author?.name || authorFallback,
     },
     publisher: {
       '@type': 'Organization',
@@ -113,21 +114,23 @@ export function generateProfessionalServiceSchema({
   telephone,
   ratingValue = '4.8',
   reviewCount = '17000',
+  logoUrl,
 }: {
   name?: string
   description?: string
   telephone?: string
   ratingValue?: string
   reviewCount?: string
+  logoUrl?: string
 } = {}) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
     name,
-    image: `${SITE_URL}/logo.png`,
+    ...(logoUrl ? { image: logoUrl } : { image: `${SITE_URL}/logo.png` }),
     description,
     url: SITE_URL,
-    telephone,
+    ...(telephone ? { telephone } : {}),
     areaServed: {
       '@type': 'Country',
       name: 'India',
@@ -165,6 +168,10 @@ export function generateLocalBusinessSchema({
   latitude,
   longitude,
   url,
+  opens = '09:00',
+  closes = '19:00',
+  days,
+  logoUrl,
 }: {
   name?: string
   telephone?: string
@@ -175,12 +182,16 @@ export function generateLocalBusinessSchema({
   latitude?: number
   longitude?: number
   url?: string
+  opens?: string
+  closes?: string
+  days?: string[]
+  logoUrl?: string
 } = {}) {
   const result: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name,
-    image: `${SITE_URL}/logo.png`,
+    ...(logoUrl ? { image: logoUrl } : { image: `${SITE_URL}/logo.png` }),
     url: url || SITE_URL,
     ...(telephone ? { telephone } : {}),
     ...((streetAddress || addressLocality || addressRegion || postalCode)
@@ -204,13 +215,11 @@ export function generateLocalBusinessSchema({
           },
         }
       : {}),
-    ...{
-      openingHoursSpecification: {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-        opens: '09:00',
-        closes: '19:00',
-      },
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: days || ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      opens,
+      closes,
     },
   }
 
@@ -270,6 +279,7 @@ export function generateArticleSchema({
   authorUrl,
   publisherName = 'NEET Counselling',
   publisherLogo,
+  authorFallback = 'Admin',
 }: {
   title?: string
   description?: string
@@ -280,10 +290,11 @@ export function generateArticleSchema({
   authorUrl?: string
   publisherName?: string
   publisherLogo?: string
+  authorFallback?: string
 }) {
   const author: Record<string, string> = {
     '@type': 'Person',
-    name: authorName || 'Admin',
+    name: authorName || authorFallback,
   }
   if (authorUrl) author.url = authorUrl
 
@@ -311,11 +322,11 @@ export function generateArticleSchema({
   }
 }
 
-export function generateEducationalOccupationalCredentialSchema() {
+export function generateEducationalOccupationalCredentialSchema(credentialName = 'MBBS Degree') {
   return {
     '@context': 'https://schema.org',
     '@type': 'EducationalOccupationalCredential',
-    name: 'MBBS Degree',
+    name: credentialName,
     educationalLevel: 'Undergraduate',
     url: SITE_URL,
   }

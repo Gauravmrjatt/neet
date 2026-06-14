@@ -2,6 +2,8 @@ import type { MetadataRoute } from 'next'
 import { getPayloadClient } from '@/lib/payload'
 import { INDIA_CITIES } from '@/lib/cities'
 
+export const revalidate = 3600
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
   const payload = await getPayloadClient()
@@ -19,6 +21,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/pricing`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
     { url: `${siteUrl}/live-counselling`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
     { url: `${siteUrl}/faq`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${siteUrl}/faq/neet-counselling`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
+  ]
+
+  const predictorSlugPages = [
+    { url: `${siteUrl}/predictor/obc`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${siteUrl}/predictor/ayush`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${siteUrl}/predictor/vet`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${siteUrl}/predictor/state-karnataka`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${siteUrl}/predictor/state-maharashtra`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${siteUrl}/predictor/state-uttar-pradesh`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${siteUrl}/predictor/state-rajasthan`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${siteUrl}/predictor/state-bihar`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${siteUrl}/predictor/state-tamil-nadu`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
+    { url: `${siteUrl}/predictor/state-delhi`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
   ]
 
   const blogs = await payload.find({
@@ -106,5 +122,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  return [...staticPages, ...newStaticPages, ...blogPages, ...cmsPages, ...videoPages, ...counsellingPages, ...statePages, ...collegePages, ...cityPages]
+  return [...staticPages, ...newStaticPages, ...predictorSlugPages, ...blogPages, ...cmsPages, ...videoPages, ...counsellingPages, ...statePages, ...collegePages, ...cityPages]
 }

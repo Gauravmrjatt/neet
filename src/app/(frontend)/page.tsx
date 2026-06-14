@@ -53,15 +53,24 @@ export default async function HomePage() {
     whyChooseUs = wcu
   } catch {}
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+  const schemaPhone = settings?.phone
+  const schemaLogo = settings?.schema?.logo?.url ? `${siteUrl}${settings.schema.logo.url}` : undefined
+
   return (
     <>
-      <JsonLd data={generateOrganizationSchema(siteName, [
-        settings?.socialMedia?.facebook,
-        settings?.socialMedia?.twitter,
-        settings?.socialMedia?.instagram,
-        settings?.socialMedia?.youtube,
-        settings?.socialMedia?.linkedin,
-      ].filter(Boolean) as string[])} />
+      <JsonLd data={generateOrganizationSchema(
+        siteName,
+        [
+          settings?.socialMedia?.facebook,
+          settings?.socialMedia?.twitter,
+          settings?.socialMedia?.instagram,
+          settings?.socialMedia?.youtube,
+          settings?.socialMedia?.linkedin,
+        ].filter(Boolean) as string[],
+        schemaPhone,
+        schemaLogo,
+      )} />
       <NewsTicker items={newsTickerItems} />
       <HeroSection />
       <PlansCoverflow />

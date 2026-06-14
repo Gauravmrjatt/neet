@@ -179,6 +179,29 @@ export const Counselling: CollectionConfig = {
           ],
         },
         {
+          slug: 'relatedPostsBlock',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              label: 'Section Title',
+            },
+            {
+              name: 'posts',
+              type: 'array',
+              label: 'Related Posts',
+              fields: [
+                {
+                  name: 'post',
+                  type: 'relationship',
+                  relationTo: ['blogs', 'counselling', 'pages'],
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
+        {
           slug: 'comparisonTable',
           fields: [
             {

@@ -13,6 +13,7 @@ import { ImageBlock } from './ImageBlock'
 import { QuoteBlock } from './QuoteBlock'
 import { AlertBlock } from './AlertBlock'
 import { ComparisonTableBlock } from './ComparisonTableBlock'
+import { RelatedPostsBlock } from './RelatedPostsBlock'
 
 const blockComponents: Record<string, React.ComponentType<any>> = {
   hero: HeroBlock,
@@ -36,6 +37,8 @@ const blockComponents: Record<string, React.ComponentType<any>> = {
   alertBlock: AlertBlock,
   comparisonTable: ComparisonTableBlock,
   'comparison-table': ComparisonTableBlock,
+  'related-posts-block': RelatedPostsBlock,
+  relatedPostsBlock: RelatedPostsBlock,
 }
 
 export function BlockRenderer({ blocks }: { blocks: any[] }) {

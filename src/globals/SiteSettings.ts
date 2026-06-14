@@ -114,5 +114,80 @@ export const SiteSettings: GlobalConfig = {
         { name: 'isEnabled', type: 'checkbox', defaultValue: true },
       ],
     },
+    {
+      name: 'schema',
+      type: 'group',
+      label: 'Schema.org Structured Data',
+      admin: {
+        description: 'Values used in JSON-LD structured data across the site',
+      },
+      fields: [
+        {
+          name: 'aggregateRating',
+          type: 'group',
+          label: 'Aggregate Rating (for ProfessionalService schema)',
+          fields: [
+            {
+              name: 'ratingValue',
+              type: 'text',
+              defaultValue: '4.8',
+              admin: { placeholder: 'e.g. 4.8' },
+            },
+            {
+              name: 'reviewCount',
+              type: 'text',
+              defaultValue: '17000',
+              admin: { placeholder: 'e.g. 17000' },
+            },
+          ],
+        },
+        {
+          name: 'openingHours',
+          type: 'group',
+          label: 'Opening Hours (for LocalBusiness schema)',
+          fields: [
+            {
+              name: 'opens',
+              type: 'text',
+              defaultValue: '09:00',
+              admin: { placeholder: 'e.g. 09:00' },
+            },
+            {
+              name: 'closes',
+              type: 'text',
+              defaultValue: '19:00',
+              admin: { placeholder: 'e.g. 19:00' },
+            },
+            {
+              name: 'days',
+              type: 'text',
+              defaultValue: 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday',
+              admin: { placeholder: 'Comma-separated, e.g. Monday,Tuesday,...' },
+            },
+          ],
+        },
+        {
+          name: 'logo',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Schema Logo',
+          admin: {
+            description: 'Logo used in Organization and LocalBusiness schema markup',
+          },
+        },
+        {
+          name: 'credentialName',
+          type: 'text',
+          defaultValue: 'MBBS Degree',
+          label: 'Credential Name (EducationalOccupationalCredential)',
+        },
+        {
+          name: 'publisherName',
+          type: 'text',
+          defaultValue: 'NEET Counselling',
+          label: 'Publisher Name (Article/BlogPosting schema)',
+        },
+      ],
+    },
   ],
 }

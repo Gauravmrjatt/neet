@@ -39,3 +39,8 @@ export {
   getCollegesByType,
   getTopColleges,
 } from './colleges'
+export {
+  getCutoffRecords,
+  getBestCutoffForCollege,
+  getCutoffRecordsForColleges,
+} from './cutoffs'

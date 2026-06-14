@@ -18,9 +18,10 @@ const typeColors: Record<string, string> = {
 
 interface CollegeCardProps {
   college: any
+  bestCutoff?: { year: number; closingRank: number } | null
 }
 
-export function CollegeCard({ college }: CollegeCardProps) {
+export function CollegeCard({ college, bestCutoff }: CollegeCardProps) {
   const stateName = typeof college.state === 'object' ? college.state?.name : ''
 
   return (
@@ -49,9 +50,11 @@ export function CollegeCard({ college }: CollegeCardProps) {
             {college.feeStructure?.totalCourseFee && (
               <p><span className="font-medium text-foreground/90">Fee:</span> {college.feeStructure.totalCourseFee}</p>
             )}
-            {college.cutoffs?.general && (
+            {bestCutoff?.closingRank ? (
+              <p><span className="font-medium text-foreground/90">Cutoff (Gen, {bestCutoff.year}):</span> {bestCutoff.closingRank.toLocaleString()}</p>
+            ) : college.cutoffs?.general ? (
               <p><span className="font-medium text-foreground/90">Cutoff (Gen):</span> {college.cutoffs.general}</p>
-            )}
+            ) : null}
           </div>
         </CardContent>
       </Card>

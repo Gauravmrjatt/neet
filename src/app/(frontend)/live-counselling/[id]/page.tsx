@@ -19,9 +19,11 @@ export async function generateMetadata({ params }: SessionDetailPageProps): Prom
   const { id } = await params
   const session = await getSessionById(id)
   if (!session) return { title: 'Session Not Found' }
+  const seo = (session as any).seo
   return generateSEOMetadata({
-    title: session.title,
-    description: 'Live counselling session details',
+    title: seo?.metaTitle || session.title,
+    description: seo?.metaDescription || `Join ${session.title} — a live NEET counselling session${session.duration ? ` (${session.duration})` : ''}. Get expert guidance on MBBS admission and college selection.`,
+    ogImage: seo?.ogImage || undefined,
     path: `/live-counselling/${id}`,
   })
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getCollegeBySlug, getColleges } from '@/lib/queries'
+import { getCollegeBySlug, getColleges, getCutoffRecords, getCutoffRecordsForColleges } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateBreadcrumbSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -12,9 +12,11 @@ import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { CutoffTable } from '@/components/colleges/CutoffTable'
+import { CutoffRecordsTable } from '@/components/colleges/CutoffRecordsTable'
 import { CollegeCard } from '@/components/colleges/CollegeCard'
 import { Disclaimer } from '@/components/shared/Disclaimer'
+
+export const revalidate = 3600
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -44,11 +46,13 @@ export default async function CollegeDetailPage({ params }: PageProps) {
   const stateName = typeof college.state === 'object' ? college.state?.name : ''
   const stateSlug = typeof college.state === 'object' ? college.state?.slug : ''
 
-  const { docs: similarColleges } = await getColleges({
-    stateSlug: stateSlug || undefined,
-    limit: 4,
-  })
+  const [cutoffRecords, { docs: similarColleges }] = await Promise.all([
+    getCutoffRecords({ collegeId: college.id, limit: 500 }),
+    getColleges({ stateSlug: stateSlug || undefined, limit: 4 }),
+  ])
   const filteredSimilar = similarColleges.filter((c: any) => c.id !== college.id).slice(0, 3)
+  const similarIds = filteredSimilar.map((c: any) => c.id)
+  const similarCutoffMap = similarIds.length > 0 ? await getCutoffRecordsForColleges(similarIds) : new Map()
 
   const typeLabels: Record<string, string> = {
     government: 'Government',
@@ -130,17 +134,8 @@ export default async function CollegeDetailPage({ params }: PageProps) {
                 </div>
               )}
 
-              {college.cutoffs && (
-                <div className="rounded-xl border border-border bg-card p-6">
-                  <CutoffTable
-                    year={college.cutoffs.year}
-                    general={college.cutoffs.general}
-                    obc={college.cutoffs.obc}
-                    sc={college.cutoffs.sc}
-                    st={college.cutoffs.st}
-                    ews={college.cutoffs.ews}
-                  />
-                </div>
+              {cutoffRecords.length > 0 && (
+                <CutoffRecordsTable records={cutoffRecords} />
               )}
 
               {college.features && college.features.length > 0 && (
@@ -231,7 +226,7 @@ export default async function CollegeDetailPage({ params }: PageProps) {
             </h2>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {filteredSimilar.map((c: any) => (
-                <CollegeCard key={c.id} college={c} />
+                <CollegeCard key={c.id} college={c} bestCutoff={similarCutoffMap.get(c.id) || null} />
               ))}
             </div>
           </Container>

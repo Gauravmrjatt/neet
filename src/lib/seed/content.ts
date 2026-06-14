@@ -74,6 +74,17 @@ async function seedStates(payload: Awaited<ReturnType<typeof getPayload>>) {
         counsellingProcess: `${state.name} NEET counselling is conducted by ${state.authority}. Students must register on the official portal and participate in choice filling and seat allotment rounds.`,
         status: 'active',
         order: count + 1,
+        seo: {
+          metaTitle: `${state.name} NEET Counselling 2026 — State Quota, Cutoff, Fees`,
+          metaDescription: `Get complete details about ${state.name} NEET counselling 2026. Check state quota MBBS/BDS admission process, counselling dates, merit list, and cutoffs for government and private medical colleges in ${state.name}.`,
+          keywords: [
+            { keyword: `${state.name} NEET counselling 2026` },
+            { keyword: `${state.name} MBBS admission` },
+            { keyword: `${state.name} medical college cutoffs` },
+            { keyword: `NEET state quota ${state.code}` },
+            { keyword: `${state.name} counselling authority` },
+          ],
+        } as any,
       },
       depth: 0,
     })
