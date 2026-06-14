@@ -127,6 +127,7 @@ export interface Config {
     'predictor-page': PredictorPage;
     'pricing-page': PricingPage;
     'why-choose-us': WhyChooseUs;
+    'page-seo': PageSeo;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -140,6 +141,7 @@ export interface Config {
     'predictor-page': PredictorPageSelect<false> | PredictorPageSelect<true>;
     'pricing-page': PricingPageSelect<false> | PricingPageSelect<true>;
     'why-choose-us': WhyChooseUsSelect<false> | WhyChooseUsSelect<true>;
+    'page-seo': PageSeoSelect<false> | PageSeoSelect<true>;
   };
   locale: null;
   widgets: {
@@ -2744,6 +2746,58 @@ export interface WhyChooseUs {
   createdAt?: string | null;
 }
 /**
+ * SEO metadata for listing/index pages that do not have their own collection or global. Set breadcrumb labels and meta tags for each route.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-seo".
+ */
+export interface PageSeo {
+  id: string;
+  /**
+   * Configure SEO metadata for each static listing page.
+   */
+  pages?:
+    | {
+        page:
+          | '/blog'
+          | '/contact'
+          | '/counsellors'
+          | '/helpdesk'
+          | '/faq'
+          | '/videos'
+          | '/live-counselling'
+          | '/live-counselling/[id]'
+          | '/josaa-counsellor'
+          | '/counselling'
+          | '/counselling/state'
+          | '/colleges';
+        /**
+         * Displayed in breadcrumb navigation on the page.
+         */
+        breadcrumbLabel?: string | null;
+        metaTitle?: string | null;
+        metaDescription?: string | null;
+        /**
+         * 1200×630px image for social sharing. Falls back to the default site OG image if not set.
+         */
+        ogImage?: (string | null) | Media;
+        keywords?:
+          | {
+              keyword?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Prevent search engines from indexing this page.
+         */
+        noIndex?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -3301,6 +3355,32 @@ export interface WhyChooseUsSelect<T extends boolean = true> {
         icon?: T;
         title?: T;
         description?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-seo_select".
+ */
+export interface PageSeoSelect<T extends boolean = true> {
+  pages?:
+    | T
+    | {
+        page?: T;
+        breadcrumbLabel?: T;
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        noIndex?: T;
         id?: T;
       };
   updatedAt?: T;

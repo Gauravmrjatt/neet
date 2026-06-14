@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getCounsellingPosts } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { JsonLd } from '@/components/shared/JsonLd'
+import { getPageSeoByPath } from '@/lib/page-seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
@@ -10,10 +13,12 @@ import { CounsellingFilter } from '@/components/counselling/CounsellingFilter'
 import { Pagination } from '@/components/shared/Pagination'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath('/counselling')
   return generateSEOMetadata({
-    title: 'NEET Counselling 2026 — Complete Guide & Expert Tips',
-    description: 'Find everything about NEET counselling 2026: AIQ, state quota, college selection, document checklist, cutoff analysis, and MBBS abroad guidance from expert counsellors.',
+    title: pageSeo?.metaTitle || 'NEET Counselling 2026 — Complete Guide & Expert Tips',
+    description: pageSeo?.metaDescription || 'Find everything about NEET counselling 2026: AIQ, state quota, college selection, document checklist, cutoff analysis, and MBBS abroad guidance from expert counsellors.',
     path: '/counselling',
+    ogImage: pageSeo?.ogImage || undefined,
   })
 }
 
@@ -30,8 +35,15 @@ export default async function CounsellingPage({
     category: category || undefined,
   })
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+  const pageSeo = await getPageSeoByPath('/counselling')
+
   return (
     <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: pageSeo?.breadcrumbLabel || 'Counselling Guides', url: `${siteUrl}/counselling` },
+      ])} />
       <PageHero
         badge="NEET 2026"
         title="NEET Counselling 2026"

@@ -41,3 +41,8 @@ export const getWhyChooseUs = cache(async () => {
   const payload = await getPayloadClient()
   return payload.findGlobal({ slug: 'why-choose-us' })
 })
+
+export const getPageSeo = cache(async () => {
+  const payload = await getPayloadClient()
+  return payload.findGlobal({ slug: 'page-seo' })
+})

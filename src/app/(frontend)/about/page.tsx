@@ -2,6 +2,8 @@ import React from 'react'
 import type { Metadata } from 'next'
 import { getAboutPage } from '@/lib/queries/about'
 import { generatePageMetadata } from '@/lib/seo'
+import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { JsonLd } from '@/components/shared/JsonLd'
 import { AboutFromCms } from '@/components/about/AboutFromCms'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,5 +28,20 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AboutPage() {
   const about = await getAboutPage()
-  return <AboutFromCms data={about} />
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+  return (
+    <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: 'About', url: `${siteUrl}/about` },
+      ])} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'AboutPage',
+        name: about?.hero?.title || 'About NEET Counselling',
+        description: about?.seo?.metaDescription || '',
+      }} />
+      <AboutFromCms data={about} />
+    </>
+  )
 }

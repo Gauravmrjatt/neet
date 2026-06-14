@@ -2,17 +2,22 @@ import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getVideos, getVideoCategories } from '@/lib/queries'
+import { getPageSeoByPath } from '@/lib/page-seo'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { JsonLd } from '@/components/shared/JsonLd'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
 import { Media } from '@/payload-types'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath('/videos')
   return generateSEOMetadata({
-    title: 'Videos',
-    description: 'Video guides and tutorials for NEET preparation',
+    title: pageSeo?.metaTitle || 'NEET Counselling Videos — Expert Guidance & Tutorials 2026',
+    description: pageSeo?.metaDescription || 'Watch NEET counselling video guides, expert tips, college selection advice, and step-by-step tutorials for MBBS admission and counselling process.',
     path: '/videos',
+    ogImage: pageSeo?.ogImage || undefined,
   })
 }
 
@@ -21,6 +26,7 @@ export default async function VideosPage({
 }: {
   searchParams: Promise<{ category?: string; page?: string }>
 }) {
+  const pageSeo = await getPageSeoByPath('/videos')
   const { category, page: pageParam } = await searchParams
   const currentPage = parseInt(pageParam || '1', 10)
   const selectedCategory = category as string | undefined
@@ -34,6 +40,8 @@ export default async function VideosPage({
     getVideoCategories(),
   ])
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+
   const categories = [
     { label: 'All', value: undefined as string | undefined },
     ...(items ?? []).map((c) => ({ label: c.label, value: c.value })),
@@ -41,6 +49,10 @@ export default async function VideosPage({
 
   return (
     <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: pageSeo?.breadcrumbLabel || 'Videos', url: `${siteUrl}/videos` },
+      ])} />
       <PageHero
         title="Videos"
         subtitle="Video guides and tutorials for NEET preparation"

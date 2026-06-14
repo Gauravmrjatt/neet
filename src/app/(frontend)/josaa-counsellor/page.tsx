@@ -2,7 +2,10 @@ import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getCounselors } from '@/lib/queries'
+import { getPageSeoByPath } from '@/lib/page-seo'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { JsonLd } from '@/components/shared/JsonLd'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
@@ -10,18 +13,26 @@ import { Button } from '@/components/ui/button'
 import { Media } from '@/payload-types'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath('/josaa-counsellor')
   return generateSEOMetadata({
-    title: 'JOSAA Counsellor',
-    description: 'Expert guidance for JOSAA counselling process',
+    title: pageSeo?.metaTitle || 'JOSAA Counselling Experts — IIT/NIT Admission Guidance 2026',
+    description: pageSeo?.metaDescription || 'Get expert JOSAA counselling guidance for IIT, NIT, and IIIT admissions. Our experienced counsellors help you navigate the JOSAA seat allocation process.',
     path: '/josaa-counsellor',
+    ogImage: pageSeo?.ogImage || undefined,
   })
 }
 
 export default async function JosaaCounsellorPage() {
+  const pageSeo = await getPageSeoByPath('/josaa-counsellor')
   const { docs: counselors } = await getCounselors({ specialization: 'josaa' })
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
 
   return (
     <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: pageSeo?.breadcrumbLabel || 'JOSAA Counselling', url: `${siteUrl}/josaa-counsellor` },
+      ])} />
       <PageHero
         badge="JOSAA Counselling"
         title="JOSAA Counselling Experts"

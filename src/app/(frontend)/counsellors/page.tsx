@@ -3,6 +3,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getCounselors } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { JsonLd } from '@/components/shared/JsonLd'
+import { getPageSeoByPath } from '@/lib/page-seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
@@ -11,15 +14,19 @@ import { Card, CardContent } from '@/components/ui/card'
 import { INDIA_CITIES } from '@/lib/cities'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath('/counsellors')
   return generateSEOMetadata({
-    title: 'Counsellors',
-    description: 'Find experienced NEET counsellors',
+    title: pageSeo?.metaTitle || 'Best NEET Counsellors in India — MBBS, BDS Admission Guidance 2026',
+    description: pageSeo?.metaDescription || 'Find experienced NEET counsellors for MBBS, BDS, and medical college admission guidance. Expert counsellors in Mumbai, Delhi, Bangalore, and across India. Book a free consultation.',
     path: '/counsellors',
+    ogImage: pageSeo?.ogImage || undefined,
   })
 }
 
 export default async function CounsellorsPage() {
   const { docs: counselors } = await getCounselors()
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+  const pageSeo = await getPageSeoByPath('/counsellors')
 
   const counselorData = counselors.map((c: any) => ({
     id: c.id,
@@ -33,6 +40,10 @@ export default async function CounsellorsPage() {
 
   return (
     <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: pageSeo?.breadcrumbLabel || 'Counsellors', url: `${siteUrl}/counsellors` },
+      ])} />
       <PageHero
         title="Our Counsellors"
         subtitle="Find experienced NEET counsellors to guide your journey to a top medical college."

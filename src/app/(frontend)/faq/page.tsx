@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getHelpdeskItems, getHelpdeskCategories } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
-import { generateFAQSchema } from '@/lib/structured-data'
+import { generateBreadcrumbSchema, generateFAQSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
+import { getPageSeoByPath } from '@/lib/page-seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
@@ -11,10 +12,12 @@ import { HelpdeskSearch } from '@/components/helpdesk/HelpdeskSearch'
 import { getLexicalText } from '@/lib/lexical'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath('/faq')
   return generateSEOMetadata({
-    title: 'NEET Counselling FAQs 2026 — Answers to All Your Questions',
-    description: 'Find answers to all your NEET counselling questions. Eligibility, documents, process, colleges, fees, and expert tips for NEET UG and PG counselling 2026.',
+    title: pageSeo?.metaTitle || 'NEET Counselling FAQs 2026 — Answers to All Your Questions',
+    description: pageSeo?.metaDescription || 'Find answers to all your NEET counselling questions. Eligibility, documents, process, colleges, fees, and expert tips for NEET UG and PG counselling 2026.',
     path: '/faq',
+    ogImage: pageSeo?.ogImage || undefined,
   })
 }
 
@@ -23,6 +26,8 @@ export default async function FAQPage() {
     getHelpdeskItems(),
     getHelpdeskCategories(),
   ])
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+  const pageSeo = await getPageSeoByPath('/faq')
 
   const faqItems = helpdeskData.docs
     .filter((item: any) => item.question && item.answer)
@@ -33,6 +38,10 @@ export default async function FAQPage() {
 
   return (
     <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: pageSeo?.breadcrumbLabel || 'FAQs', url: `${siteUrl}/faq` },
+      ])} />
       {faqItems.length > 0 && <JsonLd data={generateFAQSchema(faqItems)} />}
 
       <PageHero

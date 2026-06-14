@@ -4,8 +4,9 @@ import Link from 'next/link'
 import { ArrowRight, ArrowLeft, Calendar, BookOpen, GraduationCap, MapPin, HelpCircle } from 'lucide-react'
 import { getBlogs } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
-import { generateItemListSchema } from '@/lib/structured-data'
+import { generateItemListSchema, generateBreadcrumbSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
+import { getPageSeoByPath } from '@/lib/page-seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
@@ -13,10 +14,12 @@ import { formatDate, cn } from '@/lib/utils'
 import { Media } from '@/payload-types'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath('/blog')
   return generateSEOMetadata({
-    title: 'Blog',
-    description: 'NEET counselling guides, MBBS admission tips, college selection advice, and expert insights for medical aspirants in India',
+    title: pageSeo?.metaTitle || 'NEET Counselling Blog — Guides, Tips & Expert Advice for 2026',
+    description: pageSeo?.metaDescription || 'NEET counselling guides, MBBS admission tips, college selection advice, and expert insights for medical aspirants in India',
     path: '/blog',
+    ogImage: pageSeo?.ogImage || undefined,
   })
 }
 
@@ -30,10 +33,17 @@ export default async function BlogPage({
   const sort = sortParam === 'oldest' ? 'publishedAt' : '-publishedAt'
   const { docs: blogs, totalPages, page: paginationPage } = await getBlogs({ page: currentPage, limit: 9, sort })
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+  const [pageSeo, siteUrl] = await Promise.all([
+    getPageSeoByPath('/blog'),
+    Promise.resolve(process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'),
+  ])
 
   return (
     <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: pageSeo?.breadcrumbLabel || 'Blog', url: `${siteUrl}/blog` },
+      ])} />
       <JsonLd data={generateItemListSchema(
         blogs.map((blog: any, index: number) => ({
           url: `${siteUrl}/blog/${blog.slug}`,

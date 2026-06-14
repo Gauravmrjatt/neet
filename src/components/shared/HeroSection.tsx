@@ -42,7 +42,7 @@ export async function HeroSection() {
         <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold text-primary-navy mb-5 tracking-tight leading-[1.1]">
           {heading}
           <span className="block mt-3 text-button-gold text-xl sm:text-2xl lg:text-3xl font-semibold">
-            starting from{' '}
+            {' '}starting from{' '}
             <Link
               href={secondaryCtaLink}
               className="underline decoration-button-gold decoration-2 underline-offset-4 hover:text-button-gold-hover transition-colors duration-200 ease-out"

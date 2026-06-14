@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getColleges, getStates } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { JsonLd } from '@/components/shared/JsonLd'
+import { getPageSeoByPath } from '@/lib/page-seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
@@ -10,10 +13,12 @@ import { CollegeFilter } from '@/components/colleges/CollegeFilter'
 import { Pagination } from '@/components/shared/Pagination'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath('/colleges')
   return generateSEOMetadata({
-    title: 'Medical Colleges in India — MBBS Fees & Cutoffs 2026',
-    description: 'Find all NMC-approved medical colleges in India for NEET 2026. Compare government, private, and deemed university MBBS colleges by fees, cutoffs, and location.',
+    title: pageSeo?.metaTitle || 'Medical Colleges in India — MBBS Fees & Cutoffs 2026',
+    description: pageSeo?.metaDescription || 'Find all NMC-approved medical colleges in India for NEET 2026. Compare government, private, and deemed university MBBS colleges by fees, cutoffs, and location.',
     path: '/colleges',
+    ogImage: pageSeo?.ogImage || undefined,
   })
 }
 
@@ -35,9 +40,15 @@ export default async function CollegesPage({
   ])
 
   const states = statesData.docs.map((s: any) => ({ slug: s.slug, name: s.name }))
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+  const pageSeo = await getPageSeoByPath('/colleges')
 
   return (
     <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: pageSeo?.breadcrumbLabel || 'Medical Colleges', url: `${siteUrl}/colleges` },
+      ])} />
       <PageHero
         badge="College Directory"
         title="Medical Colleges in India 2026"

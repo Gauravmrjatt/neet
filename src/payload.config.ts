@@ -21,6 +21,10 @@ import { Specializations } from './collections/Specializations'
 import { Counselling } from './collections/Counselling'
 import { States } from './collections/States'
 import { Colleges } from './collections/Colleges'
+import { CutoffRecords } from './collections/CutoffRecords'
+import { SeatMatrix } from './collections/SeatMatrix'
+import { Bonds } from './collections/Bonds'
+import { Stipends } from './collections/Stipends'
 
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
@@ -33,6 +37,7 @@ import { Testimonials } from './globals/Testimonials'
 import { PredictorPage } from './globals/PredictorPage'
 import { PricingPage } from './globals/PricingPage'
 import { WhyChooseUs } from './globals/WhyChooseUs'
+import { PageSeo } from './globals/PageSeo'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -61,8 +66,12 @@ export default buildConfig({
     Counselling,
     States,
     Colleges,
+    CutoffRecords,
+    SeatMatrix,
+    Bonds,
+    Stipends,
   ],
-  globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker, AboutPage, VideoCategories, Testimonials, PredictorPage, PricingPage, WhyChooseUs],
+  globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker, AboutPage, VideoCategories, Testimonials, PredictorPage, PricingPage, WhyChooseUs, PageSeo],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || (() => { throw new Error('PAYLOAD_SECRET environment variable is required') })(),
   typescript: {

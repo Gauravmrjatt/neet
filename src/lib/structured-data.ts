@@ -6,10 +6,10 @@ export function generateOrganizationSchema(siteName = 'NEET Counselling', sameAs
     '@type': 'Organization',
     name: siteName,
     url: SITE_URL,
-    logo: '/logo.png',
+    logo: `${SITE_URL}/logo.png`,
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+91-XXXXXXXXXX',
+      telephone: '+91-9261858208',
       contactType: 'customer service',
     },
     sameAs,
@@ -164,6 +164,7 @@ export function generateLocalBusinessSchema({
   postalCode,
   latitude,
   longitude,
+  url,
 }: {
   name?: string
   telephone?: string
@@ -173,13 +174,14 @@ export function generateLocalBusinessSchema({
   postalCode?: string
   latitude?: number
   longitude?: number
+  url?: string
 } = {}) {
   const result: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name,
     image: `${SITE_URL}/logo.png`,
-    url: SITE_URL,
+    url: url || SITE_URL,
     ...(telephone ? { telephone } : {}),
     ...((streetAddress || addressLocality || addressRegion || postalCode)
       ? {

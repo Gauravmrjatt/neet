@@ -25,6 +25,8 @@ import { getPricingCards } from '@/lib/queries'
 import { getHelpdeskItems } from '@/lib/queries'
 import { getPricingPage } from '@/lib/queries/globals'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { JsonLd } from '@/components/shared/JsonLd'
 import { RichText } from '@/components/shared/RichText'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
@@ -60,7 +62,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return generateSEOMetadata({
     title: data?.seo?.metaTitle || 'Pricing',
-    description: data?.seo?.metaDescription || undefined,
+    description: data?.seo?.metaDescription || 'Compare NEET counselling plans starting from ₹399. Get college prediction, expert guidance, and personalised counselling from experienced NEET counsellors.',
     ogImage: data?.seo?.ogImage ? { url: (data.seo.ogImage as any)?.url } : undefined,
     keywords: data?.seo?.keywords?.map((k: any) => k.keyword).filter(Boolean) as string[] | undefined,
     noIndex: data?.seo?.noIndex ?? undefined,
@@ -209,9 +211,14 @@ export default async function PricingPage() {
   const trustSection = cms?.trustSection
   const faqSection = cms?.faqSection
   const bottomCta = cms?.bottomCta
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
 
   return (
     <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: 'Pricing', url: `${siteUrl}/pricing` },
+      ])} />
       <PageHero
         badge={hero?.badge || 'Pricing Plans'}
         title={hero?.title || 'Choose the Plan That Gets You In'}

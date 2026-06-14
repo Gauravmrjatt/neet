@@ -134,7 +134,7 @@ export default async function CounsellingDetailPage({ params }: PageProps) {
         <Section className="bg-card">
           <Container className="max-w-4xl">
             <div className="prose prose-lg max-w-none prose-headings:text-primary-navy prose-a:text-primary-navy">
-              <RichText content={p.content} />
+              <RichText content={p.content} maxHeadingLevel={2} />
             </div>
             {p.blocks && p.blocks.length > 0 && (
               <div className="mt-8">

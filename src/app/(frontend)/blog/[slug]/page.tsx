@@ -166,7 +166,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <Section className="bg-card">
           <Container className="max-w-4xl">
             <div className="prose prose-lg max-w-none prose-headings:text-primary-navy prose-a:text-primary-navy prose-a:no-underline hover:prose-a:underline">
-              <RichText content={blog.content} />
+              <RichText content={blog.content} maxHeadingLevel={2} />
             </div>
             {blog.blocks && blog.blocks.length > 0 && (
               <div className="mt-8">

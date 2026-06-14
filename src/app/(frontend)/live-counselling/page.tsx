@@ -2,7 +2,10 @@ import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getUpcomingSessions } from '@/lib/queries'
+import { getPageSeoByPath } from '@/lib/page-seo'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { JsonLd } from '@/components/shared/JsonLd'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
@@ -11,18 +14,26 @@ import { Counselor } from '@/payload-types'
 import { RichText } from '@/components/shared/RichText'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath('/live-counselling')
   return generateSEOMetadata({
-    title: 'Live Counselling',
-    description: 'Join live counselling sessions and Q&A',
+    title: pageSeo?.metaTitle || 'Live NEET Counselling Sessions — Expert Q&A & Guidance 2026',
+    description: pageSeo?.metaDescription || 'Join live NEET counselling sessions and Q&A with expert counsellors. Get real-time answers about MBBS admission, college selection, and counselling process.',
     path: '/live-counselling',
+    ogImage: pageSeo?.ogImage || undefined,
   })
 }
 
 export default async function LiveCounsellingPage() {
+  const pageSeo = await getPageSeoByPath('/live-counselling')
   const { docs: sessions } = await getUpcomingSessions()
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
 
   return (
     <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: pageSeo?.breadcrumbLabel || 'Live Counselling', url: `${siteUrl}/live-counselling` },
+      ])} />
       <PageHero
         badge="Live Sessions"
         title="Live Counselling"

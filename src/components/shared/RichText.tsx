@@ -3,6 +3,7 @@ import React from 'react'
 interface RichTextProps {
   content: any
   className?: string
+  maxHeadingLevel?: 1 | 2 | 3 | 4 | 5 | 6
 }
 
 function isSafeUrl(url: string | null | undefined): boolean {
@@ -21,7 +22,7 @@ function safeHref(url: string | null | undefined): string {
   return isSafeUrl(url) ? (url as string) : '#'
 }
 
-function serializeLexical(node: any): React.ReactNode {
+function serializeLexical(node: any, maxHeadingLevel?: number): React.ReactNode {
   if (!node) return null
 
   if (node.type === 'text') {
@@ -35,7 +36,7 @@ function serializeLexical(node: any): React.ReactNode {
   }
 
   const children = node.children?.map((child: any, i: number) => (
-    <React.Fragment key={i}>{serializeLexical(child)}</React.Fragment>
+    <React.Fragment key={i}>{serializeLexical(child, maxHeadingLevel)}</React.Fragment>
   ))
 
   switch (node.type) {
@@ -44,13 +45,16 @@ function serializeLexical(node: any): React.ReactNode {
     case 'paragraph':
       return <p>{children}</p>
     case 'heading': {
-      const level = node.tag?.replace('h', '') || '2'
-      if (level === '1') return <h1>{children}</h1>
-      if (level === '2') return <h2>{children}</h2>
-      if (level === '3') return <h3>{children}</h3>
-      if (level === '4') return <h4>{children}</h4>
-      if (level === '5') return <h5>{children}</h5>
-      if (level === '6') return <h6>{children}</h6>
+      let level = parseInt(node.tag?.replace('h', '') || '2', 10)
+      if (maxHeadingLevel && level < maxHeadingLevel) {
+        level = maxHeadingLevel
+      }
+      if (level === 1) return <h1>{children}</h1>
+      if (level === 2) return <h2>{children}</h2>
+      if (level === 3) return <h3>{children}</h3>
+      if (level === 4) return <h4>{children}</h4>
+      if (level === 5) return <h5>{children}</h5>
+      if (level === 6) return <h6>{children}</h6>
       return <h2>{children}</h2>
     }
     case 'list':
@@ -74,12 +78,12 @@ function serializeLexical(node: any): React.ReactNode {
   }
 }
 
-export function RichText({ content, className }: RichTextProps) {
+export function RichText({ content, className, maxHeadingLevel }: RichTextProps) {
   if (!content?.root?.children) return null
 
   return (
     <div className={className}>
-      {serializeLexical(content.root)}
+      {serializeLexical(content.root, maxHeadingLevel)}
     </div>
   )
 }

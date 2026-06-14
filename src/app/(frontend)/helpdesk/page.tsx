@@ -2,8 +2,9 @@ import React from 'react'
 import type { Metadata } from 'next'
 import { getHelpdeskItems, getSiteSettings } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
-import { generateFAQSchema } from '@/lib/structured-data'
+import { generateFAQSchema, generateBreadcrumbSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
+import { getPageSeoByPath } from '@/lib/page-seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
@@ -11,10 +12,12 @@ import { HelpdeskSearch } from '@/components/helpdesk/HelpdeskSearch'
 import { getLexicalText } from '@/lib/lexical'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath('/helpdesk')
   return generateSEOMetadata({
-    title: 'Helpdesk',
-    description: 'Frequently asked questions and support',
+    title: pageSeo?.metaTitle || 'Helpdesk — NEET Counselling Support & FAQs',
+    description: pageSeo?.metaDescription || 'Get answers to common questions about NEET counselling, eligibility, documents, pricing plans, and admission process. Contact our support team for personalised help.',
     path: '/helpdesk',
+    ogImage: pageSeo?.ogImage || undefined,
   })
 }
 
@@ -23,6 +26,8 @@ export default async function HelpdeskPage() {
     getHelpdeskItems(),
     getSiteSettings(),
   ])
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+  const pageSeo = await getPageSeoByPath('/helpdesk')
 
   const faqItems = items.map((item: any) => ({
     question: item.question,
@@ -38,6 +43,10 @@ export default async function HelpdeskPage() {
 
   return (
     <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: pageSeo?.breadcrumbLabel || 'Helpdesk', url: `${siteUrl}/helpdesk` },
+      ])} />
       {faqItems.length > 0 && <JsonLd data={generateFAQSchema(faqItems)} />}
       <PageHero
         title="Helpdesk"

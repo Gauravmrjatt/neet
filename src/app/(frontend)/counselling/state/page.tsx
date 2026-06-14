@@ -2,24 +2,35 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getStatesWithCounselling } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { JsonLd } from '@/components/shared/JsonLd'
+import { getPageSeoByPath } from '@/lib/page-seo'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
 import { StateGrid } from '@/components/counselling/StateGrid'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath('/counselling/state')
   return generateSEOMetadata({
-    title: 'State-Wise NEET Counselling 2026 — Complete Guide for All States',
-    description: 'Get state-specific NEET counselling information for all 28 states and 8 UTs. Find counselling authorities, important dates, eligibility criteria, and document requirements.',
+    title: pageSeo?.metaTitle || 'State-Wise NEET Counselling 2026 — Complete Guide for All States',
+    description: pageSeo?.metaDescription || 'Get state-specific NEET counselling information for all 28 states and 8 UTs. Find counselling authorities, important dates, eligibility criteria, and document requirements.',
     path: '/counselling/state',
+    ogImage: pageSeo?.ogImage || undefined,
   })
 }
 
 export default async function StateCounsellingPage() {
   const states = await getStatesWithCounselling()
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
+  const pageSeo = await getPageSeoByPath('/counselling/state')
 
   return (
     <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+        { name: pageSeo?.breadcrumbLabel || 'State-Wise Counselling', url: `${siteUrl}/counselling/state` },
+      ])} />
       <PageHero
         badge="All States"
         title="State-Wise NEET Counselling 2026"

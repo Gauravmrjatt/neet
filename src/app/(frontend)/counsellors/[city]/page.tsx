@@ -54,6 +54,7 @@ export default async function CityCounsellorsPage({ params }: PageProps) {
         name: `NEET Counselling ${city.name}`,
         addressLocality: city.name,
         addressRegion: city.state,
+        url: `${siteUrl}/counsellors/${city.slug}`,
       })} />
       <JsonLd data={generateBreadcrumbSchema([
         { name: 'Home', url: siteUrl },
