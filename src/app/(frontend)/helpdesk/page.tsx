@@ -18,6 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSeo?.metaDescription || 'Get answers to common questions about NEET counselling, eligibility, documents, pricing plans, and admission process. Contact our support team for personalised help.',
     path: '/helpdesk',
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 

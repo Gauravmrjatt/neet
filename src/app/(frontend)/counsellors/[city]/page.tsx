@@ -31,6 +31,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: `Find the best NEET counsellors in ${city.name} for 2026 admissions. Get expert guidance for MBBS, BDS, and medical college admission in ${city.name}, ${city.state}. Book a free consultation.`,
     path: `/counsellors/${city.slug}`,
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 

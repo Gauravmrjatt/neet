@@ -5,6 +5,8 @@ interface PageSeoEntry {
   metaDescription?: string | null
   ogImage?: { url?: string } | null
   breadcrumbLabel?: string | null
+  keywords?: string[]
+  noIndex?: boolean | null
 }
 
 export async function getPageSeoByPath(path: string): Promise<PageSeoEntry | null> {
@@ -17,6 +19,8 @@ export async function getPageSeoByPath(path: string): Promise<PageSeoEntry | nul
       metaDescription: entry.metaDescription || null,
       ogImage: entry.ogImage ? { url: (entry.ogImage as any)?.url } : null,
       breadcrumbLabel: entry.breadcrumbLabel || null,
+      keywords: entry.keywords?.map((k: any) => k.keyword).filter(Boolean) || undefined,
+      noIndex: entry.noIndex || null,
     }
   } catch {
     return null

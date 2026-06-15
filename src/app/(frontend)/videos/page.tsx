@@ -18,6 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSeo?.metaDescription || 'Watch NEET counselling video guides, expert tips, college selection advice, and step-by-step tutorials for MBBS admission and counselling process.',
     path: '/videos',
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 

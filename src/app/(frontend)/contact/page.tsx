@@ -17,6 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSeo?.metaDescription || 'Contact NEET Counsellors for expert NEET counselling guidance. Call +91-9027770371 or email info@neetcounselors.com. We help you secure your medical seat.',
     path: '/contact',
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 

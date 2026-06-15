@@ -19,6 +19,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSeo?.metaDescription || 'Find everything about NEET counselling 2026: AIQ, state quota, college selection, document checklist, cutoff analysis, and MBBS abroad guidance from expert counsellors.',
     path: '/counselling',
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 

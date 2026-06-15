@@ -20,6 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSeo?.metaDescription || 'NEET counselling guides, MBBS admission tips, college selection advice, and expert insights for medical aspirants in India',
     path: '/blog',
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 

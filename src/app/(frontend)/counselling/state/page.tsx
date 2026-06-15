@@ -17,6 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSeo?.metaDescription || 'Get state-specific NEET counselling information for all 28 states and 8 UTs. Find counselling authorities, important dates, eligibility criteria, and document requirements.',
     path: '/counselling/state',
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 

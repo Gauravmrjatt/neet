@@ -19,6 +19,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSeo?.metaDescription || 'Get expert JOSAA counselling guidance for IIT, NIT, and IIIT admissions. Our experienced counsellors help you navigate the JOSAA seat allocation process.',
     path: '/josaa-counsellor',
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 

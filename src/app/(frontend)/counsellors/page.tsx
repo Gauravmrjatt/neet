@@ -20,6 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSeo?.metaDescription || 'Find experienced NEET counsellors for MBBS, BDS, and medical college admission guidance. Expert counsellors in Mumbai, Delhi, Bangalore, and across India. Book a free consultation.',
     path: '/counsellors',
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 

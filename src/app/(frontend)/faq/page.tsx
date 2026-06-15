@@ -18,6 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSeo?.metaDescription || 'Find answers to all your NEET counselling questions. Eligibility, documents, process, colleges, fees, and expert tips for NEET UG and PG counselling 2026.',
     path: '/faq',
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 

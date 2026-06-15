@@ -20,6 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSeo?.metaDescription || 'Join live NEET counselling sessions and Q&A with expert counsellors. Get real-time answers about MBBS admission, college selection, and counselling process.',
     path: '/live-counselling',
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 

@@ -21,6 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description: pageSeo?.metaDescription || 'Find all NMC-approved medical colleges in India for NEET 2026. Compare government, private, and deemed university MBBS colleges by fees, cutoffs, and location.',
     path: '/colleges',
     ogImage: pageSeo?.ogImage || undefined,
+    keywords: pageSeo?.keywords || undefined,
+    noIndex: pageSeo?.noIndex || undefined,
   })
 }
 
