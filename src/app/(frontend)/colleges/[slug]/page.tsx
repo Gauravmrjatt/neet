@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getCollegeBySlug, getColleges, getCutoffRecords, getCutoffRecordsForColleges } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
-import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { generateBreadcrumbSchema, generateCollegeOrUniversitySchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { RichText } from '@/components/shared/RichText'
 import { Container } from '@/components/layout/Container'
@@ -68,6 +68,17 @@ export default async function CollegeDetailPage({ params }: PageProps) {
         { name: 'Colleges', url: `${siteUrl}/colleges` },
         { name: college.name, url: `${siteUrl}/colleges/${college.slug}` },
       ])} />
+      <JsonLd data={generateCollegeOrUniversitySchema({
+        name: college.name,
+        description: college.seo?.metaDescription,
+        url: `${siteUrl}/colleges/${college.slug}`,
+        image: college.image?.url || college.seo?.ogImage?.url,
+        city: college.city,
+        state: stateName,
+        courses: college.courses?.map((c: any) => c.course).filter(Boolean),
+        established: college.established,
+        ranking: college.ranking,
+      })} />
 
       <PageHero
         badge={typeLabels[college.type] || college.type}

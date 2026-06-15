@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: seo?.metaTitle || '2026 — College Predictor & Expert Guidance',
     description: seo?.metaDescription || 'Expert NEET and JOSAA counselling for 2026 admissions. Predict your college, get personalized guidance from experienced counsellors, and secure your seat.',
     ogImage: seo?.ogImage,
-    keywords: seo?.keywords,
+    keywords: seo?.keywords?.map((k: any) => k.keyword).filter(Boolean) as string[] | undefined,
   })
 }
 

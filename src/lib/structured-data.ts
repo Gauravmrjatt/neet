@@ -332,6 +332,55 @@ export function generateEducationalOccupationalCredentialSchema(credentialName =
   }
 }
 
+export function generateCollegeOrUniversitySchema({
+  name,
+  description,
+  url,
+  image,
+  city,
+  state,
+  courses,
+  established,
+  ranking,
+}: {
+  name?: string
+  description?: string
+  url?: string
+  image?: string
+  city?: string
+  state?: string
+  courses?: string[]
+  established?: number
+  ranking?: number
+}) {
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'CollegeOrUniversity',
+    name: name || 'Medical College',
+    url: url || SITE_URL,
+    ...(description ? { description } : {}),
+    ...(image ? { image } : {}),
+    ...(established ? { foundingDate: String(established) } : {}),
+    ...(ranking ? { globalRanking: { '@type': 'Ranking', rankingValue: String(ranking) } } : {}),
+    address: {
+      '@type': 'PostalAddress',
+      ...(city ? { addressLocality: city } : {}),
+      ...(state ? { addressRegion: state } : {}),
+      addressCountry: 'IN',
+    },
+  }
+  if (courses && courses.length > 0) {
+    schema.hasCourse = courses.map(course => ({
+      '@type': 'Course',
+      name: course,
+      courseCode: course,
+      educationalLevel: 'Undergraduate',
+      numberOfCredits: typeof course === 'string' && course === 'MBBS' ? '5.5 Years' : '4.5 Years',
+    }))
+  }
+  return schema
+}
+
 export function generateWebApplicationSchema({
   name = 'NEET College Predictor',
   description = 'Predict your medical college chances based on NEET rank',

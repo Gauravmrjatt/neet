@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getStatesWithCounselling } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
-import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { generateBreadcrumbSchema, generateItemListSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { getPageSeoByPath } from '@/lib/page-seo'
 import { Container } from '@/components/layout/Container'
@@ -31,6 +31,16 @@ export default async function StateCounsellingPage() {
         { name: 'Home', url: siteUrl },
         { name: pageSeo?.breadcrumbLabel || 'State-Wise Counselling', url: `${siteUrl}/counselling/state` },
       ])} />
+      {states.length > 0 && <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: pageSeo?.metaTitle || 'State-Wise NEET Counselling 2026',
+        description: pageSeo?.metaDescription,
+        hasPart: generateItemListSchema(states.map((s: any) => ({
+          url: `${siteUrl}/counselling/state/${s.slug}`,
+          name: `${s.name} NEET Counselling 2026`,
+        }))).itemListElement,
+      }} />}
       <PageHero
         badge="All States"
         title="State-Wise NEET Counselling 2026"

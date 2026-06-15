@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getColleges, getStates, getCutoffRecordsForColleges } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
-import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { generateBreadcrumbSchema, generateItemListSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { getPageSeoByPath } from '@/lib/page-seo'
 import { Container } from '@/components/layout/Container'
@@ -54,6 +54,16 @@ export default async function CollegesPage({
         { name: 'Home', url: siteUrl },
         { name: pageSeo?.breadcrumbLabel || 'Medical Colleges', url: `${siteUrl}/colleges` },
       ])} />
+      {collegesData.docs.length > 0 && <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: pageSeo?.metaTitle || 'Medical Colleges in India',
+        description: pageSeo?.metaDescription,
+        hasPart: generateItemListSchema(collegesData.docs.map((c: any) => ({
+          url: `${siteUrl}/colleges/${c.slug}`,
+          name: c.name,
+        }))).itemListElement,
+      }} />}
       <PageHero
         badge="College Directory"
         title="Medical Colleges in India 2026"

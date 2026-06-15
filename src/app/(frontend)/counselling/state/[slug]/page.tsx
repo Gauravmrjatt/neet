@@ -49,8 +49,9 @@ export default async function StateDetailPage({ params }: PageProps) {
     <>
       <JsonLd data={generateArticleSchema({
         title: `${state.name} NEET Counselling 2026`,
-        description: state.description ? 'Complete guide' : undefined,
-        datePublished: undefined,
+        description: state.description ? `Complete NEET counselling guide for ${state.name}` : undefined,
+        datePublished: new Date().toISOString(),
+        dateModified: new Date().toISOString(),
         authorName: 'NEET Counselling Experts',
         publisherLogo: `${siteUrl}/logo.png`,
       })} />
@@ -59,6 +60,18 @@ export default async function StateDetailPage({ params }: PageProps) {
         { name: 'State Counselling', url: `${siteUrl}/counselling/state` },
         { name: state.name, url: `${siteUrl}/counselling/state/${state.slug}` },
       ])} />
+      {state.importantDates && state.importantDates.length > 0 && <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: state.importantDates.map((d: any) => ({
+          '@type': 'Question',
+          name: `When is ${d.label} for ${state.name} NEET counselling?`,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: `${d.label}: ${d.date || 'Tentative'}. ${d.description || ''}`.trim(),
+          },
+        })),
+      }} />}
 
       <PageHero
         badge={state.code || ''}

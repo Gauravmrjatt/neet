@@ -22,7 +22,11 @@ export function StateCard({ state }: StateCardProps) {
           )}
           {state.counsellingCount !== undefined && (
             <p className="text-sm text-foreground/70">
-              <span className="font-medium">{state.counsellingCount}</span> guides available
+              {state.counsellingCount > 0 ? (
+                <><span className="font-medium">{state.counsellingCount}</span> guides available</>
+              ) : (
+                'Coming soon'
+              )}
             </p>
           )}
         </CardContent>
