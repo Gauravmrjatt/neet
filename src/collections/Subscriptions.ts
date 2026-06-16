@@ -42,22 +42,41 @@ export const Subscriptions: CollectionConfig = {
             data.purchasedAt = new Date().toISOString()
           }
 
-          // Auto-set credits from the plan's predictionCredits (minimum 1 credit)
+          // Add plan credits to user's wallet instead of storing on subscription
           if (data.plan) {
             try {
+              const planId =
+                typeof data.plan === 'object' ? (data.plan as any).id : data.plan
               const plan = await req.payload.findByID({
                 collection: 'pricing-cards',
-                id: data.plan,
+                id: planId,
               })
               const credits = Math.max((plan as any).predictionCredits ?? 1, 1)
-              data.creditsTotal = credits
-              data.creditsRemaining = credits
+
+              // Atomic $inc on the user's wallet
+              const userId = data.user || req.user?.id
+              if (userId) {
+                const UserModel = req.payload.db.collections['users']
+                if (UserModel) {
+                  await UserModel.updateOne(
+                    { _id: userId },
+                    {
+                      $inc: {
+                        predictionCredits: credits,
+                        predictionCreditsRemaining: credits,
+                      },
+                    },
+                  )
+                }
+              }
             } catch {
-              // Plan not found — defaults will apply
-              data.creditsTotal = data.creditsTotal ?? 1
-              data.creditsRemaining = data.creditsRemaining ?? 1
+              // Silently fail — credits are a bonus, not blocking
             }
           }
+
+          // Set per-subscription fields to 0 (wallet is the source of truth)
+          data.creditsTotal = 0
+          data.creditsRemaining = 0
         }
 
         // Set assignedAt when status changes to 'active'

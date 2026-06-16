@@ -85,7 +85,7 @@ const ResultRow = React.memo(function ResultRow({
       )}
     >
       <td className="px-4 py-3 text-sm text-muted-foreground">{index + 1}</td>
-      <td className="min-w-[200px] px-4 py-3 text-sm font-medium text-primary-navy">
+      <td className="min-w-[200px] px-4 py-3 text-sm font-medium text-primary-navy uppercase">
         {result.institute}
       </td>
       <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">{result.state || '—'}</td>
@@ -176,6 +176,17 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
         {summaryCards.map((card) => (
           <SummaryCard key={card.label} {...card} />
         ))}
+      </div>
+
+      <div className="flex justify-center sm:justify-start">
+        <Button
+          onClick={onReset}
+          variant="outline"
+          size="sm"
+          className="border-primary-navy/30 text-primary-navy hover:bg-primary-navy/5"
+        >
+          Try Different Rank
+        </Button>
       </div>
 
       <SecondaryFilters results={results} onFilterChange={handleFilterChange} />

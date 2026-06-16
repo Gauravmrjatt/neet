@@ -115,6 +115,21 @@ export const SiteSettings: GlobalConfig = {
       ],
     },
     {
+      name: 'plansSection',
+      type: 'group',
+      label: 'Plans Section',
+      admin: {
+        description: 'Content for the pricing plans coverflow section',
+      },
+      fields: [
+        {
+          name: 'tagline',
+          type: 'text',
+          defaultValue: 'students — compare all counselling options below',
+        },
+      ],
+    },
+    {
       name: 'schema',
       type: 'group',
       label: 'Schema.org Structured Data',

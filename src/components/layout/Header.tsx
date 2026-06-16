@@ -4,6 +4,7 @@ import config from '@/payload.config'
 import { getHeader, getSiteSettings } from '@/lib/queries/globals'
 import { MediaImage } from '@/components/shared/MediaImage'
 import { CallButton } from '@/components/shared/CallButton'
+import { MobileMenu } from '@/components/layout/MobileMenu'
 
 import { cn } from '@/lib/utils'
 
@@ -31,13 +32,21 @@ export async function Header() {
     <header
       className={cn(
         'sticky top-0 z-40 w-full',
-        'border-b border-border/70 bg-white/85 backdrop-blur-md',
+        'border-b border-border/70 bg-white backdrop-blur-md',
         'shadow-sm',
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
-        {/* Left logo / emblem */}
-        <div className="flex flex-shrink-0 items-center gap-3">
+        {/* Mobile menu + Left logo */}
+        <div className="flex flex-shrink-0 items-center gap-1 sm:gap-3">
+          <div className="lg:hidden">
+            <MobileMenu
+              user={user}
+              navigation={navigation}
+              ctaButton={ctaButton}
+              siteName={englishTitle}
+            />
+          </div>
           <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl sm:h-16 sm:w-16">
             {logo ? (
               <MediaImage

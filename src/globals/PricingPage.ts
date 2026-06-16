@@ -49,6 +49,11 @@ export const PricingPage: GlobalConfig = {
         {
           name: 'keywords',
           type: 'array',
+          admin: {
+            components: {
+              Field: '/components/admin/CommaSeparatedArray#CommaSeparatedArray',
+            },
+          },
           fields: [
             {
               name: 'keyword',

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { Media } from '@/payload-types'
+import { Media, Specialization } from '@/payload-types'
 
 interface CounselorData {
   id: string
@@ -15,18 +15,19 @@ interface CounselorData {
 
 interface CounselorFilterProps {
   counselors: CounselorData[]
+  specializations: Specialization[]
 }
 
-const SPECIALIZATION_OPTIONS = [
-  { label: 'All', value: undefined },
-  { label: 'NEET', value: 'neet' },
-  { label: 'JOSAA', value: 'josaa' },
-  { label: 'JEE', value: 'jee' },
-  { label: 'General', value: 'general' },
-]
-
-export function CounselorFilter({ counselors }: CounselorFilterProps) {
+export function CounselorFilter({ counselors, specializations }: CounselorFilterProps) {
   const [selected, setSelected] = useState<string | undefined>(undefined)
+
+  const specializationOptions = useMemo(() => {
+    const options: { label: string; value: string | undefined }[] = [
+      { label: 'All', value: undefined },
+      ...specializations.map((s) => ({ label: s.name, value: s.slug })),
+    ]
+    return options
+  }, [specializations])
 
   const filtered = useMemo(() => {
     if (!selected) return counselors
@@ -42,7 +43,7 @@ export function CounselorFilter({ counselors }: CounselorFilterProps) {
   return (
     <div>
       <div className="mb-8 flex flex-wrap justify-center gap-2">
-        {SPECIALIZATION_OPTIONS.map((opt) => (
+        {specializationOptions.map((opt) => (
           <button
             key={opt.label}
             type="button"

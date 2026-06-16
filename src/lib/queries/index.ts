@@ -2,7 +2,7 @@ export { getPayloadClient } from '../payload'
 
 export { getBlogs, getBlogBySlug, getRecentBlogs } from './blogs'
 export { getVideos, getVideoBySlug } from './videos'
-export { getCounselors, getCounselorBySlug } from './counselors'
+export { getCounselors, getCounselorBySlug, getSpecializations } from './counselors'
 export { getHelpdeskItems, getHelpdeskCategories } from './helpdesk'
 export {
   getLiveCounsellingSessions,

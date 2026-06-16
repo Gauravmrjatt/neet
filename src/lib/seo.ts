@@ -27,7 +27,12 @@ export async function generateMetadata({
     if (settings?.siteDescription) siteDescription = settings.siteDescription
   } catch {}
 
-  const ogImageUrl = ogImage?.url || `${siteUrl}/og-default.png`
+  const rawUrl = ogImage?.url
+  const ogImageUrl = rawUrl
+    ? rawUrl.startsWith('http')
+      ? rawUrl
+      : `${siteUrl}${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`
+    : `${siteUrl}/og-default.png`
 
   const metadata: Metadata = {
     title: title || siteName,

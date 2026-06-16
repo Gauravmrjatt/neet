@@ -1,6 +1,6 @@
 'use client'
 
-import { LogOut, Menu, Sparkles } from 'lucide-react'
+import { ChevronDown, LogOut, Menu, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/navigation'
@@ -17,13 +17,16 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 
+interface MobileMenuItem {
+  label: string
+  link: string
+  showWhen?: string | null
+  children?: Array<{ label: string; link: string }> | null
+}
+
 interface MobileMenuProps {
   user?: { email?: string | null } | null
-  navigation: Array<{
-    label: string
-    link: string
-    showWhen?: string | null
-  }>
+  navigation: MobileMenuItem[]
   ctaButton?: {
     text?: string | null
     link?: string | null
@@ -41,10 +44,20 @@ function shouldShow(showWhen: string | null | undefined, user: any): boolean {
 
 export function MobileMenu({ user, navigation, ctaButton, siteName = 'NEET Counselling' }: MobileMenuProps) {
   const [open, setOpen] = useState(false)
+  const [expandedLabels, setExpandedLabels] = useState<Set<string>>(new Set())
   const router = useRouter()
   const pathname = usePathname()
 
   const visibleItems = navigation.filter((item) => shouldShow(item.showWhen, user))
+
+  const toggleExpand = useCallback((label: string) => {
+    setExpandedLabels((prev) => {
+      const next = new Set(prev)
+      if (next.has(label)) next.delete(label)
+      else next.add(label)
+      return next
+    })
+  }, [])
 
   const handleLogout = useCallback(async () => {
     try {
@@ -96,6 +109,8 @@ export function MobileMenu({ user, navigation, ctaButton, siteName = 'NEET Couns
                 item.link === '/'
                   ? pathname === '/'
                   : pathname.startsWith(item.link)
+              const hasChildren = item.children && item.children.length > 0
+              const isExpanded = expandedLabels.has(item.label)
 
               if (item.link === '/logout') {
                 return (
@@ -114,6 +129,62 @@ export function MobileMenu({ user, navigation, ctaButton, siteName = 'NEET Couns
                       <LogOut className="h-4 w-4 text-primary/70" aria-hidden="true" />
                       {item.label}
                     </button>
+                  </li>
+                )
+              }
+
+              if (hasChildren) {
+                return (
+                  <li key={item.label}>
+                    <button
+                      type="button"
+                      onClick={() => toggleExpand(item.label)}
+                      className={cn(
+                        'flex w-full items-center justify-between rounded-2xl px-3 py-2.5',
+                        'text-sm font-semibold transition-all duration-200 ease-out',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                        isActive
+                          ? 'bg-button-gold text-primary shadow-sm'
+                          : 'text-foreground hover:bg-navbar-hover hover:text-primary',
+                      )}
+                    >
+                      <span>{item.label}</span>
+                      <ChevronDown
+                        className={cn(
+                          'h-4 w-4 transition-transform duration-200',
+                          isExpanded && 'rotate-180',
+                        )}
+                      />
+                    </button>
+                    {isExpanded && (
+                      <ul className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-border pl-3">
+                        {item.children!.map((child) => {
+                          const isChildActive =
+                            child.link === '/'
+                              ? pathname === '/'
+                              : pathname.startsWith(child.link)
+                          return (
+                            <li key={child.link}>
+                              <Link
+                                href={child.link}
+                                onClick={closeMenu}
+                                aria-current={isChildActive ? 'page' : undefined}
+                                className={cn(
+                                  'flex items-center rounded-xl px-3 py-2',
+                                  'text-sm font-medium transition-all duration-200 ease-out',
+                                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                                  isChildActive
+                                    ? 'bg-button-gold/10 text-primary'
+                                    : 'text-muted-foreground hover:bg-navbar-hover hover:text-primary',
+                                )}
+                              >
+                                {child.label}
+                              </Link>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    )}
                   </li>
                 )
               }

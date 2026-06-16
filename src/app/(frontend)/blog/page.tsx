@@ -32,8 +32,8 @@ export default async function BlogPage({
 }) {
   const { page: pageParam, sort: sortParam } = await searchParams
   const currentPage = parseInt(pageParam || '1', 10)
-  const sort = sortParam === 'oldest' ? 'publishedAt' : '-publishedAt'
-  const { docs: blogs, totalPages, page: paginationPage } = await getBlogs({ page: currentPage, limit: 9, sort })
+  const sort = sortParam === 'oldest' ? 'createdAt' : '-createdAt'
+  const { docs: blogs, totalPages, totalDocs } = await getBlogs({ page: currentPage, limit: 9, sort })
 
   const [pageSeo, siteUrl] = await Promise.all([
     getPageSeoByPath('/blog'),
@@ -66,13 +66,13 @@ export default async function BlogPage({
               <div className="mb-8 flex items-center justify-between gap-4">
                 <p className="inline-flex items-center gap-2 text-sm text-foreground/70">
                   <BookOpen className="h-4 w-4 text-primary-navy" aria-hidden="true" />
-                  Showing <span className="font-semibold text-primary-navy">{blogs.length}</span> of <span className="font-semibold text-primary-navy">{blogs.length * totalPages}</span> articles
+                  Showing <span className="font-semibold text-primary-navy">{blogs.length}</span> of <span className="font-semibold text-primary-navy">{totalDocs?.toLocaleString('en-IN')}</span> articles
                 </p>
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/blog?sort=newest${currentPage > 1 ? `&page=${currentPage}` : ''}`}
                     className={`inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                      sort === '-publishedAt'
+                      sort === '-createdAt'
                         ? 'bg-primary-navy text-white'
                         : 'border border-border bg-card text-primary-navy hover:bg-primary-navy hover:text-white'
                     }`}
@@ -82,7 +82,7 @@ export default async function BlogPage({
                   <Link
                     href={`/blog?sort=oldest${currentPage > 1 ? `&page=${currentPage}` : ''}`}
                     className={`inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                      sort === 'publishedAt'
+                      sort === 'createdAt'
                         ? 'bg-primary-navy text-white'
                         : 'border border-border bg-card text-primary-navy hover:bg-primary-navy hover:text-white'
                     }`}

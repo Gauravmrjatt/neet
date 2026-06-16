@@ -189,6 +189,14 @@ export interface User {
   phone?: string | null;
   role: 'admin' | 'editor' | 'user';
   avatar?: (string | null) | Media;
+  /**
+   * Lifetime total prediction credits added via purchases
+   */
+  predictionCredits?: number | null;
+  /**
+   * Available prediction credits in wallet
+   */
+  predictionCreditsRemaining?: number | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -901,7 +909,7 @@ export interface Video {
    * e.g. 12:34
    */
   duration?: string | null;
-  category?: ('lecture' | 'tips' | 'interview' | 'other') | null;
+  category?: string | null;
   publishedAt?: string | null;
   status: 'draft' | 'published';
   seo?: {
@@ -1593,6 +1601,8 @@ export interface UsersSelect<T extends boolean = true> {
   phone?: T;
   role?: T;
   avatar?: T;
+  predictionCredits?: T;
+  predictionCreditsRemaining?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -2572,6 +2582,12 @@ export interface SiteSetting {
     isEnabled?: boolean | null;
   };
   /**
+   * Content for the pricing plans coverflow section
+   */
+  plansSection?: {
+    tagline?: string | null;
+  };
+  /**
    * Values used in JSON-LD structured data across the site
    */
   schema?: {
@@ -3330,6 +3346,11 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         text?: T;
         link?: T;
         isEnabled?: T;
+      };
+  plansSection?:
+    | T
+    | {
+        tagline?: T;
       };
   schema?:
     | T

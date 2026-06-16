@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
-import { getUserSubscriptions } from '@/lib/queries'
+import { getUserSubscriptions, getTotalCredits } from '@/lib/queries'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
 import dynamic from 'next/dynamic'
@@ -42,20 +42,15 @@ function isPage(value: unknown): value is Page {
   return typeof value === 'object' && value !== null && 'content' in value
 }
 
-function SubscriptionCard({ subscription }: { subscription: Subscription }) {
+function SubscriptionCard({ subscription, walletRemaining }: { subscription: Subscription; walletRemaining: number }) {
   const plan = subscription.plan
   const planName = getPlanName(plan)
   const planSubtitle = getPlanSubtitle(plan)
   const status = subscription.status
   const purchasedAt = subscription.purchasedAt
   const isActive = status === 'active'
-  const creditsTotal = subscription.creditsTotal || 0
-  const creditsRemaining = subscription.creditsRemaining || 0
-  const hasCredits = creditsRemaining > 0
   const counselor = isCounselor(subscription.assignedCounselor) ? subscription.assignedCounselor : null
   const assignedPage = isPage(subscription.assignedPage) ? subscription.assignedPage : null
-  const creditsUsed = creditsTotal - creditsRemaining
-  const creditsPercent = creditsTotal > 0 ? Math.round((creditsRemaining / creditsTotal) * 100) : 0
 
   return (
     <Card className="border-border bg-card shadow-md">
@@ -67,14 +62,12 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
           </div>
           <Badge
             className={`shrink-0 border-0 px-3 py-1 text-xs font-semibold tracking-wider uppercase ${
-              isActive && hasCredits
+              isActive
                 ? 'bg-green-100 text-green-700 hover:bg-green-100'
-                : isActive
-                  ? 'bg-amber-100 text-amber-700 hover:bg-amber-100'
-                  : 'bg-button-gold/20 text-button-gold hover:bg-button-gold/20'
+                : 'bg-button-gold/20 text-button-gold hover:bg-button-gold/20'
             }`}
           >
-            {isActive ? (hasCredits ? 'Active' : 'No Credits Left') : 'Pending'}
+            {isActive ? 'Active' : 'Pending'}
           </Badge>
         </div>
       </CardHeader>
@@ -85,28 +78,9 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
           </p>
         )}
 
-        {/* Credits display */}
-        <div className="rounded-lg border border-primary-navy/10 bg-primary-navy/[0.03] p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold text-primary-navy">AI Predictions</span>
-            <span className="text-sm font-bold text-primary-navy">
-              {creditsRemaining} of {creditsTotal} remaining
-            </span>
-          </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-primary-navy/10">
-            <div
-              className="h-full rounded-full bg-button-gold transition-all"
-              style={{ width: `${creditsPercent}%` }}
-            />
-          </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            {creditsUsed} prediction{creditsUsed !== 1 ? 's' : ''} used
-          </p>
-        </div>
-
         {/* Counselor */}
         {counselor && (
-          <div className="pt-2">
+          <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary-navy/70">
               Your Counselor
             </p>
@@ -116,14 +90,14 @@ function SubscriptionCard({ subscription }: { subscription: Subscription }) {
 
         {/* Assigned page content */}
         {assignedPage?.content && assignedPage.content.length > 0 && (
-          <div className="pt-2">
+          <div>
             <BlockRenderer blocks={assignedPage.content} />
           </div>
         )}
 
         {/* Action buttons */}
         <div className="flex flex-wrap gap-3 pt-2">
-          {isActive && hasCredits && (
+          {isActive && walletRemaining > 0 && (
             <Button asChild className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-semibold">
               <Link href="/predictor">Use Predictor</Link>
             </Button>
@@ -145,6 +119,7 @@ export default async function MyPlanPage() {
   }
 
   const subscriptions = await getUserSubscriptions(user.id)
+  const walletRemaining = await getTotalCredits(user.id)
 
   return (
     <>
@@ -202,11 +177,50 @@ export default async function MyPlanPage() {
             </Card>
           )}
 
+          {/* Wallet banner */}
+          {subscriptions.length > 0 && (
+            <div className="mb-6 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-button-gold/10 p-5 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-button-gold/20 text-2xl">
+                    🎯
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-primary-navy">
+                      Prediction Credits
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Used across all your plans
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <span className="text-3xl font-extrabold text-primary-navy tabular-nums">
+                      {walletRemaining}
+                    </span>
+                    <span className="ml-1 text-sm text-muted-foreground">
+                      remaining
+                    </span>
+                  </div>
+                  {walletRemaining > 0 && (
+                    <Button
+                      asChild
+                      className="bg-button-gold hover:bg-button-gold-hover text-primary-navy font-bold shadow-sm"
+                    >
+                      <Link href="/predictor">Use Predictor</Link>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Subscription cards */}
           {subscriptions.length > 0 && (
             <div className="space-y-6">
               {subscriptions.map((sub) => (
-                <SubscriptionCard key={sub.id} subscription={sub} />
+                <SubscriptionCard key={sub.id} subscription={sub} walletRemaining={walletRemaining} />
               ))}
             </div>
           )}

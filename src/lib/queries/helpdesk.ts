@@ -17,6 +17,7 @@ export const getHelpdeskItems = cache(async ({
     collection: 'helpdesk',
     where,
     sort: 'order',
+    limit: 100,
   })
 })
 
@@ -26,6 +27,7 @@ export const getHelpdeskCategories = cache(async (): Promise<string[]> => {
     collection: 'helpdesk',
     where: { status: { equals: 'active' } },
     sort: 'order',
+    limit: 100,
   })
 
   const categories = [

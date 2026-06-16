@@ -58,5 +58,27 @@ export const Users: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
     },
+    {
+      name: 'predictionCredits',
+      type: 'number',
+      defaultValue: 0,
+      min: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Lifetime total prediction credits added via purchases',
+      },
+    },
+    {
+      name: 'predictionCreditsRemaining',
+      type: 'number',
+      defaultValue: 0,
+      min: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Available prediction credits in wallet',
+      },
+    },
   ],
 }

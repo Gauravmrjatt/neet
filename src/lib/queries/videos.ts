@@ -9,7 +9,7 @@ export const getVideos = cache(async ({
 }: {
   limit?: number
   page?: number
-  category?: 'lecture' | 'tips' | 'interview' | 'other'
+  category?: string
 } = {}) => {
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: 'published' } }

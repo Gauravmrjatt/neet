@@ -1,6 +1,6 @@
 import { cache } from 'react'
 import { getPayloadClient } from '../payload'
-import type { Counselor } from '@/payload-types'
+import type { Counselor, Specialization } from '@/payload-types'
 
 export const getCounselors = cache(async ({
   specialization,
@@ -29,4 +29,14 @@ export const getCounselorBySlug = cache(async (slug: string): Promise<Counselor 
     limit: 1,
   })
   return result.docs[0] || null
+})
+
+export const getSpecializations = cache(async () => {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'specializations',
+    sort: 'name',
+    limit: 100,
+  })
+  return result.docs as Specialization[]
 })

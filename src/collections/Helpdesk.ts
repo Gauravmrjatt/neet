@@ -96,6 +96,11 @@ export const Helpdesk: CollectionConfig = {
           name: 'keywords',
           type: 'array',
           label: 'Keywords',
+          admin: {
+            components: {
+              Field: '/components/admin/CommaSeparatedArray#CommaSeparatedArray',
+            },
+          },
           fields: [
             {
               name: 'keyword',

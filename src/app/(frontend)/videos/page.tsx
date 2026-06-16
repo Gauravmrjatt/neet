@@ -37,7 +37,7 @@ export default async function VideosPage({
     getVideos({
       page: currentPage,
       limit: 12,
-      category: selectedCategory as 'lecture' | 'tips' | 'interview' | 'other' | undefined,
+      category: selectedCategory,
     }),
     getVideoCategories(),
   ])

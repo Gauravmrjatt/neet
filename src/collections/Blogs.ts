@@ -283,6 +283,11 @@ export const Blogs: CollectionConfig = {
     {
       name: 'categories',
       type: 'array',
+      admin: {
+        components: {
+          Field: '/components/admin/CommaSeparatedArray#CommaSeparatedArray',
+        },
+      },
       fields: [
         {
           name: 'category',
@@ -331,6 +336,11 @@ export const Blogs: CollectionConfig = {
         {
           name: 'keywords',
           type: 'array',
+          admin: {
+            components: {
+              Field: '/components/admin/CommaSeparatedArray#CommaSeparatedArray',
+            },
+          },
           fields: [
             {
               name: 'keyword',

@@ -50,7 +50,7 @@ export function AboutFromCms({ data }: { data: AboutPageData }) {
                 </>
               )}
               {mission?.body && (
-                <div className="mt-5 text-base leading-relaxed text-foreground/75 sm:text-lg">
+                <div className="prose prose-lg max-w-none mt-5 text-foreground/75">
                   <RichText content={mission.body} />
                 </div>
               )}
@@ -144,7 +144,7 @@ export function AboutFromCms({ data }: { data: AboutPageData }) {
               </h2>
             )}
             {team?.body && (
-              <div className="mt-4 text-base leading-relaxed text-foreground/75 sm:text-lg">
+              <div className="prose prose-lg max-w-none mt-4 text-foreground/75">
                 <RichText content={team.body} />
               </div>
             )}
@@ -179,7 +179,7 @@ export function AboutFromCms({ data }: { data: AboutPageData }) {
                   </h2>
                 )}
                 {section.body && (
-                  <div className="mt-6 text-base leading-relaxed text-foreground/75 sm:text-lg">
+                  <div className="prose prose-lg max-w-none mt-6 text-foreground/75">
                     <RichText content={section.body} />
                   </div>
                 )}

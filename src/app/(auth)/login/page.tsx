@@ -148,6 +148,7 @@ function LoginForm() {
             ref={turnstileRef}
             onVerify={handleTurnstileVerify}
             onError={() => setError('Security check unavailable. Please refresh and try again.')}
+            className="w-full"
           />
 
           <Button

@@ -27,6 +27,7 @@ interface TurnstileRenderOptions {
   'retry-interval'?: number
   'refresh-expired'?: 'auto' | 'manual' | 'never'
   language?: string
+  execution?: 'render' | 'execute'
 }
 
 export interface TurnstileWidgetHandle {
@@ -115,6 +116,7 @@ const TurnstileWidget = forwardRef<TurnstileWidgetHandle, TurnstileWidgetProps>(
           sitekey: effectiveSiteKey,
           theme,
           'response-field': false,
+          execution: 'render',
           callback: (token: string) => {
             tokenRef.current = token
             onVerifyRef.current?.(token)
@@ -153,7 +155,7 @@ const TurnstileWidget = forwardRef<TurnstileWidgetHandle, TurnstileWidgetProps>(
         )}
         <div
           ref={containerRef}
-          className={ready ? '' : 'h-[65px]'}
+          className={`overflow-hidden ${ready ? 'min-h-[65px]' : 'h-[65px]'}`}
           data-testid="turnstile-widget"
         />
       </div>

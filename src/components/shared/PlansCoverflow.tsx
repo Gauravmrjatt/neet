@@ -10,6 +10,7 @@ export async function PlansCoverflow() {
     getSiteSettings().catch(() => ({ stats: { students: '17,000+' } })),
   ])
   const studentCount = (settings as any)?.stats?.students || '17,000+'
+  const tagline = (settings as any)?.plansSection?.tagline || 'students — compare all counselling options below'
 
   const plans = cards.map((card: any) => {
     const planId = String(typeof card.id === 'object' ? card.id?.id || card.planName : (card.id || card.planName))
@@ -47,7 +48,7 @@ export async function PlansCoverflow() {
           <p className="text-sm sm:text-base text-foreground/70 max-w-2xl mx-auto">
             Trusted by{' '}
             <span className="text-primary-navy font-bold">{studentCount}</span>
-            {' '}students — compare all counselling options below
+            {' '}{tagline}
           </p>
         </div>
 

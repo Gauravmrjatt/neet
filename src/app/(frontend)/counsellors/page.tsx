@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getCounselors } from '@/lib/queries'
+import { getCounselors, getSpecializations } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateBreadcrumbSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -27,6 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CounsellorsPage() {
   const { docs: counselors } = await getCounselors()
+  const specializations = await getSpecializations()
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
   const pageSeo = await getPageSeoByPath('/counsellors')
 
@@ -52,7 +53,7 @@ export default async function CounsellorsPage() {
       />
       <Section className="bg-navbar-bg/30">
         <Container>
-          <CounselorFilter counselors={counselorData} />
+          <CounselorFilter counselors={counselorData} specializations={specializations} />
         </Container>
       </Section>
       <Section>

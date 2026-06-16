@@ -75,14 +75,12 @@ export const Videos: CollectionConfig = {
     },
     {
       name: 'category',
-      type: 'select',
-      options: [
-        { label: 'Lecture', value: 'lecture' },
-        { label: 'Tips', value: 'tips' },
-        { label: 'Interview', value: 'interview' },
-        { label: 'Other', value: 'other' },
-      ],
-      defaultValue: 'other',
+      type: 'text',
+      admin: {
+        components: {
+          Field: '/components/admin/VideoCategorySelect#VideoCategorySelect',
+        },
+      },
     },
     {
       name: 'publishedAt',
@@ -125,6 +123,11 @@ export const Videos: CollectionConfig = {
         {
           name: 'keywords',
           type: 'array',
+          admin: {
+            components: {
+              Field: '/components/admin/CommaSeparatedArray#CommaSeparatedArray',
+            },
+          },
           fields: [
             {
               name: 'keyword',

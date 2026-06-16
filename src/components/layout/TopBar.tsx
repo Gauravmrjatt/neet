@@ -16,7 +16,7 @@ export async function TopBar() {
     <div
       role="region"
       aria-label="Government affiliation"
-      className="w-full bg-navbar-bg/90 text-primary border-b border-border/70 backdrop-blur-sm"
+      className="w-full bg-navbar-bg/90 text-primary border-b border-border"
     >
       <div className="mx-auto flex max-w-7xl  items-center justify-between gap-1 px-4 py-2 text-[11px] font-medium tracking-wide flex-row sm:text-xs">
         <div className="flex items-center gap-2 text-primary/80 transition-colors hover:text-primary">

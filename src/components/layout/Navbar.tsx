@@ -4,6 +4,7 @@ import config from '@/payload.config'
 import { getHeader } from '@/lib/queries/globals'
 import { NavLink } from './NavLink'
 import { LogoutButton } from './LogoutButton'
+import { NavDropdown } from './NavDropdown'
 
 function shouldShow(showWhen: string | null | undefined, user: any): boolean {
   const value = showWhen || 'always'
@@ -28,12 +29,15 @@ export async function Navbar() {
   return (
     <nav
       aria-label="Primary"
-      className="max-w-6xl mx-auto sticky top-[88px] z-30 w-full border-b border-border/70 text-primary bg-background  backdrop-blur-md lg:top-[9px]"
+      className="max-w-6xl mx-auto sticky top-[88px] z-30 w-full border-b border-border text-primary bg-background  lg:top-[9px]"
     >
       <div className="mx-auto flex h-12 max-w-6xl items-center gap-1 overflow-x-auto ">
         {visibleItems.map((item: any) => {
           if (item.link === '/logout') {
             return <LogoutButton key="logout" label={item.label} />
+          }
+          if (item.children && item.children.length > 0) {
+            return <NavDropdown key={item.label} label={item.label} children={item.children} />
           }
           return <NavLink key={item.link} href={item.link} label={item.label} />
         })}
