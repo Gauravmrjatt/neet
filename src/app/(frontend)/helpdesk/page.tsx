@@ -23,9 +23,13 @@ export async function generateMetadata(): Promise<Metadata> {
   })
 }
 
-export default async function HelpdeskPage() {
-  const [{ docs: items }, settings] = await Promise.all([
-    getHelpdeskItems(),
+export default async function HelpdeskPage(props: { searchParams?: Promise<{ q?: string; page?: string }> }) {
+  const searchParams = await props.searchParams
+  const searchQuery = searchParams?.q || ''
+  const currentPage = parseInt(searchParams?.page || '1', 10)
+
+  const [{ docs: items, totalPages, totalDocs }, settings] = await Promise.all([
+    getHelpdeskItems({ search: searchQuery || undefined, page: currentPage, limit: 20 }),
     getSiteSettings(),
   ])
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
@@ -59,6 +63,10 @@ export default async function HelpdeskPage() {
           {items.length > 0 ? (
             <HelpdeskSearch
               items={helpdeskItems}
+              search={searchQuery}
+              page={currentPage}
+              totalPages={totalPages}
+              totalDocs={totalDocs}
               contactEmail={settings?.contactEmail}
               phone={settings?.phone}
               address={settings?.address}

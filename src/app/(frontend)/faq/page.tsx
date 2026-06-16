@@ -23,9 +23,13 @@ export async function generateMetadata(): Promise<Metadata> {
   })
 }
 
-export default async function FAQPage() {
+export default async function FAQPage(props: { searchParams?: Promise<{ q?: string; page?: string }> }) {
+  const searchParams = await props.searchParams
+  const searchQuery = searchParams?.q || ''
+  const currentPage = parseInt(searchParams?.page || '1', 10)
+
   const [helpdeskData, categories] = await Promise.all([
-    getHelpdeskItems(),
+    getHelpdeskItems({ search: searchQuery || undefined, page: currentPage, limit: 20 }),
     getHelpdeskCategories(),
   ])
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
@@ -54,7 +58,13 @@ export default async function FAQPage() {
 
       <Section tone="cream">
         <Container className="max-w-4xl">
-          <HelpdeskSearch items={helpdeskData.docs} />
+          <HelpdeskSearch
+            items={helpdeskData.docs}
+            search={searchQuery}
+            page={currentPage}
+            totalPages={helpdeskData.totalPages}
+            totalDocs={helpdeskData.totalDocs}
+          />
         </Container>
       </Section>
 

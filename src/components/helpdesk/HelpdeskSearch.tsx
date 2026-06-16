@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useState, useMemo, useTransition } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Input } from '@/components/ui/input'
-import { getLexicalText } from '@/lib/lexical'
+import { Button } from '@/components/ui/button'
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 
 interface HelpdeskItemData {
   id: string
@@ -15,58 +17,64 @@ interface HelpdeskItemData {
 
 interface HelpdeskSearchProps {
   items: HelpdeskItemData[]
+  search?: string
+  page?: number
+  totalPages?: number
+  totalDocs?: number
   contactEmail?: string | null
   phone?: string | null
   address?: string | null
 }
 
-const getAnswerText = getLexicalText
-
-export function HelpdeskSearch({ items, contactEmail, phone, address }: HelpdeskSearchProps) {
-  const [search, setSearch] = useState('')
-  const [, startTransition] = useTransition()
-
-  const filtered = useMemo(() => {
-    if (!search.trim()) return items
-    const q = search.toLowerCase()
-    return items.filter(
-      (item) =>
-        item.question.toLowerCase().includes(q) ||
-        getAnswerText(item.answer).toLowerCase().includes(q)
-    )
-  }, [items, search])
+export function HelpdeskSearch({
+  items,
+  search = '',
+  page = 1,
+  totalPages = 1,
+  totalDocs = 0,
+  contactEmail,
+  phone,
+  address,
+}: HelpdeskSearchProps) {
+  const router = useRouter()
 
   const grouped = useMemo(() => {
     const groups: Record<string, HelpdeskItemData[]> = {}
-    filtered.forEach((item) => {
+    items.forEach((item) => {
       const cat = item.category || 'General'
       if (!groups[cat]) groups[cat] = []
       groups[cat].push(item)
     })
     return groups
-  }, [filtered])
+  }, [items])
+
+  const handleSearch = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      const formData = new FormData(e.currentTarget)
+      const q = (formData.get('q') as string) || ''
+      const params = new URLSearchParams()
+      if (q) params.set('q', q)
+      params.set('page', '1')
+      router.push(`?${params.toString()}`)
+    },
+    [router],
+  )
 
   return (
     <div>
-      <div className="mb-8">
+      <form onSubmit={handleSearch} className="mb-8">
         <div className="relative">
-          <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
             type="text"
+            name="q"
+            defaultValue={search}
             placeholder="Search help articles..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
           />
         </div>
-      </div>
+      </form>
 
       {Object.keys(grouped).length === 0 ? (
         <p className="text-center text-muted-foreground py-8">No results found.</p>
@@ -83,7 +91,15 @@ export function HelpdeskSearch({ items, contactEmail, phone, address }: Helpdesk
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className="prose prose-sm max-w-none text-muted-foreground">
-                        {getAnswerText(item.answer) || 'See our documentation for more details.'}
+                        {item.answer?.root?.children
+                          ?.map((n: any) =>
+                            n.children
+                              ?.map((c: any) => c.text)
+                              .filter(Boolean)
+                              .join(' '),
+                          )
+                          .filter(Boolean)
+                          .join(' ') || 'See our documentation for more details.'}
                       </div>
                     </AccordionContent>
                   </AccordionItem>
@@ -91,6 +107,42 @@ export function HelpdeskSearch({ items, contactEmail, phone, address }: Helpdesk
               </Accordion>
             </div>
           ))}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="mt-8 flex items-center justify-center gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page <= 1}
+            onClick={() => {
+              const params = new URLSearchParams()
+              if (search) params.set('q', search)
+              params.set('page', String(page - 1))
+              router.push(`?${params.toString()}`)
+            }}
+          >
+            <ChevronLeft className="mr-1 h-4 w-4" />
+            Previous
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Page {page} of {totalPages} ({totalDocs} articles)
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page >= totalPages}
+            onClick={() => {
+              const params = new URLSearchParams()
+              if (search) params.set('q', search)
+              params.set('page', String(page + 1))
+              router.push(`?${params.toString()}`)
+            }}
+          >
+            Next
+            <ChevronRight className="ml-1 h-4 w-4" />
+          </Button>
         </div>
       )}
 

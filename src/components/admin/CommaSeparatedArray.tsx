@@ -1,22 +1,40 @@
 'use client'
 
+import { useState } from 'react'
+import { useField, useFormFields } from '@payloadcms/ui'
+
 export const CommaSeparatedArray: React.FC<any> = (props) => {
-  const { field, value, onChange } = props
+  const { path, field } = props
+  const { setValue } = useField<any[]>({ path })
   const subFieldName = field?.fields?.[0]?.name || 'value'
 
-  const textValue = Array.isArray(value)
-    ? value.map((item) => item[subFieldName]).filter(Boolean).join(', ')
-    : ''
+  const fieldState = useFormFields(([fields]) => fields[path])
+
+  const rawValue = fieldState?.value
+  const arrValue = Array.isArray(rawValue) ? rawValue : []
+
+  const formText = arrValue
+    .map((item: any) => item[subFieldName])
+    .filter(Boolean)
+    .join(', ')
+
+  const [dirtyText, setDirtyText] = useState<string | null>(null)
+
+  const displayText = dirtyText !== null ? dirtyText : formText
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const items = e.target.value
+    setDirtyText(e.target.value)
+  }
+
+  const handleBlur = () => {
+    const text = dirtyText !== null ? dirtyText : formText
+    const items = text
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean)
       .map((s) => ({ [subFieldName]: s }))
-    if (typeof onChange === 'function') {
-      onChange(items)
-    }
+    setValue(items)
+    setDirtyText(null)
   }
 
   return (
@@ -25,8 +43,9 @@ export const CommaSeparatedArray: React.FC<any> = (props) => {
         <span>{field?.label || 'Comma-separated values'}</span>
       </label>
       <textarea
-        value={textValue}
+        value={displayText}
         onChange={handleChange}
+        onBlur={handleBlur}
         rows={4}
         placeholder="Enter comma-separated values"
         style={{

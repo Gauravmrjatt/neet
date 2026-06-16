@@ -34,13 +34,12 @@ export function NavDropdown({ label, children }: NavDropdownProps) {
   return (
     <div
       ref={ref}
-      className="relative"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      className="relative group"
     >
       <button
         type="button"
         onClick={() => setOpen(!open)}
+        onMouseEnter={() => setOpen(true)}
         className={cn(
           'group relative inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3.5 py-1.5',
           'text-xs font-semibold tracking-wide sm:text-sm',
@@ -60,36 +59,37 @@ export function NavDropdown({ label, children }: NavDropdownProps) {
         />
       </button>
 
-      {open && (
-        <div
-          className={cn(
-            'absolute left-0 top-full z-50 mt-1 min-w-[200px]',
-            'rounded-xl border border-border bg-popover p-1.5 shadow-lg',
-          )}
-        >
-          {children.map((child) => {
-            const isChildActive =
-              child.link === '/'
-                ? pathname === '/'
-                : pathname.startsWith(child.link)
-            return (
-              <Link
-                key={child.link}
-                href={child.link}
-                onClick={() => setOpen(false)}
-                className={cn(
-                  'flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                  isChildActive
-                    ? 'bg-button-gold/10 text-primary'
-                    : 'text-foreground hover:bg-navbar-hover hover:text-primary',
-                )}
-              >
-                {child.label}
-              </Link>
-            )
-          })}
-        </div>
-      )}
+      <div
+        className={cn(
+          'absolute left-0 top-full z-50 min-w-[200px]',
+          'rounded-xl border border-border bg-popover p-1.5 shadow-lg',
+          'invisible opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100',
+          open && 'visible opacity-100',
+        )}
+        onMouseEnter={() => setOpen(true)}
+      >
+        {children.map((child) => {
+          const isChildActive =
+            child.link === '/'
+              ? pathname === '/'
+              : pathname.startsWith(child.link)
+          return (
+            <Link
+              key={child.link}
+              href={child.link}
+              onClick={() => setOpen(false)}
+              className={cn(
+                'flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                isChildActive
+                  ? 'bg-button-gold/10 text-primary'
+                  : 'text-foreground hover:bg-navbar-hover hover:text-primary',
+              )}
+            >
+              {child.label}
+            </Link>
+          )
+        })}
+      </div>
     </div>
   )
 }
