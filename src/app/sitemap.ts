@@ -100,14 +100,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const colleges = await payload.find({
     collection: 'colleges',
     where: { status: { equals: 'active' } },
-    limit: 1000,
+    limit: 2000,
   })
-  const collegePages = colleges.docs.map((college: any) => ({
-    url: `${siteUrl}/colleges/${college.slug}`,
-    lastModified: new Date(college.updatedAt),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
+  const collegePages = colleges.docs
+    .filter((college: any) => {
+      const slug = college.slug || ''
+      // Filter out fragment/garbage slugs (too short, look like truncated text)
+      if (slug.length < 8) return false
+      if (slug.startsWith('t-of-the-') || slug.startsWith('x-of-the-') || slug.startsWith('e-and-the-')) return false
+      if (/^(is|ge|t-|ing|ays|w-|e-)-/.test(slug)) return false
+      return true
+    })
+    .map((college: any) => ({
+      url: `${siteUrl}/colleges/${college.slug}`,
+      lastModified: new Date(college.updatedAt),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }))
 
   const newStaticPages = [
     { url: `${siteUrl}/counselling`, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.9 },

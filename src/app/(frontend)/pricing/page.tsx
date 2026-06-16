@@ -25,7 +25,7 @@ import { getPricingCards } from '@/lib/queries'
 import { getHelpdeskItems } from '@/lib/queries'
 import { getPricingPage } from '@/lib/queries/globals'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
-import { generateBreadcrumbSchema } from '@/lib/structured-data'
+import { generateBreadcrumbSchema, generateServiceSchema, generateFAQSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { RichText } from '@/components/shared/RichText'
 import { Container } from '@/components/layout/Container'
@@ -219,6 +219,16 @@ export default async function PricingPage() {
         { name: 'Home', url: siteUrl },
         { name: 'Pricing', url: `${siteUrl}/pricing` },
       ])} />
+      <JsonLd data={generateServiceSchema({
+        serviceType: 'NEET Counselling',
+        providerName: 'NEET Counselling',
+        offers: cards.map((card) => ({
+          name: card.planName || '',
+          description: card.description || undefined,
+          price: card.price ? card.price.replace(/[^0-9,]/g, '') : undefined,
+        })),
+      })} />
+      {faqs.length > 0 && <JsonLd data={generateFAQSchema(faqs.map((f) => ({ question: f.question, answer: typeof f.answer === 'string' ? f.answer : '' })))} />}
       <PageHero
         badge={hero?.badge || 'Pricing Plans'}
         title={hero?.title || 'Choose the Plan That Gets You In'}

@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   } catch {}
   return generateSEOMetadata({
     title: seo?.metaTitle || '2026 — College Predictor & Expert Guidance',
-    description: seo?.metaDescription || 'Expert NEET and JOSAA counselling for 2026 admissions. Predict your college, get personalized guidance from experienced counsellors, and secure your seat.',
+    description: seo?.metaDescription || 'Expert NEET counselling for 2026 MBBS, BDS, AYUSH & Veterinary admissions. Predict your college by rank, get personalized guidance from experienced counsellors, and secure your medical seat.',
     ogImage: seo?.ogImage,
     keywords: seo?.keywords?.map((k: any) => k.keyword).filter(Boolean) as string[] | undefined,
   })

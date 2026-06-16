@@ -410,6 +410,7 @@ export interface Blog {
           id?: string | null;
         }[]
       | null;
+    noIndex?: boolean | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -913,6 +914,7 @@ export interface Video {
           id?: string | null;
         }[]
       | null;
+    noIndex?: boolean | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -1764,6 +1766,7 @@ export interface BlogsSelect<T extends boolean = true> {
               keyword?: T;
               id?: T;
             };
+        noIndex?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1824,6 +1827,7 @@ export interface VideosSelect<T extends boolean = true> {
               keyword?: T;
               id?: T;
             };
+        noIndex?: T;
       };
   updatedAt?: T;
   createdAt?: T;

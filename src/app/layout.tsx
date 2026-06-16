@@ -10,7 +10,7 @@ const quicksand = Quicksand({
 })
 
 export const metadata = {
-  description: 'Expert NEET and JOSAA counselling services',
+  description: 'Expert NEET counselling for MBBS, BDS, AYUSH & Veterinary admissions in India. College predictor, rank analysis, and personalised counselling guidance.',
   title: {
     default: 'NEET Counselling',
     template: '%s | NEET Counselling',
@@ -23,11 +23,15 @@ export const metadata = {
     type: 'website',
     locale: 'en_IN',
   },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={quicksand.variable}>
+    <html lang="en-IN" className={quicksand.variable}>
       <body className="min-h-screen bg-background font-sans antialiased gov-dots">
         {children}
         <Script

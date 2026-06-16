@@ -338,6 +338,12 @@ export const Blogs: CollectionConfig = {
             },
           ],
         },
+        {
+          name: 'noIndex',
+          type: 'checkbox',
+          label: 'Prevent search engines from indexing this page',
+          defaultValue: false,
+        },
       ],
     },
   ],
