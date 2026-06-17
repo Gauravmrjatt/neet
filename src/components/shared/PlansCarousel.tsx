@@ -182,12 +182,12 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
                 )}
 
                 {plan.discount && (
-                  <span className={`absolute -top-2.5 right-4 text-xs font-bold px-2.5 py-1 rounded-full ${c.badge}`}>
+                  <span className={`absolute top-2 right-3 text-xs font-bold px-2.5 py-1 rounded-full ${c.badge}`}>
                     {plan.discount}
                   </span>
                 )}
                 {plan.badge && !plan.discount && (
-                  <span className={`absolute -top-2.5 right-4 text-xs font-bold px-2.5 py-1 rounded-full ${c.badge}`}>
+                  <span className={`absolute top-2 right-3 text-xs font-bold px-2.5 py-1 rounded-full ${c.badge}`}>
                     {plan.badge}
                   </span>
                 )}
