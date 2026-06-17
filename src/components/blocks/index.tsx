@@ -23,6 +23,7 @@ const blockComponents: Record<string, React.ComponentType<any>> = {
   testimonials: TestimonialBlock,
   'pricing-block': PricingBlock,
   'faq-block': FAQBlock,
+  faqBlock: FAQBlock,
   'feature-block': FeatureBlock,
   'video-block': VideoBlock,
   'counsellor-block': CounsellorBlock,

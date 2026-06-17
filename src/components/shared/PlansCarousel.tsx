@@ -82,8 +82,7 @@ export function PlansCarousel({ plans }: PlansCarouselProps) {
   const n = plans.length
 
   const isCarousel = useCallback(() => {
-    if (typeof window === 'undefined') return false
-    return window.innerWidth < 1024
+    return true
   }, [])
 
   const centerTrack = useCallback(() => {
