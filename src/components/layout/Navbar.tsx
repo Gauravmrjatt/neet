@@ -29,7 +29,7 @@ export async function Navbar() {
   return (
     <nav
       aria-label="Primary"
-      className="max-w-6xl mx-auto sticky top-[88px] z-30 w-full border-b border-border text-primary bg-background  lg:top-[9px]"
+      className="max-w-6xl mx-auto overflow-scroll sticky top-[88px] z-30 w-full border-b border-border text-primary bg-background  lg:top-[9px]"
     >
       <div className="mx-auto flex h-12 max-w-6xl items-center gap-1">
         {visibleItems.map((item: any) => {
