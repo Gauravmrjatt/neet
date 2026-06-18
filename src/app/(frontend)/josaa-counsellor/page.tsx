@@ -12,6 +12,8 @@ import { PageHero } from '@/components/shared/PageHero'
 import { Button } from '@/components/ui/button'
 import { Media } from '@/payload-types'
 
+export const revalidate = 3600
+
 export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSeoByPath('/josaa-counsellor')
   return generateSEOMetadata({

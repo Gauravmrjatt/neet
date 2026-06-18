@@ -28,6 +28,12 @@ export const Counselling: CollectionConfig = {
         }
       },
     ],
+    afterChange: [
+      async ({ doc }) => {
+        const { revalidateCounselling } = await import('@/lib/revalidate')
+        revalidateCounselling(doc.slug)
+      },
+    ],
   },
   access: {
     read: publishedOrAdmin,

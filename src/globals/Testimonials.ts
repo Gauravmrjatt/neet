@@ -3,6 +3,14 @@ import { anyone, isAdmin } from '../access/roles'
 
 export const Testimonials: GlobalConfig = {
   slug: 'testimonials',
+  hooks: {
+    afterChange: [
+      async () => {
+        const { revalidateGlobals } = await import('@/lib/revalidate')
+        revalidateGlobals()
+      },
+    ],
+  },
   access: {
     read: anyone,
     update: isAdmin,

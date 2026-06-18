@@ -27,6 +27,12 @@ export const Videos: CollectionConfig = {
         }
       },
     ],
+    afterChange: [
+      async ({ doc }) => {
+        const { revalidateVideos } = await import('@/lib/revalidate')
+        revalidateVideos(doc.slug)
+      },
+    ],
   },
   access: {
     read: publishedOrAdmin,

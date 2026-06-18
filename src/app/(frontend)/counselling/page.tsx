@@ -12,6 +12,8 @@ import { CounsellingCard } from '@/components/counselling/CounsellingCard'
 import { CounsellingFilter } from '@/components/counselling/CounsellingFilter'
 import { Pagination } from '@/components/shared/Pagination'
 
+export const revalidate = 3600
+
 export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSeoByPath('/counselling')
   return generateSEOMetadata({

@@ -27,6 +27,12 @@ export const Blogs: CollectionConfig = {
         }
       },
     ],
+    afterChange: [
+      async ({ doc }) => {
+        const { revalidateBlogs } = await import('@/lib/revalidate')
+        revalidateBlogs(doc.slug)
+      },
+    ],
   },
   access: {
     read: publishedOrAdmin,

@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getBlogBySlug, getRecentBlogs } from '@/lib/queries'
+import { getSiteSettings } from '@/lib/queries/globals'
 import { getPayloadClient } from '@/lib/payload'
 import { generateBlogMetadata } from '@/lib/seo'
 import { generateBlogPostingSchema, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/structured-data'
@@ -67,7 +68,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   let publisherName = 'NEET Counselling'
   let authorFallback = 'Admin'
   try {
-    const settings: any = await payload.findGlobal({ slug: 'site-settings' })
+    const settings: any = await getSiteSettings()
     if (settings?.siteName) siteName = settings.siteName
     if (settings?.schema?.publisherName) publisherName = settings.schema.publisherName
   } catch {}

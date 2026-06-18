@@ -19,6 +19,8 @@ import { BlockRenderer } from '@/components/blocks'
 import { CounsellingCard } from '@/components/counselling/CounsellingCard'
 import { Disclaimer } from '@/components/shared/Disclaimer'
 
+export const revalidate = 3600
+
 interface PageProps {
   params: Promise<{ slug: string }>
 }

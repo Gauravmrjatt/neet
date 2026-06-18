@@ -26,6 +26,12 @@ export const LiveCounselling: CollectionConfig = {
         return doc
       },
     ],
+    afterChange: [
+      async ({ doc }) => {
+        const { revalidateLiveCounselling } = await import('@/lib/revalidate')
+        revalidateLiveCounselling()
+      },
+    ],
   },
   fields: [
     {

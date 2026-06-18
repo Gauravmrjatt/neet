@@ -13,6 +13,8 @@ import { PageHero } from '@/components/shared/PageHero'
 import { CounselorCard } from '@/components/shared/CounselorCard'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 
+export const revalidate = 3600
+
 interface PageProps {
   params: Promise<{ city: string }>
 }

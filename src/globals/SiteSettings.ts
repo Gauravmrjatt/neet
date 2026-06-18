@@ -3,6 +3,14 @@ import { isAdmin, anyone } from '../access/roles'
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
+  hooks: {
+    afterChange: [
+      async () => {
+        const { revalidateGlobals } = await import('@/lib/revalidate')
+        revalidateGlobals()
+      },
+    ],
+  },
   access: {
     read: anyone,
     update: isAdmin,

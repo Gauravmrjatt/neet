@@ -16,6 +16,14 @@ export const Helpdesk: CollectionConfig = {
   admin: {
     useAsTitle: 'question',
   },
+  hooks: {
+    afterChange: [
+      async ({ doc }) => {
+        const { revalidateHelpdesk } = await import('@/lib/revalidate')
+        revalidateHelpdesk()
+      },
+    ],
+  },
   access: {
     read: canReadHelpdesk,
     create: isAdminOrEditor,

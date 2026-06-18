@@ -25,6 +25,12 @@ export const Colleges: CollectionConfig = {
         }
       },
     ],
+    afterChange: [
+      async ({ doc }) => {
+        const { revalidateColleges } = await import('@/lib/revalidate')
+        revalidateColleges(doc.slug)
+      },
+    ],
   },
   access: {
     read: () => true,

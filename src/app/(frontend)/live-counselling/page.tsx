@@ -13,6 +13,8 @@ import { formatDate } from '@/lib/utils'
 import { Counselor } from '@/payload-types'
 import { RichText } from '@/components/shared/RichText'
 
+export const revalidate = 3600
+
 export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSeoByPath('/live-counselling')
   return generateSEOMetadata({

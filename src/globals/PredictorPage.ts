@@ -3,6 +3,14 @@ import { isAdminOrEditor, anyone } from '../access/roles'
 
 export const PredictorPage: GlobalConfig = {
   slug: 'predictor-page',
+  hooks: {
+    afterChange: [
+      async () => {
+        const { revalidateGlobals } = await import('@/lib/revalidate')
+        revalidateGlobals()
+      },
+    ],
+  },
   access: {
     read: anyone,
     update: isAdminOrEditor,

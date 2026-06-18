@@ -46,3 +46,13 @@ export const getPageSeo = cache(async () => {
   const payload = await getPayloadClient()
   return payload.findGlobal({ slug: 'page-seo' })
 })
+
+export const getNewsTicker = cache(async () => {
+  const payload = await getPayloadClient()
+  return payload.findGlobal({ slug: 'news-ticker' })
+})
+
+export const getTestimonials = cache(async () => {
+  const payload = await getPayloadClient()
+  return payload.findGlobal({ slug: 'testimonials' })
+})

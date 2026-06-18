@@ -11,6 +11,8 @@ import { PageHero } from '@/components/shared/PageHero'
 import { HelpdeskSearch } from '@/components/helpdesk/HelpdeskSearch'
 import { getLexicalText } from '@/lib/lexical'
 
+export const revalidate = 3600
+
 export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSeoByPath('/faq')
   return generateSEOMetadata({

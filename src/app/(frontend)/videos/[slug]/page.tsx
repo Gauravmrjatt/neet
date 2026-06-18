@@ -12,6 +12,8 @@ import { Section } from '@/components/layout/Section'
 import { formatDate } from '@/lib/utils'
 import { Media } from '@/payload-types'
 
+export const revalidate = 3600
+
 interface VideoPageProps {
   params: Promise<{ slug: string }>
 }

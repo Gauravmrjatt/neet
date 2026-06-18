@@ -11,6 +11,8 @@ import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
 import { Media } from '@/payload-types'
 
+export const revalidate = 3600
+
 export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSeoByPath('/videos')
   return generateSEOMetadata({

@@ -1,11 +1,10 @@
 import { Building2, Landmark } from 'lucide-react'
-import { getPayloadClient } from '@/lib/payload'
+import { getSiteSettings } from '@/lib/queries/globals'
 
 export async function TopBar() {
-  const payload = await getPayloadClient()
   let settings: any = {}
   try {
-    settings = await payload.findGlobal({ slug: 'site-settings' })
+    settings = await getSiteSettings()
   } catch {}
 
   const topBar = settings?.topBar || {}

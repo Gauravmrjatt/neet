@@ -13,6 +13,8 @@ import { CounselorFilter } from '@/components/counsellors/CounselorFilter'
 import { Card, CardContent } from '@/components/ui/card'
 import { INDIA_CITIES } from '@/lib/cities'
 
+export const revalidate = 3600
+
 export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSeoByPath('/counsellors')
   return generateSEOMetadata({

@@ -12,6 +12,14 @@ function validateUrl(value: string | null | undefined) {
 
 export const Header: GlobalConfig = {
   slug: 'header',
+  hooks: {
+    afterChange: [
+      async () => {
+        const { revalidateGlobals } = await import('@/lib/revalidate')
+        revalidateGlobals()
+      },
+    ],
+  },
   access: {
     read: anyone,
     update: isAdmin,

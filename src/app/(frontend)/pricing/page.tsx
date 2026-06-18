@@ -37,6 +37,8 @@ import {
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 
+export const revalidate = 3600
+
 const iconMap: Record<string, LucideIcon> = {
   Users,
   BarChart3,

@@ -10,6 +10,8 @@ import { Section } from '@/components/layout/Section'
 import { PageHero } from '@/components/shared/PageHero'
 import { StateGrid } from '@/components/counselling/StateGrid'
 
+export const revalidate = 3600
+
 export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSeoByPath('/counselling/state')
   return generateSEOMetadata({

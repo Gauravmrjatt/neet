@@ -13,6 +13,8 @@ import { PageHero } from '@/components/shared/PageHero'
 import { formatDate, cn } from '@/lib/utils'
 import { Media } from '@/payload-types'
 
+export const revalidate = 3600
+
 export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSeoByPath('/blog')
   return generateSEOMetadata({

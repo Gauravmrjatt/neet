@@ -17,6 +17,14 @@ const statAccentOptions = [
 
 export const AboutPage: GlobalConfig = {
   slug: 'about-page',
+  hooks: {
+    afterChange: [
+      async () => {
+        const { revalidateAbout } = await import('@/lib/revalidate')
+        revalidateAbout()
+      },
+    ],
+  },
   access: {
     read: anyone,
     update: isAdminOrEditor,

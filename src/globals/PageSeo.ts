@@ -18,6 +18,14 @@ const PAGE_OPTIONS = [
 
 export const PageSeo: GlobalConfig = {
   slug: 'page-seo',
+  hooks: {
+    afterChange: [
+      async () => {
+        const { revalidateGlobals } = await import('@/lib/revalidate')
+        revalidateGlobals()
+      },
+    ],
+  },
   access: {
     read: anyone,
     update: isAdminOrEditor,

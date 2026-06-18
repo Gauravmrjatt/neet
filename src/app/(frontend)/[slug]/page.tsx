@@ -5,6 +5,8 @@ import { getPageBySlug } from '@/lib/queries'
 import { generatePageMetadata } from '@/lib/seo'
 import { BlockRenderer } from '@/components/blocks'
 
+export const revalidate = 3600
+
 type PageProps = {
   params: Promise<{ slug: string }>
 }

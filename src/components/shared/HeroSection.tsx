@@ -1,13 +1,12 @@
 import Link from 'next/link'
 import { Sparkles, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getPayloadClient } from '@/lib/payload'
+import { getSiteSettings } from '@/lib/queries/globals'
 
 export async function HeroSection() {
-  const payload = await getPayloadClient()
   let settings: any = {}
   try {
-    settings = await payload.findGlobal({ slug: 'site-settings' })
+    settings = await getSiteSettings()
   } catch {}
 
   const hero = settings?.hero || {}

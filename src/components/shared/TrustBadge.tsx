@@ -1,11 +1,10 @@
 import { Users, Clock, UserCheck, Award } from 'lucide-react'
-import { getPayloadClient } from '@/lib/payload'
+import { getSiteSettings } from '@/lib/queries/globals'
 
 export async function TrustBadges() {
-  const payload = await getPayloadClient()
   let settings: any = {}
   try {
-    settings = await payload.findGlobal({ slug: 'site-settings' })
+    settings = await getSiteSettings()
   } catch {}
 
   const stats = settings?.stats || {}

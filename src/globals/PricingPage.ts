@@ -20,6 +20,14 @@ const iconOptions = [
 
 export const PricingPage: GlobalConfig = {
   slug: 'pricing-page',
+  hooks: {
+    afterChange: [
+      async () => {
+        const { revalidatePricing } = await import('@/lib/revalidate')
+        revalidatePricing()
+      },
+    ],
+  },
   access: {
     read: anyone,
     update: isAdminOrEditor,

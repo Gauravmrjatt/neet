@@ -9,6 +9,14 @@ export const Pages: CollectionConfig = {
   versions: {
     drafts: true,
   },
+  hooks: {
+    afterChange: [
+      async ({ doc }) => {
+        const { revalidatePages } = await import('@/lib/revalidate')
+        revalidatePages(doc.slug)
+      },
+    ],
+  },
   access: {
     read: publishedOrAdmin,
     create: isAdminOrEditor,

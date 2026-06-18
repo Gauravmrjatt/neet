@@ -32,6 +32,12 @@ export const Counselors: CollectionConfig = {
         return doc
       },
     ],
+    afterChange: [
+      async ({ doc }) => {
+        const { revalidateCounsellors } = await import('@/lib/revalidate')
+        revalidateCounsellors()
+      },
+    ],
   },
   fields: [
     {

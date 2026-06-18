@@ -25,6 +25,12 @@ export const States: CollectionConfig = {
         }
       },
     ],
+    afterChange: [
+      async ({ doc }) => {
+        const { revalidateStates } = await import('@/lib/revalidate')
+        revalidateStates(doc.slug)
+      },
+    ],
   },
   access: {
     read: () => true,

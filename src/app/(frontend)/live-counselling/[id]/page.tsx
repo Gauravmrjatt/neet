@@ -11,6 +11,8 @@ import { RichText } from '@/components/shared/RichText'
 import { formatDate } from '@/lib/utils'
 import { Counselor } from '@/payload-types'
 
+export const revalidate = 3600
+
 interface SessionDetailPageProps {
   params: Promise<{ id: string }>
 }
