@@ -25,6 +25,7 @@ import { CutoffRecords } from './collections/CutoffRecords'
 import { SeatMatrix } from './collections/SeatMatrix'
 import { Bonds } from './collections/Bonds'
 import { Stipends } from './collections/Stipends'
+import { SavedContent } from './collections/SavedContent'
 
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
@@ -70,6 +71,7 @@ export default buildConfig({
     SeatMatrix,
     Bonds,
     Stipends,
+    SavedContent,
   ],
   globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker, AboutPage, VideoCategories, Testimonials, PredictorPage, PricingPage, WhyChooseUs, PageSeo],
   editor: lexicalEditor(),

@@ -83,3 +83,7 @@ export function revalidateAbout() {
   revalidatePath('/about')
   revalidatePath('/')
 }
+
+export function revalidateSavedContent() {
+  revalidatePath('/', 'layout')
+}

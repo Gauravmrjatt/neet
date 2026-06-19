@@ -1,38 +1,12 @@
 import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor, publishedOrAdmin } from '../access/roles'
 
-function formatSlug(val: string): string {
-  return val
-    .replace(/^\//, '')
-    .replace(/\/+/g, '-')
-    .replace(/[^a-zA-Z0-9-_]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-    .toLowerCase()
-}
-
-export const Blogs: CollectionConfig = {
-  slug: 'blogs',
+export const SavedContent: CollectionConfig = {
+  slug: 'saved-content',
   admin: {
     useAsTitle: 'title',
-  },
-  versions: {
-    drafts: true,
-  },
-  hooks: {
-    beforeChange: [
-      ({ data }) => {
-        if (data?.slug) {
-          data.slug = formatSlug(data.slug)
-        }
-      },
-    ],
-    afterChange: [
-      async ({ doc }) => {
-        const { revalidateBlogs } = await import('@/lib/revalidate')
-        revalidateBlogs(doc.slug)
-      },
-    ],
+    group: 'Content',
+    description: 'Reusable content blocks that can be inserted into pages, blogs, and guides',
   },
   access: {
     read: publishedOrAdmin,
@@ -40,11 +14,20 @@ export const Blogs: CollectionConfig = {
     update: isAdminOrEditor,
     delete: isAdminOrEditor,
   },
+  hooks: {
+    afterChange: [
+      async () => {
+        const { revalidateSavedContent } = await import('@/lib/revalidate')
+        revalidateSavedContent()
+      },
+    ],
+  },
   fields: [
     {
       name: 'title',
       type: 'text',
       required: true,
+      label: 'Name',
     },
     {
       name: 'slug',
@@ -56,33 +39,13 @@ export const Blogs: CollectionConfig = {
       },
     },
     {
-      name: 'excerpt',
-      type: 'textarea',
-    },
-    {
-      name: 'content',
-      type: 'richText',
-    },
-    {
       name: 'blocks',
       type: 'blocks',
+      required: true,
       blocks: [
         {
-          slug: 'savedContentBlock',
-          labels: { singular: 'Saved Content', plural: 'Saved Content' },
-          fields: [
-            {
-              name: 'savedContent',
-              type: 'relationship',
-              relationTo: 'saved-content',
-              required: true,
-              label: 'Select Saved Content',
-            },
-          ],
-        },
-
-        {
           slug: 'contentBlock',
+          labels: { singular: 'Content Block', plural: 'Content Blocks' },
           fields: [
             {
               name: 'heading',
@@ -96,6 +59,7 @@ export const Blogs: CollectionConfig = {
         },
         {
           slug: 'imageBlock',
+          labels: { singular: 'Image', plural: 'Images' },
           fields: [
             {
               name: 'image',
@@ -121,6 +85,7 @@ export const Blogs: CollectionConfig = {
         },
         {
           slug: 'videoBlock',
+          labels: { singular: 'Video', plural: 'Videos' },
           fields: [
             {
               name: 'title',
@@ -144,6 +109,7 @@ export const Blogs: CollectionConfig = {
         },
         {
           slug: 'quoteBlock',
+          labels: { singular: 'Quote', plural: 'Quotes' },
           fields: [
             {
               name: 'quote',
@@ -168,6 +134,7 @@ export const Blogs: CollectionConfig = {
         },
         {
           slug: 'ctaBlock',
+          labels: { singular: 'CTA', plural: 'CTAs' },
           fields: [
             {
               name: 'heading',
@@ -192,6 +159,7 @@ export const Blogs: CollectionConfig = {
         },
         {
           slug: 'alertBlock',
+          labels: { singular: 'Alert', plural: 'Alerts' },
           fields: [
             {
               name: 'content',
@@ -213,6 +181,7 @@ export const Blogs: CollectionConfig = {
         },
         {
           slug: 'faqBlock',
+          labels: { singular: 'FAQ', plural: 'FAQs' },
           fields: [
             {
               name: 'title',
@@ -237,30 +206,8 @@ export const Blogs: CollectionConfig = {
           ],
         },
         {
-          slug: 'relatedPostsBlock',
-          fields: [
-            {
-              name: 'title',
-              type: 'text',
-              label: 'Section Title',
-            },
-            {
-              name: 'posts',
-              type: 'array',
-              label: 'Related Posts',
-              fields: [
-                {
-                  name: 'post',
-                  type: 'relationship',
-                  relationTo: ['blogs', 'counselling', 'pages'],
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-        {
           slug: 'features',
+          labels: { singular: 'Features', plural: 'Features' },
           fields: [
             {
               name: 'heading',
@@ -288,91 +235,73 @@ export const Blogs: CollectionConfig = {
             },
           ],
         },
-      ],
-    },
-    {
-      name: 'featuredImage',
-      type: 'upload',
-      relationTo: 'media',
-    },
-    {
-      name: 'author',
-      type: 'relationship',
-      relationTo: 'users',
-    },
-    {
-      name: 'categories',
-      type: 'array',
-      admin: {
-        components: {
-          Field: '/components/admin/CommaSeparatedArray#CommaSeparatedArray',
-        },
-      },
-      fields: [
         {
-          name: 'category',
-          type: 'text',
-        },
-      ],
-    },
-    {
-      name: 'publishedAt',
-      type: 'date',
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'status',
-      type: 'select',
-      options: [
-        { label: 'Draft', value: 'draft' },
-        { label: 'Published', value: 'published' },
-      ],
-      defaultValue: 'draft',
-      required: true,
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'seo',
-      type: 'group',
-      label: 'SEO',
-      fields: [
-        {
-          name: 'metaTitle',
-          type: 'text',
-        },
-        {
-          name: 'metaDescription',
-          type: 'textarea',
-        },
-        {
-          name: 'ogImage',
-          type: 'upload',
-          relationTo: 'media',
-        },
-        {
-          name: 'keywords',
-          type: 'array',
-          admin: {
-            components: {
-              Field: '/components/admin/CommaSeparatedArray#CommaSeparatedArray',
-            },
-          },
+          slug: 'testimonials',
+          labels: { singular: 'Testimonials', plural: 'Testimonials' },
           fields: [
             {
-              name: 'keyword',
+              name: 'heading',
               type: 'text',
+            },
+            {
+              name: 'testimonials',
+              type: 'array',
+              fields: [
+                {
+                  name: 'name',
+                  type: 'text',
+                  required: true,
+                },
+                {
+                  name: 'quote',
+                  type: 'textarea',
+                  required: true,
+                },
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                },
+                {
+                  name: 'designation',
+                  type: 'text',
+                },
+              ],
             },
           ],
         },
         {
-          name: 'noIndex',
-          type: 'checkbox',
-          label: 'Prevent search engines from indexing this page',
-          defaultValue: false,
+          slug: 'comparisonTable',
+          labels: { singular: 'Comparison Table', plural: 'Comparison Tables' },
+          fields: [
+            {
+              name: 'heading',
+              type: 'text',
+            },
+            {
+              name: 'rows',
+              type: 'array',
+              fields: [
+                {
+                  name: 'label',
+                  type: 'text',
+                  required: true,
+                },
+                {
+                  name: 'columnA',
+                  type: 'text',
+                },
+                {
+                  name: 'columnB',
+                  type: 'text',
+                },
+                {
+                  name: 'columnC',
+                  type: 'text',
+                },
+              ],
+            },
+          ],
         },
       ],
     },

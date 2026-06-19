@@ -87,6 +87,7 @@ export interface Config {
     'seat-matrix': SeatMatrix;
     bonds: Bond;
     stipends: Stipend;
+    'saved-content': SavedContent;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -114,6 +115,7 @@ export interface Config {
     'seat-matrix': SeatMatrixSelect<false> | SeatMatrixSelect<true>;
     bonds: BondsSelect<false> | BondsSelect<true>;
     stipends: StipendsSelect<false> | StipendsSelect<true>;
+    'saved-content': SavedContentSelect<false> | SavedContentSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -270,6 +272,12 @@ export interface Blog {
   blocks?:
     | (
         | {
+            savedContent: string | SavedContent;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'savedContentBlock';
+          }
+        | {
             heading?: string | null;
             body?: {
               root: {
@@ -425,6 +433,154 @@ export interface Blog {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Reusable content blocks that can be inserted into pages, blogs, and guides
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "saved-content".
+ */
+export interface SavedContent {
+  id: string;
+  title: string;
+  slug: string;
+  blocks: (
+    | {
+        heading?: string | null;
+        body?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'contentBlock';
+      }
+    | {
+        image: string | Media;
+        caption?: string | null;
+        alignment?: ('left' | 'center' | 'right') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'imageBlock';
+      }
+    | {
+        title?: string | null;
+        videoUrl: string;
+        thumbnail?: (string | null) | Media;
+        description?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'videoBlock';
+      }
+    | {
+        quote: string;
+        author?: string | null;
+        style?: ('default' | 'highlight' | 'border') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'quoteBlock';
+      }
+    | {
+        heading: string;
+        description?: string | null;
+        buttonText: string;
+        buttonLink: string;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'ctaBlock';
+      }
+    | {
+        content: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        type?: ('info' | 'warning' | 'success' | 'error') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'alertBlock';
+      }
+    | {
+        title?: string | null;
+        items?:
+          | {
+              question: string;
+              answer: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'faqBlock';
+      }
+    | {
+        heading?: string | null;
+        items?:
+          | {
+              title: string;
+              description?: string | null;
+              icon?: (string | null) | Media;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'features';
+      }
+    | {
+        heading?: string | null;
+        testimonials?:
+          | {
+              name: string;
+              quote: string;
+              image?: (string | null) | Media;
+              designation?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'testimonials';
+      }
+    | {
+        heading?: string | null;
+        rows?:
+          | {
+              label: string;
+              columnA?: string | null;
+              columnB?: string | null;
+              columnC?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'comparisonTable';
+      }
+  )[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "counselling".
  */
@@ -450,6 +606,12 @@ export interface Counselling {
   } | null;
   blocks?:
     | (
+        | {
+            savedContent: string | SavedContent;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'savedContentBlock';
+          }
         | {
             heading?: string | null;
             body?: {
@@ -592,6 +754,12 @@ export interface Page {
   slug: string;
   content?:
     | (
+        | {
+            savedContent: string | SavedContent;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'savedContentBlock';
+          }
         | {
             heading: string;
             subheading?: string | null;
@@ -1549,6 +1717,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'stipends';
         value: string | Stipend;
+      } | null)
+    | ({
+        relationTo: 'saved-content';
+        value: string | SavedContent;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1657,6 +1829,13 @@ export interface BlogsSelect<T extends boolean = true> {
   blocks?:
     | T
     | {
+        savedContentBlock?:
+          | T
+          | {
+              savedContent?: T;
+              id?: T;
+              blockName?: T;
+            };
         contentBlock?:
           | T
           | {
@@ -1948,6 +2127,13 @@ export interface PagesSelect<T extends boolean = true> {
   content?:
     | T
     | {
+        savedContentBlock?:
+          | T
+          | {
+              savedContent?: T;
+              id?: T;
+              blockName?: T;
+            };
         hero?:
           | T
           | {
@@ -2105,6 +2291,13 @@ export interface CounsellingSelect<T extends boolean = true> {
   blocks?:
     | T
     | {
+        savedContentBlock?:
+          | T
+          | {
+              savedContent?: T;
+              id?: T;
+              blockName?: T;
+            };
         contentBlock?:
           | T
           | {
@@ -2392,6 +2585,135 @@ export interface StipendsSelect<T extends boolean = true> {
   internYear?: T;
   amount?: T;
   frequency?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "saved-content_select".
+ */
+export interface SavedContentSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  blocks?:
+    | T
+    | {
+        contentBlock?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              id?: T;
+              blockName?: T;
+            };
+        imageBlock?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              alignment?: T;
+              id?: T;
+              blockName?: T;
+            };
+        videoBlock?:
+          | T
+          | {
+              title?: T;
+              videoUrl?: T;
+              thumbnail?: T;
+              description?: T;
+              id?: T;
+              blockName?: T;
+            };
+        quoteBlock?:
+          | T
+          | {
+              quote?: T;
+              author?: T;
+              style?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ctaBlock?:
+          | T
+          | {
+              heading?: T;
+              description?: T;
+              buttonText?: T;
+              buttonLink?: T;
+              id?: T;
+              blockName?: T;
+            };
+        alertBlock?:
+          | T
+          | {
+              content?: T;
+              type?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqBlock?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        features?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    icon?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        testimonials?:
+          | T
+          | {
+              heading?: T;
+              testimonials?:
+                | T
+                | {
+                    name?: T;
+                    quote?: T;
+                    image?: T;
+                    designation?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        comparisonTable?:
+          | T
+          | {
+              heading?: T;
+              rows?:
+                | T
+                | {
+                    label?: T;
+                    columnA?: T;
+                    columnB?: T;
+                    columnC?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2839,6 +3161,12 @@ export interface PredictorPage {
   beforeForm?:
     | (
         | {
+            savedContent: string | SavedContent;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'savedContentBlock';
+          }
+        | {
             heading?: string | null;
             body?: {
               root: {
@@ -2930,6 +3258,12 @@ export interface PredictorPage {
    */
   afterForm?:
     | (
+        | {
+            savedContent: string | SavedContent;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'savedContentBlock';
+          }
         | {
             heading?: string | null;
             body?: {
@@ -3554,6 +3888,13 @@ export interface PredictorPageSelect<T extends boolean = true> {
   beforeForm?:
     | T
     | {
+        savedContentBlock?:
+          | T
+          | {
+              savedContent?: T;
+              id?: T;
+              blockName?: T;
+            };
         contentBlock?:
           | T
           | {
@@ -3621,6 +3962,13 @@ export interface PredictorPageSelect<T extends boolean = true> {
   afterForm?:
     | T
     | {
+        savedContentBlock?:
+          | T
+          | {
+              savedContent?: T;
+              id?: T;
+              blockName?: T;
+            };
         contentBlock?:
           | T
           | {

@@ -69,6 +69,20 @@ export const Counselling: CollectionConfig = {
       type: 'blocks',
       blocks: [
         {
+          slug: 'savedContentBlock',
+          labels: { singular: 'Saved Content', plural: 'Saved Content' },
+          fields: [
+            {
+              name: 'savedContent',
+              type: 'relationship',
+              relationTo: 'saved-content',
+              required: true,
+              label: 'Select Saved Content',
+            },
+          ],
+        },
+
+        {
           slug: 'contentBlock',
           fields: [
             {
