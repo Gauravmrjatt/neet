@@ -442,141 +442,143 @@ export interface SavedContent {
   id: string;
   title: string;
   slug: string;
-  blocks: (
-    | {
-        heading?: string | null;
-        body?: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
+  blocks?:
+    | (
+        | {
+            heading?: string | null;
+            body?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
               [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'contentBlock';
-      }
-    | {
-        image: string | Media;
-        caption?: string | null;
-        alignment?: ('left' | 'center' | 'right') | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'imageBlock';
-      }
-    | {
-        title?: string | null;
-        videoUrl: string;
-        thumbnail?: (string | null) | Media;
-        description?: string | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'videoBlock';
-      }
-    | {
-        quote: string;
-        author?: string | null;
-        style?: ('default' | 'highlight' | 'border') | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'quoteBlock';
-      }
-    | {
-        heading: string;
-        description?: string | null;
-        buttonText: string;
-        buttonLink: string;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'ctaBlock';
-      }
-    | {
-        content: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentBlock';
+          }
+        | {
+            image: string | Media;
+            caption?: string | null;
+            alignment?: ('left' | 'center' | 'right') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'imageBlock';
+          }
+        | {
+            title?: string | null;
+            videoUrl: string;
+            thumbnail?: (string | null) | Media;
+            description?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'videoBlock';
+          }
+        | {
+            quote: string;
+            author?: string | null;
+            style?: ('default' | 'highlight' | 'border') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'quoteBlock';
+          }
+        | {
+            heading: string;
+            description?: string | null;
+            buttonText: string;
+            buttonLink: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ctaBlock';
+          }
+        | {
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
               [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        };
-        type?: ('info' | 'warning' | 'success' | 'error') | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'alertBlock';
-      }
-    | {
-        title?: string | null;
-        items?:
-          | {
-              question: string;
-              answer: string;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'faqBlock';
-      }
-    | {
-        heading?: string | null;
-        items?:
-          | {
-              title: string;
-              description?: string | null;
-              icon?: (string | null) | Media;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'features';
-      }
-    | {
-        heading?: string | null;
-        testimonials?:
-          | {
-              name: string;
-              quote: string;
-              image?: (string | null) | Media;
-              designation?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'testimonials';
-      }
-    | {
-        heading?: string | null;
-        rows?:
-          | {
-              label: string;
-              columnA?: string | null;
-              columnB?: string | null;
-              columnC?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'comparisonTable';
-      }
-  )[];
+            };
+            type?: ('info' | 'warning' | 'success' | 'error') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'alertBlock';
+          }
+        | {
+            title?: string | null;
+            items?:
+              | {
+                  question: string;
+                  answer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqBlock';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  title: string;
+                  description?: string | null;
+                  icon?: (string | null) | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'features';
+          }
+        | {
+            heading?: string | null;
+            testimonials?:
+              | {
+                  name: string;
+                  quote: string;
+                  image?: (string | null) | Media;
+                  designation?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testimonials';
+          }
+        | {
+            heading?: string | null;
+            rows?:
+              | {
+                  label: string;
+                  columnA?: string | null;
+                  columnB?: string | null;
+                  columnC?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'comparisonTable';
+          }
+      )[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
