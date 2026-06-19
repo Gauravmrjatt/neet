@@ -41,7 +41,6 @@ export const SavedContent: CollectionConfig = {
     {
       name: 'blocks',
       type: 'blocks',
-      required: true,
       blocks: [
         {
           slug: 'contentBlock',
