@@ -1,6 +1,8 @@
 import { marked } from 'marked'
 import type { LexicalNode, LexicalRoot, TextNode, ParagraphNode, HeadingNode, ListNode, ListItemNode, QuoteNode, LinkNode, LinebreakNode, TableNode, TableRowNode, TableCellNode } from './types.js'
 
+type MarkedToken = any
+
 function t(text: string, format = 0): TextNode {
   return { type: 'text', mode: 'normal', text, style: '', detail: 0, format, version: 1 }
 }
@@ -59,7 +61,7 @@ function rewriteUrl(url: string): string {
   return url
 }
 
-function processInline(tokens: marked.Token[], formatBitmask = 0): LexicalNode[] {
+function processInline(tokens: MarkedToken[], formatBitmask = 0): LexicalNode[] {
   const result: LexicalNode[] = []
 
   for (const token of tokens) {
@@ -88,23 +90,23 @@ function processInline(tokens: marked.Token[], formatBitmask = 0): LexicalNode[]
   return result
 }
 
-function processBlock(token: marked.Token): LexicalNode | null {
+function processBlock(token: MarkedToken): LexicalNode | null {
   switch (token.type) {
     case 'heading': {
-      const t = token as marked.Tokens.Heading
+      const t = token as any
       const tag = `h${t.depth}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
       return h(tag, ...processInline(t.tokens || []))
     }
 
     case 'paragraph': {
-      const t = token as marked.Tokens.Paragraph
+      const t = token as any
       const children = processInline(t.tokens || [])
       if (children.length === 0) return null
       return p(...children)
     }
 
     case 'list': {
-      const t = token as marked.Tokens.List
+      const t = token as any
       const items: ListItemNode[] = []
       for (const item of t.items) {
         const itemTokens = item.tokens || []
@@ -135,7 +137,7 @@ function processBlock(token: marked.Token): LexicalNode | null {
     }
 
     case 'blockquote': {
-      const t = token as marked.Tokens.Blockquote
+      const t = token as any
       const children: LexicalNode[] = []
       for (const child of t.tokens || []) {
         const node = processBlock(child)
@@ -146,11 +148,11 @@ function processBlock(token: marked.Token): LexicalNode | null {
     }
 
     case 'table': {
-      const t = token as marked.Tokens.Table
+      const t = token as any
       const rows: TableRowNode[] = []
 
       if (t.header && t.header.length > 0) {
-        const headerCells: TableCellNode[] = t.header.map((cell) => {
+        const headerCells: TableCellNode[] = t.header.map((cell: any) => {
           const cellChildren = processInline(cell.tokens || [])
           return tableCell(1, ...cellChildren)
         })
@@ -158,7 +160,7 @@ function processBlock(token: marked.Token): LexicalNode | null {
       }
 
       for (const row of t.rows || []) {
-        const dataCells: TableCellNode[] = row.map((cell) => {
+        const dataCells: TableCellNode[] = row.map((cell: any) => {
           const cellChildren = processInline(cell.tokens || [])
           return tableCell(0, ...cellChildren)
         })
@@ -170,7 +172,7 @@ function processBlock(token: marked.Token): LexicalNode | null {
     }
 
     case 'code': {
-      const t = token as marked.Tokens.Code
+      const t = token as any
       return p(t(t.text || ''))
     }
 

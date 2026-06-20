@@ -129,7 +129,7 @@ async function main() {
       if (ctaBlock) blocks.push(ctaBlock)
       if (blocks.length > 0) blogData.blocks = blocks
 
-      await payload.create({
+      await (payload.create as any)({
         collection: 'blogs',
         data: blogData,
         depth: 0,
