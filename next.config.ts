@@ -25,6 +25,7 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      // Security headers + CDN caching for all routes
       {
         source: '/(.*)',
         headers: [
@@ -33,8 +34,12 @@ const nextConfig: NextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'X-DNS-Prefetch-Control', value: 'off' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          // CDN caches HTML for 1 hour; stale-while-revalidate allows serving stale
+          // while revalidating in background for up to 1 year
+          { key: 'Cache-Control', value: 'public, max-age=0, s-maxage=3600, stale-while-revalidate=31536000' },
         ],
       },
+      // Media files: immutable long-term cache
       {
         source: '/api/media/file/:path*',
         headers: [

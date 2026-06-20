@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 
 interface NavDropdownProps {
   label: string
-  children: Array<{ label: string; link: string }>
+  children: Array<{ label: string; link: string; id?: string | null }>
 }
 
 export function NavDropdown({ label, children }: NavDropdownProps) {
