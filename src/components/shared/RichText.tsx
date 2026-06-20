@@ -68,6 +68,14 @@ function serializeLexical(node: any, maxHeadingLevel?: number): React.ReactNode 
       return <a href={safeHref(node.fields?.url)} className="text-primary underline">{children}</a>
     case 'linebreak':
       return <br />
+    case 'table':
+      return <table className="w-full border-collapse border border-border my-6">{children}</table>
+    case 'tablerow':
+      return <tr>{children}</tr>
+    case 'tablecell': {
+      const Tag = node.headerState ? 'th' : 'td'
+      return <Tag className="border border-border px-3 py-2 text-left">{children}</Tag>
+    }
     case 'upload':
       if (node.value?.url) {
         return <img src={node.value.url} alt={node.value.alt || ''} className="rounded-lg" />

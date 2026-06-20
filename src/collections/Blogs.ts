@@ -29,8 +29,12 @@ export const Blogs: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc }) => {
-        const { revalidateBlogs } = await import('@/lib/revalidate')
-        revalidateBlogs(doc.slug)
+        try {
+          const { revalidateBlogs } = await import('@/lib/revalidate')
+          revalidateBlogs(doc.slug)
+        } catch {
+          /* silently ignore — revalidation only works inside Next.js request context */
+        }
       },
     ],
   },
