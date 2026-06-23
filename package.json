@@ -14,6 +14,7 @@
     "seed:content": "cross-env NODE_OPTIONS=--no-deprecation tsx src/lib/seed/content.ts",
     "seed": "pnpm seed:globals && pnpm seed:content",
     "import:blogs": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/import-blogs.ts",
+    "update:blogs": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/update-blogs.ts",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",

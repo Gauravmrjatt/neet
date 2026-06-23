@@ -172,8 +172,8 @@ function processBlock(token: MarkedToken): LexicalNode | null {
     }
 
     case 'code': {
-      const t = token as any
-      return p(t(t.text || ''))
+      const c = token as any
+      return p(t(c.text || ''))
     }
 
     case 'space':
@@ -181,8 +181,8 @@ function processBlock(token: MarkedToken): LexicalNode | null {
       return null
 
     case 'html': {
-      const t = token as any
-      if (t.text?.trim()) return p(t(t.text.trim()))
+      const h = token as any
+      if (h.text?.trim()) return p(t(h.text.trim()))
       return null
     }
 

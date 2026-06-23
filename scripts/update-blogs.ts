@@ -85,7 +85,7 @@ async function main() {
   })
 
   if (authors.length === 0) {
-    console.error(`Author not found with email "${AUTHOR_EMAIL}". Make sure the user exists in the database.`)
+    console.error(`Author not found with email "${AUTHOR_EMAIL}".`)
     process.exit(1)
   }
 
@@ -96,10 +96,10 @@ async function main() {
     .filter((f) => f.startsWith('blog-') && f.endsWith('.md'))
     .sort()
 
-  console.log(`Found ${files.length} blog files in ${CONTENT_DIR}`)
+  console.log(`Found ${files.length} blog files in ${CONTENT_DIR}\n`)
 
   let created = 0
-  let skipped = 0
+  let updated = 0
   let errors = 0
 
   for (const file of files) {
@@ -112,20 +112,6 @@ async function main() {
       const parsed = matter(raw)
       const { data: frontmatter, content: body } =
         parsed.data?.slug ? parsed : parseNoFrontmatter(raw)
-
-      const { docs: existing } = await payload.find({
-        collection: 'blogs',
-        where: { slug: { equals: frontmatter.slug } },
-        limit: 1,
-        depth: 0,
-        pagination: false,
-      })
-
-      if (existing.length > 0) {
-        console.log(`  Skipping ${file}: slug "${frontmatter.slug}" already exists`)
-        skipped++
-        continue
-      }
 
       const { faqBlock, ctaBlock, cleanedMd } = extractBlocks(body)
 
@@ -155,21 +141,39 @@ async function main() {
       if (ctaBlock) blocks.push(ctaBlock)
       if (blocks.length > 0) blogData.blocks = blocks
 
-      await (payload.create as any)({
+      const { docs: existing } = await payload.find({
         collection: 'blogs',
-        data: blogData,
+        where: { slug: { equals: frontmatter.slug } },
+        limit: 1,
         depth: 0,
+        pagination: false,
       })
 
-      console.log(`  Created: [${String(blogNum).padStart(2, '0')}] ${frontmatter.title}`)
-      created++
+      if (existing.length > 0) {
+        await (payload.update as any)({
+          collection: 'blogs',
+          id: existing[0].id,
+          data: blogData,
+          depth: 0,
+        })
+        console.log(`  Updated: [${String(blogNum).padStart(2, '0')}] ${frontmatter.title}`)
+        updated++
+      } else {
+        await (payload.create as any)({
+          collection: 'blogs',
+          data: blogData,
+          depth: 0,
+        })
+        console.log(`  Created: [${String(blogNum).padStart(2, '0')}] ${frontmatter.title}`)
+        created++
+      }
     } catch (err) {
       console.error(`  ERROR: ${file}:`, err instanceof Error ? err.message : err)
       errors++
     }
   }
 
-  console.log(`\nDone! Created: ${created}, Skipped: ${skipped}, Errors: ${errors}`)
+  console.log(`\nDone! Updated: ${updated}, Created: ${created}, Errors: ${errors}`)
   process.exit(errors > 0 ? 1 : 0)
 }
 
