@@ -1,6 +1,17 @@
 import { cache } from 'react'
 import { getPayloadClient } from '../payload'
 
+async function resolveStateId(slug: string): Promise<string | null> {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'states',
+    where: { slug: { equals: slug } },
+    limit: 1,
+    depth: 0,
+  })
+  return result.docs[0]?.id || null
+}
+
 export const getColleges = cache(async ({
   limit = 20,
   page = 1,
@@ -19,7 +30,10 @@ export const getColleges = cache(async ({
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: status } }
   if (type) where.type = { equals: type }
-  if (stateSlug) where['state.slug'] = { equals: stateSlug }
+  if (stateSlug) {
+    const stateId = await resolveStateId(stateSlug)
+    if (stateId) where.state = { equals: stateId }
+  }
 
   return payload.find({
     collection: 'colleges',
@@ -42,9 +56,11 @@ export const getCollegeBySlug = cache(async (slug: string) => {
 
 export const getCollegesByState = cache(async (stateSlug: string) => {
   const payload = await getPayloadClient()
+  const stateId = await resolveStateId(stateSlug)
+  if (!stateId) return { docs: [], totalDocs: 0, totalPages: 0, page: 1 }
   return payload.find({
     collection: 'colleges',
-    where: { 'state.slug': { equals: stateSlug }, status: { equals: 'active' } },
+    where: { state: { equals: stateId }, status: { equals: 'active' } },
     sort: 'order',
   })
 })

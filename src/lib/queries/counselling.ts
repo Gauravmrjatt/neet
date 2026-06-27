@@ -1,6 +1,17 @@
 import { cache } from 'react'
 import { getPayloadClient } from '../payload'
 
+async function resolveStateId(slug: string): Promise<string | null> {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'states',
+    where: { slug: { equals: slug } },
+    limit: 1,
+    depth: 0,
+  })
+  return result.docs[0]?.id || null
+}
+
 export const getCounsellingPosts = cache(async ({
   limit = 12,
   page = 1,
@@ -19,7 +30,10 @@ export const getCounsellingPosts = cache(async ({
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: status } }
   if (category) where.category = { equals: category }
-  if (state) where['state.slug'] = { equals: state }
+  if (state) {
+    const stateId = await resolveStateId(state)
+    if (stateId) where.state = { equals: stateId }
+  }
 
   return payload.find({
     collection: 'counselling',
@@ -61,9 +75,11 @@ export const getCounsellingByCategory = cache(async (category: string) => {
 
 export const getCounsellingByState = cache(async (stateSlug: string) => {
   const payload = await getPayloadClient()
+  const stateId = await resolveStateId(stateSlug)
+  if (!stateId) return { docs: [], totalDocs: 0, totalPages: 0, page: 1 }
   return payload.find({
     collection: 'counselling',
-    where: { 'state.slug': { equals: stateSlug }, status: { equals: 'published' } },
+    where: { state: { equals: stateId }, status: { equals: 'published' } },
     sort: '-publishedAt',
   })
 })

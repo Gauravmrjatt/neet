@@ -1,4 +1,3 @@
-import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getCounsellingPosts } from '@/lib/queries'
@@ -63,9 +62,7 @@ export default async function CounsellingPage({
       </Section>
       <Section tone="cream" className="relative pt-0">
         <Container>
-          <Suspense fallback={<div className="flex flex-wrap gap-2 mb-8"><div className="h-8 w-20 rounded-full bg-muted animate-pulse" /><div className="h-8 w-24 rounded-full bg-muted animate-pulse" /><div className="h-8 w-20 rounded-full bg-muted animate-pulse" /><div className="h-8 w-28 rounded-full bg-muted animate-pulse" /><div className="h-8 w-20 rounded-full bg-muted animate-pulse" /></div>}>
-            <CounsellingFilter />
-          </Suspense>
+          <CounsellingFilter />
           {posts.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {posts.map((post: any) => (
