@@ -19,7 +19,7 @@ export const getColleges = cache(async ({
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: status } }
   if (type) where.type = { equals: type }
-  if (stateSlug) where.state = { equals: stateSlug }
+  if (stateSlug) where['state.slug'] = { equals: stateSlug }
 
   return payload.find({
     collection: 'colleges',
@@ -44,7 +44,7 @@ export const getCollegesByState = cache(async (stateSlug: string) => {
   const payload = await getPayloadClient()
   return payload.find({
     collection: 'colleges',
-    where: { state: { equals: stateSlug }, status: { equals: 'active' } },
+    where: { 'state.slug': { equals: stateSlug }, status: { equals: 'active' } },
     sort: 'order',
   })
 })
