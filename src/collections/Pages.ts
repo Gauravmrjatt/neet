@@ -25,6 +25,15 @@ export const Pages: CollectionConfig = {
   },
   fields: [
     {
+      name: 'jsonImport',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '/components/admin/PageJsonImporter#PageJsonImporter',
+        },
+      },
+    },
+    {
       name: 'title',
       type: 'text',
       required: true,
