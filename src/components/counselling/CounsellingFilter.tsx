@@ -1,6 +1,7 @@
 'use client'
 
-import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import { useSearchParams, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 const categories = [
@@ -13,34 +14,34 @@ const categories = [
 ]
 
 export function CounsellingFilter() {
-  const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const currentCategory = searchParams.get('category') || ''
 
-  function handleFilter(category: string) {
-    const params = new URLSearchParams(searchParams)
-    if (category) {
-      params.set('category', category)
+  function hrefFor(catValue: string) {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete('page')
+    if (catValue) {
+      params.set('category', catValue)
     } else {
       params.delete('category')
     }
-    params.delete('page')
-    router.push(`${pathname}?${params.toString()}`)
+    const qs = params.toString()
+    return qs ? `${pathname}?${qs}` : pathname
   }
 
   return (
     <div className="flex flex-wrap gap-2 mb-8">
       {categories.map((cat) => (
-        <Button
-          key={cat.value}
-          variant={currentCategory === cat.value ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => handleFilter(cat.value)}
-          className="rounded-full"
-        >
-          {cat.label}
-        </Button>
+        <Link key={cat.value} href={hrefFor(cat.value)} scroll={false}>
+          <Button
+            variant={currentCategory === cat.value ? 'default' : 'outline'}
+            size="sm"
+            className="rounded-full"
+          >
+            {cat.label}
+          </Button>
+        </Link>
       ))}
     </div>
   )
