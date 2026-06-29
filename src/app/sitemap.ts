@@ -42,6 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     where: { status: { equals: 'published' } },
     limit: 1000,
   })
+  
   const blogPages = blogs.docs.map((blog: any) => ({
     url: `${siteUrl}/blog/${blog.slug}`,
     lastModified: new Date(blog.updatedAt),
