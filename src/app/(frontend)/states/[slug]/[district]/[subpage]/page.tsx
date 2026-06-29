@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 import { getStateBySlug } from '@/lib/queries'
 import { getDistrictBySlug, getDistrictContent, getCollegesByDistrict, getCutoffsByDistrict, getNearbyDistricts } from '@/lib/queries/districts'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
-import { generateBreadcrumbSchema, generateArticleSchema, generateFAQSchema } from '@/lib/structured-data'
+import { generateBreadcrumbSchema, generateArticleSchema, generateFAQSchema, generateHowToSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { RichText } from '@/components/shared/RichText'
 import { Container } from '@/components/layout/Container'
@@ -112,6 +112,8 @@ export default async function DistrictSubPage({ params }: PageProps) {
     year: String(new Date().getFullYear()),
   } as TemplateContext) : null
 
+  const processSubpages = new Set(['neet-counselling', 'mbbs-admission', 'choice-filling', 'mcc-counselling', 'state-counselling'])
+
   return (
     <>
       <JsonLd data={generateArticleSchema({
@@ -129,8 +131,17 @@ export default async function DistrictSubPage({ params }: PageProps) {
         { name: district.name, url: `${siteUrl}/states/${state.slug}/${district.slug}` },
         { name: label, url: `${siteUrl}/states/${state.slug}/${district.slug}/${subpage}` },
       ])} />
-      {subpage === 'faq' && templateOutput?.faqs && templateOutput.faqs.length > 0 && (
+      {templateOutput?.faqs && templateOutput.faqs.length > 0 && (
         <JsonLd data={generateFAQSchema(templateOutput.faqs.map(f => ({ question: f.question, answer: f.answer })))} />
+      )}
+      {processSubpages.has(subpage) && (
+        <JsonLd data={generateHowToSchema([
+          { name: `Register for NEET Counselling`, text: `Visit the official counselling portal, register with your NEET roll number and personal details, and pay the registration fee.` },
+          { name: `Upload Documents`, text: `Upload scanned copies of all required documents including NEET scorecard, admit card, class 10 and 12 marksheets, domicile certificate, and category certificate.` },
+          { name: `Fill College Choices`, text: `List your preferred medical colleges and courses in order of priority. Fill all available choices to maximize your chances of seat allotment.` },
+          { name: `Lock Choices`, text: `Review and lock your choices before the deadline. Locked choices cannot be modified in that round.` },
+          { name: `Check Allotment Result`, text: `Check the seat allotment result on the counselling portal. If allotted, download the allotment letter and report to the college.` },
+        ])} />
       )}
 
       <PageHero
