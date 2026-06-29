@@ -24,7 +24,7 @@ export async function Header() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 w-full',
+        'top-0 z-40 w-full',
         'border-b border-border/70 bg-white backdrop-blur-md',
         'shadow-sm',
       )}
