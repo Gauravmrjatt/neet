@@ -7,6 +7,7 @@ export const getStates = cache(async ({ status = 'active' }: { status?: 'active'
     collection: 'states',
     where: { status: { equals: status } },
     sort: 'order',
+    limit: 100,
   })
 })
 
