@@ -27,8 +27,12 @@ export const Colleges: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc }) => {
-        const { revalidateColleges } = await import('@/lib/revalidate')
-        revalidateColleges(doc.slug)
+        try {
+          const { revalidateColleges } = await import('@/lib/revalidate')
+          revalidateColleges(doc.slug)
+        } catch {
+          // revalidateTag only works in Next.js request context — ignore in scripts
+        }
       },
     ],
   },
@@ -73,6 +77,16 @@ export const Colleges: CollectionConfig = {
     {
       name: 'city',
       type: 'text',
+    },
+    {
+      name: 'district',
+      type: 'relationship',
+      relationTo: 'districts',
+      required: false,
+      admin: {
+        position: 'sidebar',
+        description: 'District where this college is located',
+      },
     },
     {
       name: 'established',

@@ -29,8 +29,12 @@ export const Videos: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc }) => {
-        const { revalidateVideos } = await import('@/lib/revalidate')
-        revalidateVideos(doc.slug)
+        try {
+          const { revalidateVideos } = await import('@/lib/revalidate')
+          revalidateVideos(doc.slug)
+        } catch {
+          // revalidateTag only works in Next.js request context — ignore in scripts
+        }
       },
     ],
   },

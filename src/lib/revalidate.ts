@@ -87,3 +87,18 @@ export function revalidateAbout() {
 export function revalidateSavedContent() {
   revalidatePath('/', 'layout')
 }
+
+export function revalidateDistricts(slug?: string) {
+  revalidateTag('districts', 'max')
+  revalidatePath('/states')
+  if (slug) revalidatePath(`/states/${slug}`)
+}
+
+export function revalidateDistrictContent(districtSlug?: string, type?: string) {
+  revalidateTag('district-content', 'max')
+  revalidatePath('/states')
+  if (districtSlug) {
+    revalidatePath(`/states/${districtSlug}`)
+    if (type) revalidatePath(`/states/${districtSlug}/${type}`)
+  }
+}

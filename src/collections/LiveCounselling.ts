@@ -28,8 +28,12 @@ export const LiveCounselling: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc }) => {
-        const { revalidateLiveCounselling } = await import('@/lib/revalidate')
-        revalidateLiveCounselling()
+        try {
+          const { revalidateLiveCounselling } = await import('@/lib/revalidate')
+          revalidateLiveCounselling()
+        } catch {
+          // revalidateTag only works in Next.js request context — ignore in scripts
+        }
       },
     ],
   },

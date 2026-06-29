@@ -122,6 +122,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/counselling`, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.9 },
     { url: `${siteUrl}/counselling/state`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
     { url: `${siteUrl}/colleges`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${siteUrl}/states`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
   ]
 
   const cityPages = INDIA_CITIES.map((city) => ({
@@ -131,5 +132,58 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  return [...staticPages, ...newStaticPages, ...predictorSlugPages, ...blogPages, ...cmsPages, ...videoPages, ...counsellingPages, ...statePages, ...collegePages, ...cityPages]
+  const stateDistrictPages = states.docs.map((s: any) => ({
+    url: `${siteUrl}/states/${s.slug}`,
+    lastModified: new Date(s.updatedAt),
+    changeFrequency: 'weekly' as const,
+    priority: 0.85,
+  }))
+
+  const allDistricts = await payload.find({
+    collection: 'districts',
+    where: { status: { equals: 'active' } },
+    limit: 2000,
+    depth: 1,
+  })
+
+  const districtHubPages = allDistricts.docs.map((d: any) => {
+    const stateSlug = typeof d.state === 'object' ? d.state?.slug : ''
+    return {
+      url: `${siteUrl}/states/${stateSlug}/${d.slug}`,
+      lastModified: new Date(d.updatedAt),
+      changeFrequency: 'weekly' as const,
+      priority: 0.75,
+    }
+  })
+
+  const districtContent = await payload.find({
+    collection: 'district-content',
+    where: { status: { equals: 'published' } },
+    limit: 20000,
+    depth: 1,
+    sort: '-updatedAt',
+  })
+
+  const subpageSet = new Set<string>()
+  const districtSubpages: MetadataRoute.Sitemap[number][] = []
+  const districtSlugMap = new Map(allDistricts.docs.map((d: any) => [d.id, d]))
+
+  for (const dc of districtContent.docs as any[]) {
+    const districtId = typeof dc.district === 'object' ? dc.district?.id : dc.district
+    const district = districtSlugMap.get(districtId)
+    if (!district) continue
+    const stateSlug = typeof district.state === 'object' ? district.state?.slug : ''
+    if (!stateSlug) continue
+    const url = `${siteUrl}/states/${stateSlug}/${district.slug}/${dc.type}`
+    if (subpageSet.has(url)) continue
+    subpageSet.add(url)
+    districtSubpages.push({
+      url,
+      lastModified: new Date(dc.updatedAt),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    })
+  }
+
+  return [...staticPages, ...newStaticPages, ...predictorSlugPages, ...blogPages, ...cmsPages, ...videoPages, ...counsellingPages, ...statePages, ...collegePages, ...cityPages, ...stateDistrictPages, ...districtHubPages, ...districtSubpages]
 }

@@ -26,6 +26,8 @@ import { SeatMatrix } from './collections/SeatMatrix'
 import { Bonds } from './collections/Bonds'
 import { Stipends } from './collections/Stipends'
 import { SavedContent } from './collections/SavedContent'
+import { Districts } from './collections/Districts'
+import { DistrictContent } from './collections/DistrictContent'
 
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
@@ -72,6 +74,8 @@ export default buildConfig({
     Bonds,
     Stipends,
     SavedContent,
+    Districts,
+    DistrictContent,
   ],
   globals: [Header, Footer, SiteSettings, HomePageSEO, NewsTicker, AboutPage, VideoCategories, Testimonials, PredictorPage, PricingPage, WhyChooseUs, PageSeo],
   editor: lexicalEditor({

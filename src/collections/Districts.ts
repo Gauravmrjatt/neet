@@ -1,27 +1,36 @@
 import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '../access/roles'
 
-const canReadHelpdesk = ({ req: { user } }: { req: { user: any } }) => {
-  if (!user) return false
-  if (user.role === 'admin' || user.role === 'editor') return true
-  return {
-    status: {
-      equals: 'active',
-    },
-  }
+function formatSlug(val: string): string {
+  return val
+    .replace(/^\//, '')
+    .replace(/\/+/g, '-')
+    .replace(/[^a-zA-Z0-9-_]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .toLowerCase()
 }
 
-export const Helpdesk: CollectionConfig = {
-  slug: 'helpdesk',
+export const Districts: CollectionConfig = {
+  slug: 'districts',
   admin: {
-    useAsTitle: 'question',
+    useAsTitle: 'name',
+    group: 'Content',
+    defaultColumns: ['name', 'state', 'status', 'id'],
   },
   hooks: {
+    beforeChange: [
+      ({ data }) => {
+        if (data?.slug) {
+          data.slug = formatSlug(data.slug)
+        }
+      },
+    ],
     afterChange: [
       async ({ doc }) => {
         try {
-          const { revalidateHelpdesk } = await import('@/lib/revalidate')
-          revalidateHelpdesk()
+          const { revalidateDistricts } = await import('@/lib/revalidate')
+          revalidateDistricts(doc.slug)
         } catch {
           // revalidateTag only works in Next.js request context — ignore in scripts
         }
@@ -29,34 +38,58 @@ export const Helpdesk: CollectionConfig = {
     ],
   },
   access: {
-    read: canReadHelpdesk,
+    read: () => true,
     create: isAdminOrEditor,
     update: isAdminOrEditor,
     delete: isAdminOrEditor,
   },
   fields: [
     {
-      name: 'question',
+      name: 'name',
       type: 'text',
       required: true,
     },
     {
-      name: 'answer',
-      type: 'richText',
+      name: 'slug',
+      type: 'text',
       required: true,
+      unique: true,
+      admin: {
+        position: 'sidebar',
+      },
     },
     {
-      name: 'category',
-      type: 'select',
-      options: [
-        { label: 'Admission', value: 'admission' },
-        { label: 'Exam', value: 'exam' },
-        { label: 'Counselling', value: 'counselling' },
-        { label: 'Pricing', value: 'pricing' },
-        { label: 'Technical', value: 'technical' },
-        { label: 'Other', value: 'other' },
-      ],
-      defaultValue: 'other',
+      name: 'state',
+      type: 'relationship',
+      relationTo: 'states',
+      required: true,
+      index: true,
+    },
+    {
+      name: 'description',
+      type: 'richText',
+    },
+    {
+      name: 'population',
+      type: 'text',
+    },
+    {
+      name: 'famousColleges',
+      type: 'relationship',
+      relationTo: 'colleges',
+      hasMany: true,
+      admin: {
+        description: 'Notable medical colleges in this district',
+      },
+    },
+    {
+      name: 'nearbyDistricts',
+      type: 'relationship',
+      relationTo: 'districts',
+      hasMany: true,
+      admin: {
+        description: 'Geographically nearby districts for cross-linking',
+      },
     },
     {
       name: 'order',
@@ -84,35 +117,23 @@ export const Helpdesk: CollectionConfig = {
       name: 'seo',
       type: 'group',
       label: 'SEO',
-      admin: {
-        position: 'sidebar',
-      },
       fields: [
         {
           name: 'metaTitle',
           type: 'text',
-          label: 'Meta Title',
         },
         {
           name: 'metaDescription',
           type: 'textarea',
-          label: 'Meta Description',
         },
         {
           name: 'ogImage',
           type: 'upload',
-          label: 'OG Image',
           relationTo: 'media',
         },
         {
           name: 'keywords',
           type: 'array',
-          label: 'Keywords',
-          admin: {
-            components: {
-              Field: '/components/admin/CommaSeparatedArray#CommaSeparatedArray',
-            },
-          },
           fields: [
             {
               name: 'keyword',
@@ -123,7 +144,6 @@ export const Helpdesk: CollectionConfig = {
         {
           name: 'noIndex',
           type: 'checkbox',
-          label: 'Prevent Indexing',
           defaultValue: false,
         },
       ],

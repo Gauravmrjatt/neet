@@ -34,8 +34,12 @@ export const Counselors: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc }) => {
-        const { revalidateCounsellors } = await import('@/lib/revalidate')
-        revalidateCounsellors()
+        try {
+          const { revalidateCounsellors } = await import('@/lib/revalidate')
+          revalidateCounsellors()
+        } catch {
+          // revalidateTag only works in Next.js request context — ignore in scripts
+        }
       },
     ],
   },

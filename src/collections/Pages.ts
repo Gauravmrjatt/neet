@@ -12,8 +12,12 @@ export const Pages: CollectionConfig = {
   hooks: {
     afterChange: [
       async ({ doc }) => {
-        const { revalidatePages } = await import('@/lib/revalidate')
-        revalidatePages(doc.slug)
+        try {
+          const { revalidatePages } = await import('@/lib/revalidate')
+          revalidatePages(doc.slug)
+        } catch {
+          // revalidateTag only works in Next.js request context — ignore in scripts
+        }
       },
     ],
   },

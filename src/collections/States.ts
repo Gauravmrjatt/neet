@@ -27,8 +27,12 @@ export const States: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc }) => {
-        const { revalidateStates } = await import('@/lib/revalidate')
-        revalidateStates(doc.slug)
+        try {
+          const { revalidateStates } = await import('@/lib/revalidate')
+          revalidateStates(doc.slug)
+        } catch {
+          // revalidateTag only works in Next.js request context — ignore in scripts
+        }
       },
     ],
   },

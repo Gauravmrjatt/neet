@@ -17,8 +17,12 @@ export const SavedContent: CollectionConfig = {
   hooks: {
     afterChange: [
       async () => {
-        const { revalidateSavedContent } = await import('@/lib/revalidate')
-        revalidateSavedContent()
+        try {
+          const { revalidateSavedContent } = await import('@/lib/revalidate')
+          revalidateSavedContent()
+        } catch {
+          // revalidateTag only works in Next.js request context — ignore in scripts
+        }
       },
     ],
   },

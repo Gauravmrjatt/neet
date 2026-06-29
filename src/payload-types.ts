@@ -88,6 +88,8 @@ export interface Config {
     bonds: Bond;
     stipends: Stipend;
     'saved-content': SavedContent;
+    districts: District;
+    'district-content': DistrictContent;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -116,6 +118,8 @@ export interface Config {
     bonds: BondsSelect<false> | BondsSelect<true>;
     stipends: StipendsSelect<false> | StipendsSelect<true>;
     'saved-content': SavedContentSelect<false> | SavedContentSelect<true>;
+    districts: DistrictsSelect<false> | DistrictsSelect<true>;
+    'district-content': DistrictContentSelect<false> | DistrictContentSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -1393,6 +1397,10 @@ export interface College {
   type: 'government' | 'private' | 'deemed' | 'central';
   state: string | State;
   city?: string | null;
+  /**
+   * District where this college is located
+   */
+  district?: (string | null) | District;
   established?: number | null;
   website?: string | null;
   description?: {
@@ -1454,6 +1462,59 @@ export interface College {
    * Optional ranking number
    */
   ranking?: number | null;
+  /**
+   * Lower numbers appear first
+   */
+  order?: number | null;
+  status: 'active' | 'inactive';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "districts".
+ */
+export interface District {
+  id: string;
+  name: string;
+  slug: string;
+  state: string | State;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  population?: string | null;
+  /**
+   * Notable medical colleges in this district
+   */
+  famousColleges?: (string | College)[] | null;
+  /**
+   * Geographically nearby districts for cross-linking
+   */
+  nearbyDistricts?: (string | District)[] | null;
   /**
    * Lower numbers appear first
    */
@@ -1618,6 +1679,132 @@ export interface Stipend {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "district-content".
+ */
+export interface DistrictContent {
+  id: string;
+  district: string | District;
+  type:
+    | 'neet-counselling'
+    | 'mbbs-admission'
+    | 'government-medical-colleges'
+    | 'private-medical-colleges'
+    | 'cutoff'
+    | 'fees'
+    | 'documents-required'
+    | 'choice-filling'
+    | 'seat-matrix'
+    | 'mcc-counselling'
+    | 'state-counselling'
+    | 'expected-cutoff'
+    | 'all-medical-colleges'
+    | 'important-dates'
+    | 'faq'
+    | 'news'
+    | 'updates';
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  blocks?:
+    | (
+        | {
+            heading?: string | null;
+            body?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentBlock';
+          }
+        | {
+            title?: string | null;
+            items?:
+              | {
+                  question?: string | null;
+                  answer?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqBlock';
+          }
+        | {
+            heading?: string | null;
+            rows?:
+              | {
+                  label?: string | null;
+                  columnA?: string | null;
+                  columnB?: string | null;
+                  columnC?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'comparisonTable';
+          }
+        | {
+            heading?: string | null;
+            description?: string | null;
+            buttonText?: string | null;
+            buttonLink?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ctaBlock';
+          }
+      )[]
+    | null;
+  status: 'draft' | 'published';
+  /**
+   * When this content was auto-generated
+   */
+  generatedAt?: string | null;
+  /**
+   * Set to true when admin manually edits this content
+   */
+  manuallyOverridden?: boolean | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -1723,6 +1910,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'saved-content';
         value: string | SavedContent;
+      } | null)
+    | ({
+        relationTo: 'districts';
+        value: string | District;
+      } | null)
+    | ({
+        relationTo: 'district-content';
+        value: string | DistrictContent;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -2465,6 +2660,7 @@ export interface CollegesSelect<T extends boolean = true> {
   type?: T;
   state?: T;
   city?: T;
+  district?: T;
   established?: T;
   website?: T;
   description?: T;
@@ -2715,6 +2911,117 @@ export interface SavedContentSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "districts_select".
+ */
+export interface DistrictsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  state?: T;
+  description?: T;
+  population?: T;
+  famousColleges?: T;
+  nearbyDistricts?: T;
+  order?: T;
+  status?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        noIndex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "district-content_select".
+ */
+export interface DistrictContentSelect<T extends boolean = true> {
+  district?: T;
+  type?: T;
+  content?: T;
+  blocks?:
+    | T
+    | {
+        contentBlock?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqBlock?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        comparisonTable?:
+          | T
+          | {
+              heading?: T;
+              rows?:
+                | T
+                | {
+                    label?: T;
+                    columnA?: T;
+                    columnB?: T;
+                    columnC?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        ctaBlock?:
+          | T
+          | {
+              heading?: T;
+              description?: T;
+              buttonText?: T;
+              buttonLink?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  status?: T;
+  generatedAt?: T;
+  manuallyOverridden?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        noIndex?: T;
       };
   updatedAt?: T;
   createdAt?: T;
