@@ -141,6 +141,7 @@ export const getDistrictsWithCollegeCount = cache(async (stateSlug: string) => {
     collection: 'districts',
     where: { state: { equals: stateId }, status: { equals: 'active' } },
     sort: 'order',
+    limit: 200,
     depth: 1,
   })
 
