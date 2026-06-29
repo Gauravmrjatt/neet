@@ -38,6 +38,16 @@ export const getBlogBySlug = cache(async (slug: string): Promise<Blog | null> =>
   return result.docs[0] || null
 })
 
+export const getBlogsByCategory = cache(async (category: string, limit = 10) => {
+  const payload = await getPayloadClient()
+  return payload.find({
+    collection: 'blogs',
+    where: { categories: { contains: category }, status: { equals: 'published' } },
+    limit,
+    sort: '-publishedAt',
+  })
+})
+
 export const getRecentBlogs = cache(async (limit = 5) => {
   const payload = await getPayloadClient()
   return payload.find({

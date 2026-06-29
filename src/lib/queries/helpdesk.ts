@@ -29,6 +29,15 @@ export const getHelpdeskItems = cache(async ({
   })
 })
 
+export const getHelpdeskByCategory = cache(async (category: string) => {
+  const payload = await getPayloadClient()
+  return payload.find({
+    collection: 'helpdesk',
+    where: { category: { equals: category }, status: { equals: 'active' } },
+    sort: 'order',
+  })
+})
+
 export const getHelpdeskCategories = cache(async (): Promise<string[]> => {
   const payload = await getPayloadClient()
   const items = await payload.find({

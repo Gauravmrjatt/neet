@@ -33,6 +33,8 @@ export const getUserSubscriptions = cache(async (userId: string): Promise<Subscr
   return result.docs as Subscription[]
 })
 
+export const getSubscriptionsByUser = getUserSubscriptions
+
 export const getActiveSubscriptions = cache(async (userId: string): Promise<Subscription[]> => {
   const payload = await getPayloadClient()
   const result = await payload.find({

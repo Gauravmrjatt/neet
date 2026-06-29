@@ -54,6 +54,8 @@ export const getCounsellingPostBySlug = cache(async (slug: string) => {
   return result.docs[0] || null
 })
 
+export const getCounsellingBySlug = getCounsellingPostBySlug
+
 export const getRecentCounsellingPosts = cache(async (limit = 5) => {
   const payload = await getPayloadClient()
   return payload.find({

@@ -45,3 +45,5 @@ export const getSessionById = cache(async (id: string): Promise<LiveCounselling 
     return null
   }
 })
+
+export const getLiveCounsellingSession = getSessionById
