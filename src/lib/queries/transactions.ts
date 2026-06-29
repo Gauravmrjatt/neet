@@ -19,6 +19,18 @@ export const findTransactionByRazorpayOrderId = cache(async (
   return (result.docs[0] as Transaction) || null
 })
 
+export const getTransactionsByUser = cache(async (userId: string, limit = 50) => {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'transactions',
+    where: { user: { equals: userId } },
+    sort: '-createdAt',
+    limit,
+    depth: 1,
+  })
+  return result.docs as Transaction[]
+})
+
 export const findTransactionById = cache(async (
   transactionId: string,
 ): Promise<Transaction | null> => {
