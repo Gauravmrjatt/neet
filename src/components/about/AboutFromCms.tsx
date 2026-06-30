@@ -1,5 +1,5 @@
 import React from 'react'
-import { Sparkles, Award, Target, BookOpen, Headphones, Heart, Users } from 'lucide-react'
+import { Award, Target, BookOpen, Headphones, Heart, Users } from 'lucide-react'
 import { PageHero } from '@/components/shared/PageHero'
 import { RichText } from '@/components/shared/RichText'
 import { Container } from '@/components/layout/Container'
@@ -39,15 +39,9 @@ export function AboutFromCms({ data }: { data: AboutPageData }) {
           <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center">
             <div className="md:col-span-7">
               {mission?.heading && (
-                <>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-button-gold/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary-navy">
-                    <Sparkles className="h-3.5 w-3.5 text-button-gold" aria-hidden="true" />
-                    {mission.heading}
-                  </span>
-                  <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-primary-navy sm:text-4xl">
-                    {mission.heading}
-                  </h2>
-                </>
+                <h2 className="font-display text-3xl font-bold tracking-tight text-primary-navy sm:text-4xl">
+                  {mission.heading}
+                </h2>
               )}
               {mission?.body && (
                 <div className="prose prose-lg max-w-none mt-5 text-foreground/75">
@@ -85,12 +79,7 @@ export function AboutFromCms({ data }: { data: AboutPageData }) {
           <Container className="max-w-6xl">
             <div className="mx-auto max-w-2xl text-center">
               {whyChooseUs.heading && (
-                <span className="inline-flex items-center gap-2 rounded-full bg-primary-navy/5 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary-navy">
-                  {whyChooseUs.heading}
-                </span>
-              )}
-              {whyChooseUs.heading && (
-                <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-primary-navy sm:text-4xl">
+                <h2 className="font-display text-3xl font-bold tracking-tight text-primary-navy sm:text-4xl">
                   {whyChooseUs.heading}
                 </h2>
               )}
@@ -134,12 +123,7 @@ export function AboutFromCms({ data }: { data: AboutPageData }) {
         <Container className="max-w-4xl">
           <div className="rounded-3xl border border-border bg-card p-8 shadow-sm sm:p-12">
             {team?.heading && (
-              <span className="inline-flex items-center gap-2 rounded-full bg-button-gold/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary-navy">
-                {team.heading}
-              </span>
-            )}
-            {team?.heading && (
-              <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-primary-navy sm:text-4xl">
+              <h2 className="font-display text-3xl font-bold tracking-tight text-primary-navy sm:text-4xl">
                 {team.heading}
               </h2>
             )}
