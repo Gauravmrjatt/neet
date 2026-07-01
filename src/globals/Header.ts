@@ -77,6 +77,9 @@ export const Header: GlobalConfig = {
         {
           name: 'children',
           type: 'array',
+          admin: {
+            style: { overflow: 'visible' },
+          },
           fields: [
             {
               name: 'label',

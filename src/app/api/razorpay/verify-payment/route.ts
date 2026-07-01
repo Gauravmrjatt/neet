@@ -77,24 +77,38 @@ export async function POST(request: Request) {
     // Create subscription (auto-active since payment is verified)
     const planId = typeof transaction.plan === 'object' ? transaction.plan?.id : transaction.plan
 
-    const subscription = await payload.create({
-      collection: 'subscriptions',
-      data: {
-        user: user.id,
-        plan: planId,
-        transaction: transactionId,
-        status: 'active',
-      },
-    })
+    // Idempotency: reuse existing subscription if webhook already created one
+    const existingSubId =
+      typeof transaction.subscription === 'object'
+        ? transaction.subscription?.id
+        : transaction.subscription
 
-    // Link subscription back to transaction
-    await payload.update({
-      collection: 'transactions',
-      id: transactionId,
-      data: {
-        subscription: subscription.id,
-      },
-    })
+    let subscription
+    if (existingSubId) {
+      subscription = await payload.findByID({
+        collection: 'subscriptions',
+        id: existingSubId,
+      })
+    } else {
+      subscription = await payload.create({
+        collection: 'subscriptions',
+        data: {
+          user: user.id,
+          plan: planId,
+          transaction: transactionId,
+          status: 'active',
+        },
+      })
+
+      // Link subscription back to transaction
+      await payload.update({
+        collection: 'transactions',
+        id: transactionId,
+        data: {
+          subscription: subscription.id,
+        },
+      })
+    }
 
     return NextResponse.json({
       success: true,

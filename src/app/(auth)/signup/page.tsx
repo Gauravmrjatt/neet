@@ -9,12 +9,14 @@ import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-react'
 import { TurnstileWidget } from '@/components/shared/TurnstileWidget'
 import type { TurnstileWidgetHandle } from '@/components/shared/TurnstileWidget'
+import Image from 'next/image'
 
 function SignupForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const rawRedirect = searchParams.get('redirect') || '/my-plan'
-  const redirect = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/my-plan'
+  const redirect =
+    rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/my-plan'
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -120,8 +122,11 @@ function SignupForm() {
 
   return (
     <div className="w-full max-w-md">
-      <div className="bg-card rounded-xl border border-border shadow-lg p-8">
+      <div className="">
         <div className="text-center mb-8">
+          <div className="mb-10">
+            <Image src="favicon.svg" alt="" height={100} width={100} className="m-auto mb-5" />
+          </div>
           <h1 className="text-2xl font-bold text-primary-navy">Create Account</h1>
           <p className="text-sm text-muted-foreground mt-2">
             Join us for expert NEET counselling guidance
@@ -129,7 +134,10 @@ function SignupForm() {
         </div>
 
         {error && (
-          <div className="mb-6 p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm" role="alert">
+          <div
+            className="mb-6 p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm"
+            role="alert"
+          >
             {error}
           </div>
         )}
@@ -234,10 +242,7 @@ function SignupForm() {
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
           Already have an account?{' '}
-          <Link
-            href="/login"
-            className="text-primary-navy font-semibold hover:underline"
-          >
+          <Link href="/login" className="text-primary-navy font-semibold hover:underline">
             Sign in
           </Link>
         </div>

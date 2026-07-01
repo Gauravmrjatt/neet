@@ -68,6 +68,15 @@
   background-size: 14px 14px;
 }
 
+/* Hide scrollbar while keeping scroll functionality. */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Skip-to-content link — visible only when focused. */
 .skip-to-content {
   position: fixed;

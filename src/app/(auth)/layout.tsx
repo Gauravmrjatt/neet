@@ -20,7 +20,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
         </div>
       </div>
       {/* Right form panel */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-gray-50 gov-dots">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-gray">
         {children}
       </div>
     </div>

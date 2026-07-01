@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-react'
 import { TurnstileWidget } from '@/components/shared/TurnstileWidget'
 import type { TurnstileWidgetHandle } from '@/components/shared/TurnstileWidget'
-
+import Image from 'next/image'
 function LoginForm() {
   const searchParams = useSearchParams()
   const rawRedirect = searchParams.get('redirect') || '/'
@@ -91,8 +91,11 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-md">
-      <div className="bg-card rounded-xl border border-border shadow-lg p-8">
+      <div className="">
         <div className="text-center mb-8">
+          <div className='mb-10'>
+            <Image src="favicon.svg" alt="" height={100} width={100}  className='m-auto mb-5'/>
+          </div>
           <h1 className="text-2xl font-bold text-primary-navy">Welcome Back</h1>
           <p className="text-sm text-muted-foreground mt-2">
             Sign in to access your counselling dashboard
@@ -100,7 +103,10 @@ function LoginForm() {
         </div>
 
         {error && (
-          <div className="mb-6 p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm" role="alert">
+          <div
+            className="mb-6 p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm"
+            role="alert"
+          >
             {error}
           </div>
         )}
@@ -117,7 +123,7 @@ function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
-              placeholder="you@example.com"
+              placeholder="you@gmail.com"
             />
           </div>
 
@@ -126,10 +132,7 @@ function LoginForm() {
               <Label htmlFor="password" className="text-primary-navy">
                 Password
               </Label>
-              <Link
-                href="/forgot-password"
-                className="text-xs text-primary-navy hover:underline"
-              >
+              <Link href="/forgot-password" className="text-xs text-primary-navy hover:underline">
                 Forgot password?
               </Link>
             </div>
@@ -148,7 +151,7 @@ function LoginForm() {
             ref={turnstileRef}
             onVerify={handleTurnstileVerify}
             onError={() => setError('Security check unavailable. Please refresh and try again.')}
-            className="w-full"
+            className="w-full "
           />
 
           <Button
@@ -169,10 +172,7 @@ function LoginForm() {
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{' '}
-          <Link
-            href="/signup"
-            className="text-primary-navy font-semibold hover:underline"
-          >
+          <Link href="/signup" className="text-primary-navy font-semibold hover:underline">
             Sign up
           </Link>
         </div>

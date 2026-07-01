@@ -52,7 +52,7 @@ export function AboutFromCms({ data }: { data: AboutPageData }) {
               {mission.stats && mission.stats.length > 0 && (
                 <div className="relative">
                   <div className="absolute -inset-4 rounded-3xl bg-button-gold/5" />
-                  <div className="relative rounded-2xl border border-border bg-card p-8 shadow-sm">
+                  <div className="relative sticky top-[30dvh] rounded-2xl border border-border bg-card p-8 shadow-sm">
                     <div className="grid grid-cols-2 gap-6">
                       {mission.stats.map((stat, i) => (
                         <div key={stat.id || i}>

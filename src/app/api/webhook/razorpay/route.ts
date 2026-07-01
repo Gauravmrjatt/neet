@@ -79,6 +79,15 @@ export async function POST(request: Request) {
           },
         })
 
+        // Idempotency: skip if verify-payment already created a subscription
+        const existingSubId =
+          typeof transaction.subscription === 'object'
+            ? transaction.subscription?.id
+            : transaction.subscription
+        if (existingSubId) {
+          continue
+        }
+
         // Create subscription (auto-active since payment is captured)
         const subscription = await payload.create({
           collection: 'subscriptions',
