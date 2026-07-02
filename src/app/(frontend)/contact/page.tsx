@@ -14,7 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSeoByPath('/contact')
   return generateSEOMetadata({
     title: pageSeo?.metaTitle || 'Contact Us — NEET Counselling Experts | MBBS Admission Guidance',
-    description: pageSeo?.metaDescription || 'Contact NEET Counsellors for expert NEET counselling guidance. Call +91-9027770371 or email info@neetcounselors.com. We help you secure your medical seat.',
+    description:
+      pageSeo?.metaDescription ||
+      'Contact NEET Counsellors for expert NEET counselling guidance. Call +91 9509698208 , +91 9261878208 or email neetcounselors@gmail.com. We help you secure your medical seat.',
     path: '/contact',
     ogImage: pageSeo?.ogImage || undefined,
     keywords: pageSeo?.keywords || undefined,
@@ -25,16 +27,18 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ContactPage() {
   const [settings, siteUrl, pageSeo] = await Promise.all([
     getSiteSettings(),
-    Promise.resolve(process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'),
+    Promise.resolve(process.env.NEXT_PUBLIC_SITE_URL || 'https://neetcounselors.com'),
     getPageSeoByPath('/contact'),
   ])
 
   return (
     <>
-      <JsonLd data={generateBreadcrumbSchema([
-        { name: 'Home', url: siteUrl },
-        { name: pageSeo?.breadcrumbLabel || 'Contact', url: `${siteUrl}/contact` },
-      ])} />
+      <JsonLd
+        data={generateBreadcrumbSchema([
+          { name: 'Home', url: siteUrl },
+          { name: pageSeo?.breadcrumbLabel || 'Contact', url: `${siteUrl}/contact` },
+        ])}
+      />
       <PageHero
         title="Contact Us"
         subtitle="Get in touch with our team — we're here to help you with your NEET counselling journey."

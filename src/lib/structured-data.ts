@@ -1,6 +1,11 @@
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
 
-export function generateOrganizationSchema(siteName = 'NEET Counselling', sameAs: string[] = [], phone?: string, logoUrl?: string) {
+export function generateOrganizationSchema(
+  siteName = 'NEET Counselling',
+  sameAs: string[] = [],
+  phone?: string,
+  logoUrl?: string,
+) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -9,7 +14,7 @@ export function generateOrganizationSchema(siteName = 'NEET Counselling', sameAs
     ...(logoUrl ? { logo: logoUrl } : {}),
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: phone || '+91-9261858208',
+      telephone: phone || '+91-9509698208',
       contactType: 'customer service',
     },
     sameAs,
@@ -194,7 +199,7 @@ export function generateLocalBusinessSchema({
     ...(logoUrl ? { image: logoUrl } : { image: `${SITE_URL}/logo.png` }),
     url: url || SITE_URL,
     ...(telephone ? { telephone } : {}),
-    ...((streetAddress || addressLocality || addressRegion || postalCode)
+    ...(streetAddress || addressLocality || addressRegion || postalCode
       ? {
           address: {
             '@type': 'PostalAddress',
@@ -370,7 +375,7 @@ export function generateCollegeOrUniversitySchema({
     },
   }
   if (courses && courses.length > 0) {
-    schema.hasCourse = courses.map(course => ({
+    schema.hasCourse = courses.map((course) => ({
       '@type': 'Course',
       name: course,
       courseCode: course,

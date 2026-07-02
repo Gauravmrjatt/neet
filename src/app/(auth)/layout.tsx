@@ -7,7 +7,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="flex min-h-screen">
-      {/* Left branding panel - hidden on mobile */}
+      {/* Left branding panel - hidden on mobile */} 
       <div className="hidden lg:flex lg:w-1/2 bg-[#062963] flex-col items-center justify-center p-12 text-white relative overflow-hidden">
         {/* Decorative background pattern */}
         <div className="absolute inset-0 opacity-10">
