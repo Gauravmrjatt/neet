@@ -6,7 +6,7 @@ import { getStateBySlug } from '@/lib/queries'
 import { getDistrictBySlug, getCollegesByDistrict } from '@/lib/queries/districts'
 import { getTehsilBySlug, getCollegesByTehsil, getTehsilsByDistrict } from '@/lib/queries/tehsils'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
-import { generateBreadcrumbSchema, generateArticleSchema } from '@/lib/structured-data'
+import { generateBreadcrumbSchema, generateArticleSchema, generateFAQSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { Container } from '@/components/layout/Container'
 import { Section } from '@/components/layout/Section'
@@ -20,6 +20,36 @@ interface PageProps {
   params: Promise<{ slug: string; district: string; tehsil: string }>
 }
 
+const FAQS = [
+  {
+    q: 'How do I register for NEET counselling from my tehsil?',
+    a: (tehsil: string, district: string, state: string) =>
+      `Students from ${tehsil}, ${district} must register on the MCC portal (mcc.nic.in) for All India Quota and on the ${state} state counselling portal for state quota seats. Registration requires NEET roll number, personal details, and payment of counselling fees. Keep scanned copies of all documents ready before starting registration.`,
+  },
+  {
+    q: 'What documents are needed for NEET counselling?',
+    a: (tehsil: string, district: string, state: string) =>
+      `NEET ${new Date().getFullYear()} admit card and scorecard, Class 10 and 12 mark sheets, domicile certificate of ${state}, category certificate (SC/ST/OBC-NCL/EWS) if applicable, Aadhaar card, passport-size photographs, and migration certificate. Students from ${tehsil}, ${district} should carry both original and self-attested copies for verification.`,
+  },
+  {
+    q: 'Can I get MBBS seat in my own tehsil?',
+    a: (tehsil: string, district: string, state: string, collegeCount: number) =>
+      collegeCount > 0
+        ? `${tehsil} has ${collegeCount} medical college(s). You can apply through both All India Quota and ${state} state counselling. Seat allotment depends on your NEET rank, category, and choice filling strategy.`
+        : `${tehsil} does not have medical colleges within its boundaries. However, you can apply to colleges in nearby areas of ${district} district and across ${state} through state counselling and AIQ.`,
+  },
+  {
+    q: 'What is the NEET cutoff for colleges near my tehsil?',
+    a: (_tehsil: string, district: string, _state: string) =>
+      `Cutoff ranks for medical colleges in ${district} vary by college type and category. Government college closing ranks are higher than private colleges. General category cutoffs are the highest, followed by OBC-NCL, EWS, SC, and ST. Check the ${district} cutoff page for college-wise opening and closing ranks from previous years.`,
+  },
+  {
+    q: 'When does NEET counselling start this year?',
+    a: (_tehsil: string, _district: string, _state: string) =>
+      `NEET UG ${new Date().getFullYear()} counselling typically begins in July after the NEET results are announced. MCC Round 1 registration usually starts in mid-July, followed by choice filling, seat allotment, and reporting. ${_state} state counselling dates are announced separately. Subscribe to our updates for real-time notifications about important deadlines.`,
+  },
+]
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug, district: districtSlug, tehsil: tehsilSlug } = await params
   const state: any = await getStateBySlug(slug)
@@ -29,6 +59,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return generateSEOMetadata({
     title: tehsil.seo?.metaTitle || `${tehsil.name} NEET Counselling ${new Date().getFullYear()} — ${district.name}, ${state.name}`,
     description: tehsil.seo?.metaDescription || `Complete NEET counselling guide for ${tehsil.name} tehsil, ${district.name}, ${state.name}. Find medical colleges, cutoff marks, fee structure, and counselling process for students from ${tehsil.name}.`,
+    keywords: tehsil.seo?.keywords || [
+      `${tehsil.name} tehsil NEET counselling`,
+      `${tehsil.name} medical colleges`,
+      `NEET counselling ${district.name}`,
+      `${tehsil.name} MBBS admission`,
+      `${district.name} NEET cutoff`,
+      `${state.name} state counselling`,
+      `medical colleges in ${tehsil.name}`,
+      `${tehsil.name} ${district.name} NEET`,
+    ],
     path: `/states/${state.slug}/${district.slug}/tehsil/${tehsil.slug}`,
   })
 }
@@ -53,11 +93,17 @@ export default async function TehsilHubPage({ params }: PageProps) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
   const collegeCount = tehsilColleges.docs.length
   const districtCollegeCount = districtColleges.docs.length
+  const year = new Date().getFullYear()
+
+  const faqs = FAQS.map(f => ({
+    question: f.q,
+    answer: f.a(tehsil.name, district.name, state.name, collegeCount),
+  }))
 
   return (
     <>
       <JsonLd data={generateArticleSchema({
-        title: `${tehsil.name} NEET Counselling ${new Date().getFullYear()}`,
+        title: `${tehsil.name} NEET Counselling ${year}`,
         description: `Complete NEET counselling guide for ${tehsil.name} tehsil, ${district.name}, ${state.name}`,
         datePublished: new Date().toISOString(),
         dateModified: new Date().toISOString(),
@@ -71,10 +117,11 @@ export default async function TehsilHubPage({ params }: PageProps) {
         { name: district.name, url: `${siteUrl}/states/${state.slug}/${district.slug}` },
         { name: tehsil.name, url: `${siteUrl}/states/${state.slug}/${district.slug}/tehsil/${tehsil.slug}` },
       ])} />
+      <JsonLd data={generateFAQSchema(faqs)} />
 
       <PageHero
         badge={`${tehsil.name}, ${district.name}`}
-        title={`${tehsil.name} NEET Counselling ${new Date().getFullYear()}`}
+        title={`${tehsil.name} NEET Counselling ${year}`}
         subtitle="Comprehensive tehsil-level counselling guide with college information, fee details, and admission strategy."
       />
 
@@ -85,9 +132,9 @@ export default async function TehsilHubPage({ params }: PageProps) {
               <div className="rounded-xl border border-border bg-card p-6">
                 <h2 className="text-xl font-bold text-primary-navy mb-3">NEET Counselling for Students from {tehsil.name}</h2>
                 <p className="text-foreground/80 leading-relaxed">
-                  {tehsil.name} is a tehsil in {district.name} district, {state.name}. Students from {tehsil.name} 
-                  aspiring for MBBS and medical courses appear for NEET UG and participate in counselling through 
-                  MCC for All India Quota seats and {state.counsellingAuthority || state.name + ' state counselling authority'} 
+                  {tehsil.name} is a tehsil in {district.name} district, {state.name}. Students from {tehsil.name}
+                  aspiring for MBBS and medical courses appear for NEET UG and participate in counselling through
+                  MCC for All India Quota seats and {state.counsellingAuthority || state.name + ' state counselling authority'}
                   for state quota seats.
                   {collegeCount > 0
                     ? ` ${tehsil.name} has ${collegeCount} medical college(s) within its boundaries. Students also have access to ${districtCollegeCount} medical colleges across ${district.name} district.`
@@ -197,11 +244,64 @@ export default async function TehsilHubPage({ params }: PageProps) {
                 </p>
               </div>
 
+              <div className="rounded-xl border border-border bg-card p-6">
+                <h2 className="text-xl font-bold text-primary-navy mb-3">Eligibility and Documents Required</h2>
+                <p className="text-foreground/80 leading-relaxed mb-3">
+                  To participate in NEET counselling, students from {tehsil.name} must have qualified NE UG {year}
+                  with the minimum required percentile. Candidates must be at least 17 years old as of December 31, {year}.
+                  For state quota seats in {state.name}, candidates need valid domicile of {state.name}.
+                </p>
+                <p className="text-foreground/80 leading-relaxed">
+                  Required documents include: NEET {year} admit card and scorecard, Class 10 certificate
+                  (date of birth proof), Class 12 mark sheet, {state.name} domicile certificate, category certificate
+                  (SC/ST/OBC-NCL/EWS) if applicable, PwD certificate if applicable, Aadhaar card, and passport-size
+                  photographs. Ensure all documents are self-attested before appearing for document verification.
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-border bg-card p-6">
+                <h2 className="text-xl font-bold text-primary-navy mb-3">Important Dates for NEET Counselling {year}</h2>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between py-2 border-b border-border">
+                    <span className="text-foreground/70">NEET UG {year} Exam</span>
+                    <span className="font-semibold text-primary-navy">May {year}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border">
+                    <span className="text-foreground/70">Result Declaration</span>
+                    <span className="font-semibold text-primary-navy">June {year}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border">
+                    <span className="text-foreground/70">MCC Round 1 Registration</span>
+                    <span className="font-semibold text-primary-navy">July {year}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border">
+                    <span className="text-foreground/70">{state.name} State Counselling</span>
+                    <span className="font-semibold text-primary-navy">July-August {year}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-foreground/70">Academic Session Begins</span>
+                    <span className="font-semibold text-primary-navy">September {year}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-border bg-card p-6">
+                <h2 className="text-xl font-bold text-primary-navy mb-4">Frequently Asked Questions</h2>
+                <div className="space-y-4 divide-y divide-border">
+                  {faqs.map((faq, i) => (
+                    <div key={i} className={i > 0 ? 'pt-4' : ''}>
+                      <h3 className="font-medium text-primary-navy mb-2">{faq.question}</h3>
+                      <p className="text-sm text-foreground/70">{faq.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="rounded-xl bg-gradient-to-br from-primary-navy to-blue-900 p-6 text-white">
                 <h3 className="text-xl font-bold mb-2">Get Personalised NEET Counselling</h3>
                 <p className="text-white/80 text-sm mb-4">
-                  Our experienced counsellors provide one-on-one guidance for students from {tehsil.name}. 
-                  Get help with college selection, choice filling strategy, document preparation, and 
+                  Our experienced counsellors provide one-on-one guidance for students from {tehsil.name}.
+                  Get help with college selection, choice filling strategy, document preparation, and
                   seat allotment tracking throughout the counselling process.
                 </p>
                 <div className="flex flex-wrap gap-3">
@@ -332,7 +432,7 @@ export default async function TehsilHubPage({ params }: PageProps) {
               Need Help with {tehsil.name} NEET Counselling?
             </h2>
             <p className="text-foreground/70 max-w-2xl mx-auto mb-6">
-              Get expert guidance for NEET counselling in {tehsil.name}, {district.name}, {state.name}. 
+              Get expert guidance for NEET counselling in {tehsil.name}, {district.name}, {state.name}.
               Our counsellors help with college selection, choice filling, and admission strategy.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
