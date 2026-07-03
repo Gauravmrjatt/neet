@@ -164,7 +164,7 @@ export const getDistrictsForSite = cache(async () => {
     collection: 'districts',
     where: { status: { equals: 'active' } },
     limit: 2000,
-    depth: 1,
+    depth: 0,
   })
   return districts.docs
 })

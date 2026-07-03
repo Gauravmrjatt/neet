@@ -10,7 +10,7 @@ import { PageHero } from '@/components/shared/PageHero'
 import { Card, CardContent } from '@/components/ui/card'
 import { getDistrictsForSite } from '@/lib/queries/districts'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateSEOMetadata({

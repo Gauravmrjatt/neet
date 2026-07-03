@@ -9,6 +9,8 @@ const dirname = path.dirname(__filename)
 const nextConfig: NextConfig = {
   output: 'standalone',
   experimental: {
+    staticGenerationMaxConcurrency: 2,
+    staticGenerationRetryCount: 1,
     optimizePackageImports: [
       'lucide-react',
       '@radix-ui/react-accordion',

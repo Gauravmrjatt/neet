@@ -15,7 +15,7 @@ import { Section } from '@/components/layout/Section'
 import { formatDate } from '@/lib/utils'
 import { Media, User } from '@/payload-types'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export async function generateStaticParams() {
   const payload = await getPayloadClient()

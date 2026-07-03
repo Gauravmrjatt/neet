@@ -12,7 +12,7 @@ import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateWebApplicationSchema, generateHowToSchema, generateBreadcrumbSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getPredictorPage()
