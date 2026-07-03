@@ -89,6 +89,16 @@ export const Colleges: CollectionConfig = {
       },
     },
     {
+      name: 'tehsil',
+      type: 'relationship',
+      relationTo: 'tehsils',
+      required: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Tehsil/sub-district where this college is located',
+      },
+    },
+    {
       name: 'established',
       type: 'number',
     },

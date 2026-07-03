@@ -29,7 +29,7 @@ export function getFilterOptions(): FilterOptions {
   for (const rec of all) {
     if (rec.category) categorySet.add(rec.category)
     if (rec.quota) quotaSet.add(rec.quota)
-    if (rec.state) stateSet.add(rec.state)
+    if (rec.state && rec.state !== 'Unknown' && rec.state !== '') stateSet.add(rec.state)
     if (rec.course) courseSet.add(rec.course)
     if (rec.collegeType) collegeTypeSet.add(rec.collegeType)
   }

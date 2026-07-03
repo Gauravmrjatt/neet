@@ -38,13 +38,13 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
   const [inputMode, setInputMode] = useState<InputMode>('rank')
 
   const COURSE_CATEGORIES: Record<CourseGroup, string[]> = {
-    mcc: ['General', 'General PwD', 'OBC-NCL', 'OBC-NCL PwD', 'EWS', 'EWS PwD', 'Scheduled Caste', 'Scheduled Caste PwD', 'Scheduled Tribe', 'Scheduled Tribe PwD', 'OP'],
+    mcc: ['GN', 'GN-PH', 'OBC', 'OBC-PH', 'EWS', 'EWS-PH', 'SC', 'SC-PH', 'ST', 'ST-PH', 'OP'],
     ayush: ['GEN', 'OBC', 'EWS', 'SC', 'ST'],
     vet: ['GEN', 'OBC', 'EWS', 'SC', 'ST'],
   }
 
   const COURSE_QUOTAS: Record<CourseGroup, string[]> = {
-    mcc: ['All India', 'AIQ', 'Deemed/Paid Seats', 'NRI', 'AMU Quota', 'Delhi University', 'ESI', 'IP University', 'Open Seat'],
+    mcc: ['AIQ', 'NRI', 'AMU'],
     ayush: ['AIQ', 'Central', 'Management', 'Minority'],
     vet: ['AIQ'],
   }

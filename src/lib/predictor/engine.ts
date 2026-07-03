@@ -16,14 +16,48 @@ const DATA_MAP: Record<string, AllotmentRecord[]> = {
   'BVSc & AH': vetData as AllotmentRecord[],
 }
 
+const CATEGORY_ALIAS: Record<string, string> = {
+  'general': 'GN',
+  'gn': 'GN',
+  'gen': 'GN',
+  'general pwd': 'GN-PH',
+  'gn-ph': 'GN-PH',
+  'general-ph': 'GN-PH',
+  'obc-ncl': 'OBC',
+  'obc': 'OBC',
+  'obc-ncl pwd': 'OBC-PH',
+  'obc-ph': 'OBC-PH',
+  'ews': 'EWS',
+  'ews pwd': 'EWS-PH',
+  'ews-ph': 'EWS-PH',
+  'scheduled caste': 'SC',
+  'sc': 'SC',
+  'scheduled caste pwd': 'SC-PH',
+  'sc-ph': 'SC-PH',
+  'scheduled tribe': 'ST',
+  'st': 'ST',
+  'scheduled tribe pwd': 'ST-PH',
+  'st-ph': 'ST-PH',
+  'op': 'OP',
+}
+
+const QUOTA_ALIAS: Record<string, string> = {
+  'all india': 'AIQ',
+  'aiq': 'AIQ',
+  'nri': 'NRI',
+  'amu quota': 'AMU',
+  'amu': 'AMU',
+  'amq': 'AMQ',
+}
+
+function normalizeValue(val: string, aliasMap: Record<string, string>): string {
+  const lower = val.toLowerCase().trim()
+  return aliasMap[lower] || lower
+}
+
 function getDataset(course?: string): AllotmentRecord[] {
   if (course && DATA_MAP[course]) return DATA_MAP[course]
-  return [
-    ...(mccData as AllotmentRecord[]),
-    ...(bdsData as AllotmentRecord[]),
-    ...(ayushData as AllotmentRecord[]),
-    ...(vetData as AllotmentRecord[]),
-  ]
+  return mccData as AllotmentRecord[]
 }
 
 export function predict(request: PredictRequest): {
@@ -37,14 +71,20 @@ export function predict(request: PredictRequest): {
 
   const cat = category?.toLowerCase().trim() || ''
   if (cat) {
-    filtered = filtered.filter(
-      (r) => r.category?.toLowerCase().trim() === cat,
-    )
+    const catCanonical = normalizeValue(cat, CATEGORY_ALIAS)
+    filtered = filtered.filter((r) => {
+      const recCat = r.category?.toLowerCase().trim() || ''
+      return normalizeValue(recCat, CATEGORY_ALIAS) === catCanonical
+    })
   }
 
   if (quota) {
     const q = quota.toLowerCase().trim()
-    filtered = filtered.filter((r) => r.quota?.toLowerCase().trim() === q)
+    const qCanonical = normalizeValue(q, QUOTA_ALIAS)
+    filtered = filtered.filter((r) => {
+      const recQ = r.quota?.toLowerCase().trim() || ''
+      return normalizeValue(recQ, QUOTA_ALIAS) === qCanonical
+    })
   }
 
   if (state) {

@@ -1403,6 +1403,10 @@ export interface College {
    * District where this college is located
    */
   district?: (string | null) | District;
+  /**
+   * Tehsil/sub-district where this college is located
+   */
+  tehsil?: (string | null) | Tehsil;
   established?: number | null;
   website?: string | null;
   description?: {
@@ -1517,6 +1521,55 @@ export interface District {
    * Geographically nearby districts for cross-linking
    */
   nearbyDistricts?: (string | District)[] | null;
+  /**
+   * Lower numbers appear first
+   */
+  order?: number | null;
+  status: 'active' | 'inactive';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tehsils".
+ */
+export interface Tehsil {
+  id: string;
+  name: string;
+  slug: string;
+  district: string | District;
+  state: string | State;
+  /**
+   * LGD (Local Government Directory) code for this tehsil
+   */
+  lgdCode?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
    * Lower numbers appear first
    */
@@ -1790,55 +1843,6 @@ export interface DistrictContent {
    * Set to true when admin manually edits this content
    */
   manuallyOverridden?: boolean | null;
-  seo?: {
-    metaTitle?: string | null;
-    metaDescription?: string | null;
-    ogImage?: (string | null) | Media;
-    keywords?:
-      | {
-          keyword?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    noIndex?: boolean | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tehsils".
- */
-export interface Tehsil {
-  id: string;
-  name: string;
-  slug: string;
-  district: string | District;
-  state: string | State;
-  /**
-   * LGD (Local Government Directory) code for this tehsil
-   */
-  lgdCode?: string | null;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Lower numbers appear first
-   */
-  order?: number | null;
-  status: 'active' | 'inactive';
   seo?: {
     metaTitle?: string | null;
     metaDescription?: string | null;
@@ -2716,6 +2720,7 @@ export interface CollegesSelect<T extends boolean = true> {
   state?: T;
   city?: T;
   district?: T;
+  tehsil?: T;
   established?: T;
   website?: T;
   description?: T;
