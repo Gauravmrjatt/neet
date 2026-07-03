@@ -245,7 +245,7 @@ function counsellingCTA(district: any, state: any, siteUrl: string): React.React
           Book a Free Session
         </Link>
         <Link
-          href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi, I need NEET counselling guidance for ${district.name}, ${state.name}`)}`}
+          href={`https://wa.me/919509698208?text=${encodeURIComponent(`Hi, I need NEET counselling guidance for ${district.name}, ${state.name}`)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center rounded-lg bg-white/15 px-5 py-2.5 text-sm font-medium hover:bg-white/25 transition-colors"
