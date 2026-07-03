@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 import { getPayloadClient } from '@/lib/payload'
 import { INDIA_CITIES } from '@/lib/cities'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
@@ -41,6 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     collection: 'blogs',
     where: { status: { equals: 'published' } },
     limit: 1000,
+    depth: 0,
   })
   
   const blogPages = blogs.docs.map((blog: any) => ({
@@ -54,6 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     collection: 'pages',
     where: { status: { equals: 'published' } },
     limit: 1000,
+    depth: 0,
   })
   const cmsPages = pages.docs.map((page: any) => ({
     url: `${siteUrl}/${page.slug}`,
@@ -66,6 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     collection: 'videos',
     where: { status: { equals: 'published' } },
     limit: 1000,
+    depth: 0,
   })
   const videoPages = videos.docs.map((video: any) => ({
     url: `${siteUrl}/videos/${video.slug}`,
@@ -78,6 +81,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     collection: 'counselling',
     where: { status: { equals: 'published' } },
     limit: 1000,
+    depth: 0,
   })
   const counsellingPages = counsellingPosts.docs.map((post: any) => ({
     url: `${siteUrl}/counselling/${post.slug}`,
@@ -90,7 +94,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     collection: 'states',
     where: { status: { equals: 'active' } },
     limit: 100,
+    depth: 0,
   })
+  const stateLookup = new Map(states.docs.map((s: any) => [s.id, s.slug]))
   const statePages = states.docs.map((state: any) => ({
     url: `${siteUrl}/counselling/state/${state.slug}`,
     lastModified: new Date(state.updatedAt),
@@ -102,6 +108,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     collection: 'colleges',
     where: { status: { equals: 'active' } },
     limit: 2000,
+    depth: 0,
   })
   const collegePages = colleges.docs
     .filter((college: any) => {
@@ -144,11 +151,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     collection: 'districts',
     where: { status: { equals: 'active' } },
     limit: 2000,
-    depth: 1,
+    depth: 0,
   })
 
+  const districtLookup = new Map(allDistricts.docs.map((d: any) => [d.id, d]))
+
   const districtHubPages = allDistricts.docs.map((d: any) => {
-    const stateSlug = typeof d.state === 'object' ? d.state?.slug : ''
+    const stateSlug = stateLookup.get(d.state as string) || ''
     return {
       url: `${siteUrl}/states/${stateSlug}/${d.slug}`,
       lastModified: new Date(d.updatedAt),
@@ -161,19 +170,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     collection: 'district-content',
     where: { status: { equals: 'published' } },
     limit: 20000,
-    depth: 1,
+    depth: 0,
     sort: '-updatedAt',
   })
 
   const subpageSet = new Set<string>()
   const districtSubpages: MetadataRoute.Sitemap[number][] = []
-  const districtSlugMap = new Map(allDistricts.docs.map((d: any) => [d.id, d]))
 
   for (const dc of districtContent.docs as any[]) {
-    const districtId = typeof dc.district === 'object' ? dc.district?.id : dc.district
-    const district = districtSlugMap.get(districtId)
+    const districtId = dc.district as string
+    const district = districtLookup.get(districtId)
     if (!district) continue
-    const stateSlug = typeof district.state === 'object' ? district.state?.slug : ''
+    const stateSlug = stateLookup.get(district.state as string)
     if (!stateSlug) continue
     const url = `${siteUrl}/states/${stateSlug}/${district.slug}/${dc.type}`
     if (subpageSet.has(url)) continue
@@ -186,5 +194,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
-  return [...staticPages, ...newStaticPages, ...predictorSlugPages, ...blogPages, ...cmsPages, ...videoPages, ...counsellingPages, ...statePages, ...collegePages, ...cityPages, ...stateDistrictPages, ...districtHubPages, ...districtSubpages]
+  const allTehsils = await payload.find({
+    collection: 'tehsils',
+    where: { status: { equals: 'active' } },
+    limit: 7000,
+    depth: 0,
+  })
+
+  const tehsilPages = allTehsils.docs.map((t: any) => {
+    const districtId = t.district as string
+    const district = districtLookup.get(districtId)
+    if (!district) return null
+    const stateSlug = stateLookup.get(district.state as string)
+    if (!stateSlug) return null
+    return {
+      url: `${siteUrl}/states/${stateSlug}/${district.slug}/tehsil/${t.slug}`,
+      lastModified: new Date(t.updatedAt),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }
+  }).filter((x): x is NonNullable<typeof x> => x != null)
+
+  return [...staticPages, ...newStaticPages, ...predictorSlugPages, ...blogPages, ...cmsPages, ...videoPages, ...counsellingPages, ...statePages, ...collegePages, ...cityPages, ...stateDistrictPages, ...districtHubPages, ...districtSubpages, ...tehsilPages]
 }

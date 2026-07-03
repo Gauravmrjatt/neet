@@ -10,9 +10,8 @@ export interface AllotmentRecord {
   year: number
   collegeType: string
   fees: number
+  score: number
 }
-
-export type Chance = 'Safe' | 'Likely' | 'Risky'
 
 export interface PredictionResult {
   institute: string
@@ -26,12 +25,14 @@ export interface PredictionResult {
   collegeType: string
   fees: number
   year: number
-  chance: Chance
-  probability: number
+  score: number
+  chance?: 'Safe' | 'Likely' | 'Risky'
+  probability?: number
 }
 
 export interface PredictRequest {
-  rank: number
+  rank?: number
+  score?: number
   category: string
   quota?: string
   state?: string
@@ -42,10 +43,5 @@ export interface PredictResponse {
   premium: boolean
   creditsRemaining: number
   total: number
-  summary: {
-    safe: number
-    likely: number
-    risky: number
-  }
   results: PredictionResult[]
 }

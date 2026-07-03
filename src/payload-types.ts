@@ -90,6 +90,7 @@ export interface Config {
     'saved-content': SavedContent;
     districts: District;
     'district-content': DistrictContent;
+    tehsils: Tehsil;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -120,6 +121,7 @@ export interface Config {
     'saved-content': SavedContentSelect<false> | SavedContentSelect<true>;
     districts: DistrictsSelect<false> | DistrictsSelect<true>;
     'district-content': DistrictContentSelect<false> | DistrictContentSelect<true>;
+    tehsils: TehsilsSelect<false> | TehsilsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -1805,6 +1807,55 @@ export interface DistrictContent {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tehsils".
+ */
+export interface Tehsil {
+  id: string;
+  name: string;
+  slug: string;
+  district: string | District;
+  state: string | State;
+  /**
+   * LGD (Local Government Directory) code for this tehsil
+   */
+  lgdCode?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Lower numbers appear first
+   */
+  order?: number | null;
+  status: 'active' | 'inactive';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (string | null) | Media;
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -1918,6 +1969,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'district-content';
         value: string | DistrictContent;
+      } | null)
+    | ({
+        relationTo: 'tehsils';
+        value: string | Tehsil;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -3009,6 +3064,36 @@ export interface DistrictContentSelect<T extends boolean = true> {
   status?: T;
   generatedAt?: T;
   manuallyOverridden?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        noIndex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tehsils_select".
+ */
+export interface TehsilsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  district?: T;
+  state?: T;
+  lgdCode?: T;
+  description?: T;
+  order?: T;
+  status?: T;
   seo?:
     | T
     | {

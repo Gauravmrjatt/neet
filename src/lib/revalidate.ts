@@ -102,3 +102,9 @@ export function revalidateDistrictContent(districtSlug?: string, type?: string) 
     if (type) revalidatePath(`/states/${districtSlug}/${type}`)
   }
 }
+
+export function revalidateTehsils(slug?: string) {
+  revalidateTag('tehsils', 'max')
+  revalidatePath('/states')
+  if (slug) revalidatePath(`/states/*/tehsil/${slug}`)
+}

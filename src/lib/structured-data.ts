@@ -386,6 +386,38 @@ export function generateCollegeOrUniversitySchema({
   return schema
 }
 
+export function generateWebSiteSchema({
+  name = 'NEET Counselling',
+  url,
+  description,
+  searchActionUrl,
+}: {
+  name?: string
+  url?: string
+  description?: string
+  searchActionUrl?: string
+} = {}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name,
+    url: url || SITE_URL,
+    ...(description ? { description } : {}),
+    ...(searchActionUrl
+      ? {
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: {
+              '@type': 'EntryPoint',
+              urlTemplate: searchActionUrl,
+            },
+            'query-input': 'required name=search_term_string',
+          },
+        }
+      : {}),
+  }
+}
+
 export function generateWebApplicationSchema({
   name = 'NEET College Predictor',
   description = 'Predict your medical college chances based on NEET rank',

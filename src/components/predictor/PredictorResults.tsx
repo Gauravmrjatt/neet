@@ -1,39 +1,35 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import type { PredictResponse, PredictionResult, Chance } from '@/lib/predictor/types'
+import type { PredictResponse, PredictionResult } from '@/lib/predictor/types'
 import { SecondaryFilters } from './SecondaryFilters'
 
 interface PredictorResultsProps {
   response: PredictResponse
   onReset: () => void
+  inputMode?: 'rank' | 'score'
 }
 
-const CHANCE_STYLES: Record<Chance, { badge: string; bg: string; border: string; icon: string }> = {
-  Safe: { badge: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100', bg: 'bg-green-50', border: 'border-green-200', icon: '🟢' },
-  Likely: { badge: 'bg-amber-100 text-amber-800 border-amber-200 hover:bg-amber-100', bg: 'bg-amber-50', border: 'border-amber-200', icon: '🟡' },
-  Risky: { badge: 'bg-red-100 text-red-800 border-red-200 hover:bg-red-100', bg: 'bg-red-50', border: 'border-red-200', icon: '🔴' },
+const COLLEGE_TYPE_STYLES: Record<string, string> = {
+  'Govt-State': 'bg-blue-100 text-blue-800 border-blue-200',
+  'Govt-AIIMS': 'bg-indigo-100 text-indigo-800 border-indigo-200',
+  'Govt-Central': 'bg-purple-100 text-purple-800 border-purple-200',
+  'Govt-Aided': 'bg-teal-100 text-teal-800 border-teal-200',
+  'Private': 'bg-amber-100 text-amber-800 border-amber-200',
+  'Private-Deemed': 'bg-orange-100 text-orange-800 border-orange-200',
+  'Private-Minority': 'bg-pink-100 text-pink-800 border-pink-200',
+  'Private-University': 'bg-rose-100 text-rose-800 border-rose-200',
 }
-
-const ChanceBadge = React.memo(function ChanceBadge({ chance, probability }: { chance: Chance; probability: number }) {
-  const s = CHANCE_STYLES[chance]
-  return (
-    <Badge variant="outline" className={cn('border-0 px-2.5 py-1 text-xs font-semibold', s.badge)}>
-      <span className="mr-1">{s.icon}</span>
-      {chance} {probability}%
-    </Badge>
-  )
-})
 
 const UnlockPremiumPanel = React.memo(function UnlockPremiumPanel({ total }: { total: number }) {
   return (
     <tr>
-      <td colSpan={9} className="px-0 py-0">
+      <td colSpan={10} className="px-0 py-0">
         <div className="relative overflow-hidden">
           <div className="flex flex-col items-center gap-3 bg-gradient-to-b from-button-gold/[0.07] to-button-gold/[0.12] px-6 py-10 text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-button-gold/20 text-3xl">
@@ -49,8 +45,8 @@ const UnlockPremiumPanel = React.memo(function UnlockPremiumPanel({ total }: { t
             </div>
             <div className="flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
               <span className="rounded-full bg-primary-navy/5 px-3 py-1">Full college list</span>
-              <span className="rounded-full bg-primary-navy/5 px-3 py-1">Chance analysis</span>
-              <span className="rounded-full bg-primary-navy/5 px-3 py-1">Dedicated counsellor</span>
+              <span className="rounded-full bg-primary-navy/5 px-3 py-1">All round cutoffs</span>
+              <span className="rounded-full bg-primary-navy/5 px-3 py-1">Score & rank data</span>
             </div>
             <Button
               asChild
@@ -76,22 +72,24 @@ const ResultRow = React.memo(function ResultRow({
   result: PredictResponse['results'][number]
   index: number
 }) {
-  const isFreePreview = index === 0
+  const typeStyle = COLLEGE_TYPE_STYLES[result.collegeType] || 'bg-gray-100 text-gray-800 border-gray-200'
   return (
-    <tr
-      className={cn(
-        'border-b border-border transition-colors hover:bg-muted/40 result-row',
-        !isFreePreview && 'opacity-0',
-      )}
-    >
+    <tr className="border-b border-border transition-colors hover:bg-muted/40 result-row">
       <td className="px-4 py-3 text-sm text-muted-foreground">{index + 1}</td>
-      <td className="min-w-[200px] px-4 py-3 text-sm font-medium text-primary-navy uppercase">
+      <td className="min-w-[200px] px-4 py-3 text-sm font-medium text-primary-navy">
         {result.institute}
       </td>
       <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">{result.state || '—'}</td>
-      <td className="hidden px-4 py-3 text-sm text-muted-foreground md:table-cell">{result.course}</td>
+      <td className="hidden px-4 py-3 text-sm sm:table-cell">
+        <Badge variant="outline" className={cn('border-0 px-2 py-0.5 text-xs font-medium', typeStyle)}>
+          {result.collegeType}
+        </Badge>
+      </td>
       <td className="hidden px-4 py-3 text-sm text-muted-foreground lg:table-cell">{result.quota}</td>
       <td className="hidden px-4 py-3 text-right text-sm tabular-nums text-muted-foreground lg:table-cell">
+        {result.score > 0 ? result.score : '—'}
+      </td>
+      <td className="px-4 py-3 text-right text-sm tabular-nums text-muted-foreground lg:table-cell">
         {result.openingRank > 0 ? result.openingRank.toLocaleString('en-IN') : '—'}
       </td>
       <td className="px-4 py-3 text-right text-sm tabular-nums text-foreground">
@@ -100,9 +98,7 @@ const ResultRow = React.memo(function ResultRow({
       <td className="hidden px-4 py-3 text-sm text-muted-foreground sm:table-cell">
         {result.expectedRound}
       </td>
-      <td className="px-4 py-3 text-right">
-        <ChanceBadge chance={result.chance} probability={result.probability} />
-      </td>
+      <td className="hidden px-4 py-3 text-sm text-muted-foreground sm:table-cell">{result.year}</td>
     </tr>
   )
 })
@@ -129,13 +125,20 @@ const SummaryCard = React.memo(function SummaryCard({
   )
 })
 
-export const PredictorResults = React.memo(function PredictorResults({ response, onReset }: PredictorResultsProps) {
-  const { results, summary, total, premium, creditsRemaining } = response
+export const PredictorResults = React.memo(function PredictorResults({ response, onReset, inputMode }: PredictorResultsProps) {
+  const { results, total, premium, creditsRemaining } = response
   const [displayResults, setDisplayResults] = useState<PredictionResult[]>(results)
 
   const handleFilterChange = useCallback((filtered: PredictionResult[]) => {
     setDisplayResults(filtered)
   }, [])
+
+  const summaryData = useMemo(() => {
+    const uniqueColleges = new Set(results.map((r) => r.institute)).size
+    const states = new Set(results.map((r) => r.state)).size
+    const types = new Set(results.filter((r) => r.collegeType).map((r) => r.collegeType)).size
+    return { uniqueColleges, states, types }
+  }, [results])
 
   if (results.length === 0) {
     return (
@@ -144,7 +147,7 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
           <div className="mb-4 text-5xl">🔍</div>
           <CardTitle className="mb-2 text-xl text-primary-navy">No Matching Colleges Found</CardTitle>
           <p className="mx-auto mb-6 max-w-md text-sm leading-relaxed text-muted-foreground">
-            No colleges matched your rank and filters. Try adjusting your category, quota, or expanding
+            No colleges matched your {inputMode || 'rank'} and filters. Try adjusting your category, quota, or expanding
             your search criteria.
           </p>
           <div className="flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
@@ -165,9 +168,9 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
 
   const summaryCards = [
     { label: 'Total Colleges', value: total, color: 'bg-card border-primary-navy/20', icon: '🎓' },
-    { label: 'Safe', value: summary.safe, color: 'bg-green-50 border-green-200', icon: '🟢' },
-    { label: 'Likely', value: summary.likely, color: 'bg-amber-50 border-amber-200', icon: '🟡' },
-    { label: 'Risky', value: summary.risky, color: 'bg-red-50 border-red-200', icon: '🔴' },
+    { label: 'Unique Colleges', value: summaryData.uniqueColleges, color: 'bg-blue-50 border-blue-200', icon: '🏛️' },
+    { label: 'States Covered', value: summaryData.states, color: 'bg-green-50 border-green-200', icon: '🗺️' },
+    { label: 'College Types', value: summaryData.types, color: 'bg-amber-50 border-amber-200', icon: '🏷️' },
   ]
 
   return (
@@ -185,7 +188,7 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
           size="sm"
           className="border-primary-navy/30 text-primary-navy hover:bg-primary-navy/5"
         >
-          Try Different Rank
+          Try Different {inputMode === 'score' ? 'Score' : 'Rank'}
         </Button>
       </div>
 
@@ -224,26 +227,6 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
         )}
       </div>
 
-      <style jsx>{`
-        @keyframes rowFadeIn {
-          from { opacity: 0; transform: translateY(4px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .result-row {
-          animation: rowFadeIn 300ms ease-out forwards;
-        }
-        .result-row:nth-child(1) { animation-delay: 0ms; }
-        .result-row:nth-child(2) { animation-delay: 40ms; }
-        .result-row:nth-child(3) { animation-delay: 80ms; }
-        .result-row:nth-child(4) { animation-delay: 120ms; }
-        .result-row:nth-child(5) { animation-delay: 160ms; }
-        .result-row:nth-child(6) { animation-delay: 200ms; }
-        .result-row:nth-child(7) { animation-delay: 240ms; }
-        .result-row:nth-child(8) { animation-delay: 280ms; }
-        .result-row:nth-child(9) { animation-delay: 320ms; }
-        .result-row:nth-child(10) { animation-delay: 360ms; }
-      `}</style>
-
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -252,12 +235,13 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
                 <th className="px-4 py-3">#</th>
                 <th className="px-4 py-3">Institute</th>
                 <th className="hidden px-4 py-3 md:table-cell">State</th>
-                <th className="hidden px-4 py-3 md:table-cell">Course</th>
+                <th className="hidden px-4 py-3 sm:table-cell">Type</th>
                 <th className="hidden px-4 py-3 lg:table-cell">Quota</th>
+                <th className="hidden px-4 py-3 text-right lg:table-cell">Score</th>
                 <th className="hidden px-4 py-3 text-right lg:table-cell">Opening Rank</th>
                 <th className="px-4 py-3 text-right">Closing Rank</th>
-                <th className="hidden px-4 py-3 sm:table-cell">Exp. Round</th>
-                <th className="px-4 py-3 text-right">Chance</th>
+                <th className="hidden px-4 py-3 sm:table-cell">Round</th>
+                <th className="hidden px-4 py-3 sm:table-cell">Year</th>
               </tr>
             </thead>
             <tbody>
@@ -275,7 +259,7 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
                 </>
               ) : (
                 <tr>
-                  <td colSpan={9} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                  <td colSpan={10} className="px-4 py-8 text-center text-sm text-muted-foreground">
                     No colleges match your current filters. Try adjusting your filter selections.
                   </td>
                 </tr>
@@ -297,7 +281,7 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
           variant="outline"
           className="border-primary-navy/30 text-primary-navy hover:bg-primary-navy/5"
         >
-          Try Different Rank
+          Try Different {inputMode === 'score' ? 'Score' : 'Rank'}
         </Button>
         {!premium && (
           <Button asChild className="bg-primary-navy hover:bg-primary-navy-dark text-white font-semibold">
@@ -307,7 +291,7 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
       </div>
 
       <p className="text-center text-xs text-muted-foreground/70">
-        Predictions are based on previous year closing ranks from official allotment data. Actual cutoffs
+        Predictions are based on previous year closing ranks from official MCC/State allotment data. Actual cutoffs
         may vary. This is not a guarantee of admission. Each prediction uses 1 credit.
       </p>
     </div>

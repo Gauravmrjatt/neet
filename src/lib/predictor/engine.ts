@@ -1,13 +1,14 @@
 import mccData from '@/data/neet-allotment-data.json'
+import bdsData from '@/data/bds-cutoff-data.json'
 import ayushData from '@/data/ayush-cutoff-data.json'
 import vetData from '@/data/vet-cutoff-data.json'
-import type { AllotmentRecord, PredictionResult, PredictRequest, Chance } from './types'
+import type { AllotmentRecord, PredictionResult, PredictRequest } from './types'
 
 const DATA_MAP: Record<string, AllotmentRecord[]> = {
   MBBS: mccData as AllotmentRecord[],
-  BDS: mccData as AllotmentRecord[],
-  Nursing: mccData as AllotmentRecord[],
-  'B.Sc. Nursing': mccData as AllotmentRecord[],
+  BDS: bdsData as AllotmentRecord[],
+  Nursing: bdsData as AllotmentRecord[],
+  'B.Sc. Nursing': bdsData as AllotmentRecord[],
   BAMS: ayushData as AllotmentRecord[],
   BHMS: ayushData as AllotmentRecord[],
   BUMS: ayushData as AllotmentRecord[],
@@ -17,76 +18,78 @@ const DATA_MAP: Record<string, AllotmentRecord[]> = {
 
 function getDataset(course?: string): AllotmentRecord[] {
   if (course && DATA_MAP[course]) return DATA_MAP[course]
-  const all = [...(mccData as AllotmentRecord[]), ...(ayushData as AllotmentRecord[]), ...(vetData as AllotmentRecord[])]
-  return all
-}
-
-const CHANCE_LIKELY_THRESHOLD = 1.07
-const CHANCE_RISKY_THRESHOLD = 1.15
-
-function classifyChance(rank: number, closingRank: number): { chance: Chance; probability: number } {
-  if (rank <= closingRank) return { chance: 'Safe', probability: 85 }
-  if (rank <= closingRank * CHANCE_LIKELY_THRESHOLD) return { chance: 'Likely', probability: 65 }
-  return { chance: 'Risky', probability: 35 }
-}
-
-function predictRound(record: AllotmentRecord): string {
-  if (record.round <= 0) return 'R1'
-  return `R${record.round}`
+  return [
+    ...(mccData as AllotmentRecord[]),
+    ...(bdsData as AllotmentRecord[]),
+    ...(ayushData as AllotmentRecord[]),
+    ...(vetData as AllotmentRecord[]),
+  ]
 }
 
 export function predict(request: PredictRequest): {
   results: PredictionResult[]
   summary: { safe: number; likely: number; risky: number }
 } {
-  const { rank, category, quota, state, course } = request
+  const { rank, score, category, quota, state, course } = request
   const dataset = getDataset(course)
 
   let filtered: AllotmentRecord[] = [...dataset]
 
-  if (category) {
-    const cat = category.toLowerCase()
-    filtered = filtered.filter((r) => r.category.toLowerCase() === cat)
-  }
-  if (quota) {
-    const q = quota.toLowerCase()
-    filtered = filtered.filter((r) => r.quota.toLowerCase() === q)
-  }
-  if (state) {
-    const s = state.toLowerCase()
-    filtered = filtered.filter((r) => r.state.toLowerCase() === s)
-  }
-  if (course) {
-    const c = course.toLowerCase()
-    filtered = filtered.filter((r) => r.course.toLowerCase() === c)
+  const cat = category?.toLowerCase().trim() || ''
+  if (cat) {
+    filtered = filtered.filter(
+      (r) => r.category?.toLowerCase().trim() === cat,
+    )
   }
 
-  filtered = filtered.filter((r) => rank <= r.closingRank * CHANCE_RISKY_THRESHOLD)
+  if (quota) {
+    const q = quota.toLowerCase().trim()
+    filtered = filtered.filter((r) => r.quota?.toLowerCase().trim() === q)
+  }
+
+  if (state) {
+    const s = state.toLowerCase().trim()
+    filtered = filtered.filter((r) => r.state?.toLowerCase().trim() === s)
+  }
+
+  if (course) {
+    const c = course.toLowerCase().trim()
+    filtered = filtered.filter((r) => r.course?.toLowerCase().trim() === c)
+  }
+
+  if (score && score > 0) {
+    filtered = filtered.filter((r) => r.score > 0 && r.score >= score * 0.7)
+    filtered = filtered.filter((r) => r.score <= Math.max(720, score * 1.3))
+  }
+
+  filtered = filtered.filter((r) => r.closingRank > 0)
+
+  if (rank && rank > 0) {
+    filtered = filtered.filter((r) => r.closingRank >= rank)
+  }
 
   const results: PredictionResult[] = filtered
-    .map((r) => {
-      const { chance, probability } = classifyChance(rank, r.closingRank)
-      return {
-        institute: r.institute,
-        state: r.state,
-        course: r.course,
-        quota: r.quota,
-        category: r.category,
-        openingRank: r.openingRank,
-        closingRank: r.closingRank,
-        expectedRound: predictRound(r),
-        collegeType: r.collegeType,
-        fees: r.fees,
-        year: r.year,
-        chance,
-        probability,
-      }
-    })
+    .map((r) => ({
+      institute: r.institute,
+      state: r.state,
+      course: r.course,
+      quota: r.quota,
+      category: r.category,
+      openingRank: r.openingRank,
+      closingRank: r.closingRank,
+      expectedRound: r.round > 0 ? `R${r.round}` : 'R1',
+      collegeType: r.collegeType,
+      fees: r.fees,
+      year: r.year,
+      score: r.score,
+    }))
     .sort((a, b) => a.closingRank - b.closingRank)
 
-  const safe = results.filter((r) => r.chance === 'Safe').length
-  const likely = results.filter((r) => r.chance === 'Likely').length
-  const risky = results.filter((r) => r.chance === 'Risky').length
+  const safe = results.filter((r) => r.closingRank >= (rank || r.closingRank)).length
+  const likely = results.filter(
+    (r) => r.closingRank > 0 && r.closingRank >= (rank || r.closingRank) * 0.93,
+  ).length
+  const risky = results.length - safe - likely
 
   return { results, summary: { safe, likely, risky } }
 }

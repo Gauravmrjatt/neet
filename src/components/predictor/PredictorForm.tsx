@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState, useCallback, useEffect, useMemo } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
-import { Loader2, AlertTriangle, Stethoscope, Leaf, PawPrint } from 'lucide-react'
+import { Loader2, AlertTriangle, Stethoscope, Leaf, PawPrint, GraduationCap, Hash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -31,8 +31,11 @@ const COURSE_GROUPS: { id: CourseGroup; label: string; icon: React.ElementType; 
   { id: 'vet', label: 'Veterinary', icon: PawPrint, courses: ['BVSc & AH'] },
 ]
 
+type InputMode = 'rank' | 'score'
+
 export function PredictorForm({ filterOptions }: PredictorFormProps) {
   const [courseGroup, setCourseGroup] = useState<CourseGroup>('mcc')
+  const [inputMode, setInputMode] = useState<InputMode>('rank')
 
   const COURSE_CATEGORIES: Record<CourseGroup, string[]> = {
     mcc: ['General', 'General PwD', 'OBC-NCL', 'OBC-NCL PwD', 'EWS', 'EWS PwD', 'Scheduled Caste', 'Scheduled Caste PwD', 'Scheduled Tribe', 'Scheduled Tribe PwD', 'OP'],
@@ -45,7 +48,9 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
     ayush: ['AIQ', 'Central', 'Management', 'Minority'],
     vet: ['AIQ'],
   }
+
   const [rank, setRank] = useState('')
+  const [score, setScore] = useState('')
   const [category, setCategory] = useState('')
   const [quota, setQuota] = useState('')
   const [state, setState] = useState('')
@@ -60,23 +65,15 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
   const hasResults = response !== null
   useLeaveWarning(hasResults)
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!hasResults) return
-
     window.history.pushState(null, '', window.location.href)
-
-    const handlePopState = () => {
-      setShowLeaveWarning(true)
-    }
-
+    const handlePopState = () => setShowLeaveWarning(true)
     window.addEventListener('popstate', handlePopState)
-
-    return () => {
-      window.removeEventListener('popstate', handlePopState)
-    }
+    return () => window.removeEventListener('popstate', handlePopState)
   }, [hasResults])
 
-  useEffect(() => {
+  React.useEffect(() => {
     setCategory('')
     setQuota('')
     setCourse('')
@@ -119,11 +116,20 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
       setResponse(null)
       setCreditsRemaining(null)
 
-      const rankNum = parseInt(rank, 10)
-      if (!rank || isNaN(rankNum) || rankNum < 1) {
-        setError('Please enter a valid NEET All India Rank.')
-        setStatus('idle')
-        return
+      if (inputMode === 'rank') {
+        const rankNum = parseInt(rank, 10)
+        if (!rank || isNaN(rankNum) || rankNum < 1) {
+          setError('Please enter a valid NEET All India Rank.')
+          setStatus('idle')
+          return
+        }
+      } else {
+        const scoreNum = parseInt(score, 10)
+        if (!score || isNaN(scoreNum) || scoreNum < 1 || scoreNum > 720) {
+          setError('Please enter a valid NEET score (1-720).')
+          setStatus('idle')
+          return
+        }
       }
 
       if (!category) {
@@ -133,7 +139,12 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
       }
 
       try {
-        const body: Record<string, unknown> = { rank: rankNum, category }
+        const body: Record<string, unknown> = { category }
+        if (inputMode === 'rank') {
+          body.rank = parseInt(rank, 10)
+        } else {
+          body.score = parseInt(score, 10)
+        }
         if (quota) body.quota = quota
         if (state) body.state = state
         if (course) body.course = course
@@ -163,7 +174,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
         setStatus('idle')
       }
     },
-    [rank, category, quota, state, course],
+    [inputMode, rank, score, category, quota, state, course],
   )
 
   const handleReset = useCallback(() => {
@@ -177,13 +188,6 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
     () => 'flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
     [],
   )
-
-  const handleRankChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setRank(e.target.value), [])
-  const handleCategoryChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value), [])
-  const handleQuotaChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setQuota(e.target.value), [])
-  const handleStateChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setState(e.target.value), [])
-  const handleCourseChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => setCourse(e.target.value), [])
-  const handleCourseGroupChange = useCallback((value: string) => setCourseGroup(value as CourseGroup), [])
 
   if (creditsRemaining !== null && creditsRemaining <= 0 && !response) {
     return (
@@ -231,7 +235,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
           }}
           onConfirmLeave={handleConfirmLeave}
         />
-        <PredictorResults response={response} onReset={handleReset} />
+        <PredictorResults response={response} onReset={handleReset} inputMode={inputMode} />
       </>
     )
   }
@@ -245,17 +249,17 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
           </span>
           <div>
             <h2 className="text-balance text-lg font-bold text-primary-navy">
-              Enter Your NEET Details
+              NEET College Predictor
             </h2>
             <p className="text-xs text-muted-foreground">
-              Enter your rank and filters to predict your college admission chances.
+              Enter your rank or score to predict college admission chances.
             </p>
           </div>
         </div>
       </div>
 
       <div className="px-6 pt-5">
-        <Tabs value={courseGroup} onValueChange={handleCourseGroupChange}>
+        <Tabs value={courseGroup} onValueChange={(v) => setCourseGroup(v as CourseGroup)}>
           <TabsList className="w-full">
             {COURSE_GROUPS.map((group) => {
               const Icon = group.icon
@@ -272,22 +276,73 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
       </div>
 
       <form onSubmit={handleSubmit} className="p-6 pt-4">
+        <div className="mb-4 flex gap-2 rounded-lg border border-border bg-muted/30 p-1">
+          <button
+            type="button"
+            onClick={() => setInputMode('rank')}
+            className={cn(
+              'flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors',
+              inputMode === 'rank'
+                ? 'bg-card text-primary-navy shadow-sm'
+                : 'text-muted-foreground hover:text-foreground',
+            )}
+          >
+            <Hash className="h-4 w-4" />
+            By Rank
+          </button>
+          <button
+            type="button"
+            onClick={() => setInputMode('score')}
+            className={cn(
+              'flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors',
+              inputMode === 'score'
+                ? 'bg-card text-primary-navy shadow-sm'
+                : 'text-muted-foreground hover:text-foreground',
+            )}
+          >
+            <GraduationCap className="h-4 w-4" />
+            By Score
+          </button>
+        </div>
+
         <div className="mb-6">
-          <Label htmlFor="rank" className="text-sm font-semibold text-primary-navy">
-            NEET All India Rank <span className="text-destructive">*</span>
-          </Label>
-          <Input
-            id="rank"
-            type="number"
-            min="1"
-            max="2000000"
-            placeholder="Enter your AIR (e.g. 50000)"
-            value={rank}
-            onChange={handleRankChange}
-            className="mt-1 h-10 text-sm"
-            required
-            disabled={status === 'loading'}
-          />
+          {inputMode === 'rank' ? (
+            <div>
+              <Label htmlFor="rank" className="text-sm font-semibold text-primary-navy">
+                NEET All India Rank <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="rank"
+                type="number"
+                min="1"
+                max="2000000"
+                placeholder="Enter your AIR (e.g. 50000)"
+                value={rank}
+                onChange={(e) => setRank(e.target.value)}
+                className="mt-1 h-10 text-sm"
+                required={inputMode === 'rank'}
+                disabled={status === 'loading'}
+              />
+            </div>
+          ) : (
+            <div>
+              <Label htmlFor="score" className="text-sm font-semibold text-primary-navy">
+                NEET Score (out of 720) <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="score"
+                type="number"
+                min="1"
+                max="720"
+                placeholder="Enter your score (e.g. 600)"
+                value={score}
+                onChange={(e) => setScore(e.target.value)}
+                className="mt-1 h-10 text-sm"
+                required={inputMode === 'score'}
+                disabled={status === 'loading'}
+              />
+            </div>
+          )}
         </div>
 
         <div className="mb-6">
@@ -303,7 +358,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 id="category"
                 aria-label="Your category"
                 value={category}
-                onChange={handleCategoryChange}
+                onChange={(e) => setCategory(e.target.value)}
                 className={cn(selectClasses, 'mt-1')}
                 disabled={status === 'loading'}
                 required
@@ -323,7 +378,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 id="course"
                 aria-label="Course"
                 value={course}
-                onChange={handleCourseChange}
+                onChange={(e) => setCourse(e.target.value)}
                 className={cn(selectClasses, 'mt-1.5')}
                 disabled={status === 'loading'}
               >
@@ -342,7 +397,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                 id="quota"
                 aria-label="Quota"
                 value={quota}
-                onChange={handleQuotaChange}
+                onChange={(e) => setQuota(e.target.value)}
                 className={cn(selectClasses, 'mt-1.5')}
                 disabled={status === 'loading'}
               >
@@ -362,7 +417,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
                   id="state"
                   aria-label="State"
                   value={state}
-                  onChange={handleStateChange}
+                  onChange={(e) => setState(e.target.value)}
                   className={cn(selectClasses, 'mt-1.5')}
                   disabled={status === 'loading'}
                 >
@@ -395,7 +450,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
             {status === 'loading' ? (
               <span className="flex items-center justify-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                Predicting...
+                Analyzing your admission chances...
               </span>
             ) : (
               'Predict My College'

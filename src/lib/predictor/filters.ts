@@ -1,4 +1,5 @@
 import mccData from '@/data/neet-allotment-data.json'
+import bdsData from '@/data/bds-cutoff-data.json'
 import ayushData from '@/data/ayush-cutoff-data.json'
 import vetData from '@/data/vet-cutoff-data.json'
 import type { AllotmentRecord } from './types'
@@ -14,6 +15,7 @@ export interface FilterOptions {
 export function getFilterOptions(): FilterOptions {
   const all = [
     ...(mccData as AllotmentRecord[]),
+    ...(bdsData as AllotmentRecord[]),
     ...(ayushData as AllotmentRecord[]),
     ...(vetData as AllotmentRecord[]),
   ]
@@ -33,8 +35,8 @@ export function getFilterOptions(): FilterOptions {
   }
 
   const sortQuotas = (a: string, b: string) => {
-    if (a === 'All India') return -1
-    if (b === 'All India') return 1
+    if (a === 'All India' || a === 'AIQ') return -1
+    if (b === 'All India' || b === 'AIQ') return 1
     return a.localeCompare(b)
   }
 

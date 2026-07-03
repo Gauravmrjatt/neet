@@ -5,21 +5,20 @@ import { Search, ChevronDown, ChevronUp, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import type { PredictionResult, Chance } from '@/lib/predictor/types'
+import type { PredictionResult } from '@/lib/predictor/types'
 
 interface SecondaryFiltersProps {
   results: PredictionResult[]
   onFilterChange: (filtered: PredictionResult[]) => void
 }
 
-type FilterTab = 'state' | 'course' | 'quota' | 'collegeType' | 'chance'
+type FilterTab = 'state' | 'course' | 'quota' | 'collegeType'
 
 interface FilterState {
   state: string[]
   course: string[]
   quota: string[]
   collegeType: string[]
-  chance: string[]
 }
 
 const TABS: { id: FilterTab; label: string }[] = [
@@ -27,10 +26,7 @@ const TABS: { id: FilterTab; label: string }[] = [
   { id: 'course', label: 'Course' },
   { id: 'quota', label: 'Quota' },
   { id: 'collegeType', label: 'College Type' },
-  { id: 'chance', label: 'Chance' },
 ]
-
-const CHANCE_OPTIONS: Chance[] = ['Safe', 'Likely', 'Risky']
 
 export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersProps) {
   const [activeTab, setActiveTab] = useState<FilterTab>('state')
@@ -39,7 +35,6 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
     course: [],
     quota: [],
     collegeType: [],
-    chance: [],
   })
   const [stateSearch, setStateSearch] = useState('')
   const [isOpen, setIsOpen] = useState(false)
@@ -62,8 +57,8 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
       states: Array.from(stateSet).sort(),
       courses: Array.from(courseSet).sort(),
       quotas: Array.from(quotaSet).sort((a: string, b: string) => {
-        if (a === 'All India') return -1
-        if (b === 'All India') return 1
+        if (a === 'All India' || a === 'AIQ') return -1
+        if (b === 'All India' || b === 'AIQ') return 1
         return a.localeCompare(b)
       }),
       collegeTypes: Array.from(collegeTypeSet).sort(),
@@ -81,9 +76,7 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
   }, [selectedFilters])
 
   useEffect(() => {
-    if (
-      Object.values(selectedFilters).every((arr) => arr.length === 0)
-    ) {
+    if (Object.values(selectedFilters).every((arr) => arr.length === 0)) {
       onFilterChange(results)
       return
     }
@@ -93,16 +86,15 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
       if (selectedFilters.course.length > 0 && !selectedFilters.course.includes(r.course)) return false
       if (selectedFilters.quota.length > 0 && !selectedFilters.quota.includes(r.quota)) return false
       if (selectedFilters.collegeType.length > 0 && !selectedFilters.collegeType.includes(r.collegeType)) return false
-      if (selectedFilters.chance.length > 0 && !selectedFilters.chance.includes(r.chance)) return false
       return true
     })
 
     onFilterChange(filtered)
   }, [selectedFilters, results, onFilterChange])
 
-  const toggleFilter = useCallback((tab: FilterTab, value: string | number) => {
+  const toggleFilter = useCallback((tab: FilterTab, value: string) => {
     setPendingFilters((prev) => {
-      const arr = prev[tab] as (string | number)[]
+      const arr = prev[tab]
       const newArr = arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value]
       return { ...prev, [tab]: newArr }
     })
@@ -113,9 +105,8 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
       const options = tab === 'state' ? filterOptions.states
         : tab === 'course' ? filterOptions.courses
         : tab === 'quota' ? filterOptions.quotas
-        : tab === 'collegeType' ? filterOptions.collegeTypes
-        : CHANCE_OPTIONS
-      const current = prev[tab] as (string | number)[]
+        : filterOptions.collegeTypes
+      const current = prev[tab]
       const allSelected = current.length === options.length
       return { ...prev, [tab]: allSelected ? [] : [...options] }
     })
@@ -127,7 +118,6 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
       course: [],
       quota: [],
       collegeType: [],
-      chance: [],
     })
   }, [])
 
@@ -140,16 +130,15 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
   }, [selectedFilters])
 
   const renderCheckboxItems = useCallback((
-    options: (string | number)[],
-    selected: (string | number)[],
+    options: string[],
+    selected: string[],
     tab: FilterTab,
   ) => {
     return options.map((option) => {
-      const value = String(option)
       const isSelected = selected.includes(option)
       return (
         <label
-          key={value}
+          key={option}
           className={cn(
             'flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors',
             isSelected ? 'bg-primary-navy/10 text-primary-navy' : 'hover:bg-muted/50',
@@ -161,7 +150,7 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
             onChange={() => toggleFilter(tab, option)}
             className="h-4 w-4 rounded border-gray-300 text-primary-navy focus:ring-primary-navy/20"
           />
-          <span className="flex-1 truncate">{value}</span>
+          <span className="flex-1 truncate">{option}</span>
         </label>
       )
     })
@@ -197,8 +186,7 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
               const count = tab.id === 'state' ? pendingFilters.state.length
                 : tab.id === 'course' ? pendingFilters.course.length
                 : tab.id === 'quota' ? pendingFilters.quota.length
-                : tab.id === 'collegeType' ? pendingFilters.collegeType.length
-                : pendingFilters.chance.length
+                : pendingFilters.collegeType.length
               return (
                 <button
                   key={tab.id}
@@ -304,25 +292,6 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
                 </div>
                 <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
                   {renderCheckboxItems(filterOptions.collegeTypes, pendingFilters.collegeType, 'collegeType')}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'chance' && (
-              <div>
-                <div className="mb-3 flex justify-end">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleAll('chance')}
-                    className="text-xs"
-                  >
-                    {pendingFilters.chance.length === CHANCE_OPTIONS.length ? 'Deselect All' : 'Select All'}
-                  </Button>
-                </div>
-                <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
-                  {renderCheckboxItems(CHANCE_OPTIONS, pendingFilters.chance, 'chance')}
                 </div>
               </div>
             )}

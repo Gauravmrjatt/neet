@@ -2,7 +2,12 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { getHomePageSEO, getSiteSettings, getNewsTicker, getTestimonials, getWhyChooseUs } from '@/lib/queries/globals'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
-import { generateOrganizationSchema } from '@/lib/structured-data'
+import {
+  generateOrganizationSchema,
+  generateWebSiteSchema,
+  generateLocalBusinessSchema,
+  generateBreadcrumbSchema,
+} from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { NewsTicker } from '@/components/layout/NewsTicker'
 import { HeroSection } from '@/components/shared/HeroSection'
@@ -70,6 +75,20 @@ export default async function HomePage() {
         schemaPhone,
         schemaLogo,
       )} />
+      <JsonLd data={generateWebSiteSchema({
+        name: siteName,
+        url: siteUrl,
+        description: 'Expert NEET counselling for MBBS, BDS, AYUSH & Veterinary admissions in India. College predictor, rank analysis, and personalised guidance.',
+        searchActionUrl: `${siteUrl}/predictor?rank={search_term_string}`,
+      })} />
+      <JsonLd data={generateLocalBusinessSchema({
+        name: siteName,
+        telephone: schemaPhone || '+91-9509698208',
+        logoUrl: schemaLogo,
+      })} />
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteUrl },
+      ])} />
       <NewsTicker items={newsTickerItems} />
       <HeroSection />
       <PlansCoverflow />

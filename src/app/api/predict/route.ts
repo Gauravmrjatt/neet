@@ -8,8 +8,9 @@ import type { PredictRequest, PredictResponse } from '@/lib/predictor/types'
 const ANON_LIMIT = { limit: 15, windowMs: 60 * 60 * 1000 }
 const AUTH_LIMIT = { limit: 120, windowMs: 60 * 60 * 1000 }
 
-const MAX_BODY_BYTES = 1024 // 1 KB — a predict request is tiny
+const MAX_BODY_BYTES = 1024
 const MAX_RANK = 2_000_000
+const MAX_SCORE = 720
 const MAX_STRING_LEN = 64
 
 function sanitize(val: unknown, maxLen = MAX_STRING_LEN): string | undefined {
@@ -20,7 +21,6 @@ function sanitize(val: unknown, maxLen = MAX_STRING_LEN): string | undefined {
 
 export async function POST(request: Request) {
   try {
-    // --- Rate limit (first thing, before any expensive work) ---
     const clientIp = extractClientIp(request)
     const user = await getCurrentUser()
     const { limit, windowMs } = user ? AUTH_LIMIT : ANON_LIMIT
@@ -40,7 +40,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // --- Body size guard ---
     const contentLength = request.headers.get('content-length')
     if (contentLength && parseInt(contentLength, 10) > MAX_BODY_BYTES) {
       return NextResponse.json({ error: 'Request body too large.' }, { status: 413 })
@@ -48,45 +47,55 @@ export async function POST(request: Request) {
 
     const body: PredictRequest = await request.json()
 
-    // --- Input hardening ---
-    if (typeof body.rank !== 'number' || !Number.isFinite(body.rank) || body.rank < 1 || body.rank > MAX_RANK) {
+    const category = sanitize(body.category)
+    if (!category) {
+      return NextResponse.json({ error: 'Category is required.' }, { status: 400 })
+    }
+
+    const hasRank = typeof body.rank === 'number' && Number.isFinite(body.rank) && body.rank >= 1
+    const hasScore = typeof body.score === 'number' && Number.isFinite(body.score) && body.score >= 1
+
+    if (!hasRank && !hasScore) {
       return NextResponse.json(
-        { error: `A valid NEET rank (1–${MAX_RANK.toLocaleString()}) is required.` },
+        { error: 'Either a valid NEET rank (1–20,00,000) or score (1–720) is required.' },
         { status: 400 },
       )
     }
 
-    const category = sanitize(body.category)
+    if (hasRank && (body.rank! > MAX_RANK || body.rank! < 1)) {
+      return NextResponse.json(
+        { error: `Rank must be between 1 and ${MAX_RANK.toLocaleString('en-IN')}.` },
+        { status: 400 },
+      )
+    }
+
+    if (hasScore && (body.score! > MAX_SCORE || body.score! < 1)) {
+      return NextResponse.json(
+        { error: `Score must be between 1 and ${MAX_SCORE}.` },
+        { status: 400 },
+      )
+    }
+
     const quota = sanitize(body.quota)
     const state = sanitize(body.state)
     const course = sanitize(body.course)
 
-    if (!category) {
-      return NextResponse.json(
-        { error: 'Category is required.' },
-        { status: 400 },
-      )
-    }
-
-    const filtered: PredictRequest = { rank: Math.floor(body.rank), category }
+    const filtered: PredictRequest = { category }
+    if (hasRank) filtered.rank = Math.floor(body.rank!)
+    if (hasScore) filtered.score = Math.floor(body.score!)
     if (quota) filtered.quota = quota
     if (state) filtered.state = state
     if (course) filtered.course = course
 
-    // --- Predict (engine already imports data at module scope) ---
     const { results, summary } = predict(filtered)
 
     let isPremium = false
     let creditsRemaining = 0
     if (user) {
-      console.log(`[Predict] User ${user.id} authenticated, checking credits...`)
       creditsRemaining = await getTotalCredits(user.id)
-      console.log(`[Predict] User ${user.id} has ${creditsRemaining} credits remaining`)
       if (creditsRemaining > 0) {
         isPremium = true
       }
-    } else {
-      console.log('[Predict] No authenticated user, treating as anonymous')
     }
 
     if (isPremium && results.length > 0) {
@@ -98,7 +107,6 @@ export async function POST(request: Request) {
       premium: isPremium,
       creditsRemaining,
       total: results.length,
-      summary,
       results: isPremium ? results : results.slice(0, 1),
     }
 

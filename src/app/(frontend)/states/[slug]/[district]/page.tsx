@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getStateBySlug } from '@/lib/queries'
 import { getDistrictBySlug, getCollegesByDistrict, getCutoffsByDistrict, getNearbyDistricts } from '@/lib/queries/districts'
+import { getTehsilsByDistrict } from '@/lib/queries/tehsils'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateBreadcrumbSchema, generateArticleSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -63,10 +64,11 @@ export default async function DistrictHubPage({ params }: PageProps) {
   const district: any = await getDistrictBySlug(districtSlug, slug)
   if (!district) notFound()
 
-  const [colleges, cutoffs, nearbyDistricts] = await Promise.all([
+  const [colleges, cutoffs, nearbyDistricts, tehsils] = await Promise.all([
     getCollegesByDistrict(district.id),
     getCutoffsByDistrict(district.id),
     getNearbyDistricts(district.id),
+    getTehsilsByDistrict(district.id),
   ])
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
@@ -141,6 +143,24 @@ export default async function DistrictHubPage({ params }: PageProps) {
                 govtCount={govtColleges.length}
                 privateCount={privateColleges.length}
               />
+              {tehsils.docs.length > 0 && (
+                <Card>
+                  <CardContent className="p-5 space-y-3">
+                    <h3 className="font-bold text-primary-navy text-lg">Tehsils in {district.name}</h3>
+                    <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
+                      {tehsils.docs.map((t: any) => (
+                        <Link
+                          key={t.id}
+                          href={`/states/${state.slug}/${district.slug}/tehsil/${t.slug}`}
+                          className="block rounded-lg px-3 py-1.5 text-sm text-foreground/70 hover:text-primary-navy hover:bg-primary-navy/5 transition-colors"
+                        >
+                          {t.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               <NearbyDistricts districts={nearbyDistricts} stateSlug={state.slug} />
             </div>
           </div>
