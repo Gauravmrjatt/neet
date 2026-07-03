@@ -56,20 +56,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const district: any = await getDistrictBySlug(districtSlug, slug)
   const tehsil: any = await getTehsilBySlug(tehsilSlug, districtSlug, slug)
   if (!state || !district || !tehsil) return { title: 'Not Found' }
+  const title = tehsil.seo?.metaTitle || `${tehsil.name} NEET Counselling ${new Date().getFullYear()} — ${district.name}, ${state.name}`
+  const description = tehsil.seo?.metaDescription || `Complete NEET counselling guide for ${tehsil.name} tehsil, ${district.name}, ${state.name}. Find medical colleges, cutoff marks, fee structure, and counselling process for students from ${tehsil.name}.`
+  const keywords = (tehsil.seo?.keywords?.length ? tehsil.seo.keywords : [
+    `${tehsil.name} tehsil NEET counselling`,
+    `${tehsil.name} medical colleges`,
+    `NEET counselling ${district.name}`,
+    `${tehsil.name} MBBS admission`,
+    `${district.name} NEET cutoff`,
+    `${state.name} state counselling`,
+    `medical colleges in ${tehsil.name}`,
+    `${tehsil.name} ${district.name} NEET`,
+  ])
+  const path = `/states/${state.slug}/${district.slug}/tehsil/${tehsil.slug}`
   return generateSEOMetadata({
-    title: tehsil.seo?.metaTitle || `${tehsil.name} NEET Counselling ${new Date().getFullYear()} — ${district.name}, ${state.name}`,
-    description: tehsil.seo?.metaDescription || `Complete NEET counselling guide for ${tehsil.name} tehsil, ${district.name}, ${state.name}. Find medical colleges, cutoff marks, fee structure, and counselling process for students from ${tehsil.name}.`,
-    keywords: tehsil.seo?.keywords || [
-      `${tehsil.name} tehsil NEET counselling`,
-      `${tehsil.name} medical colleges`,
-      `NEET counselling ${district.name}`,
-      `${tehsil.name} MBBS admission`,
-      `${district.name} NEET cutoff`,
-      `${state.name} state counselling`,
-      `medical colleges in ${tehsil.name}`,
-      `${tehsil.name} ${district.name} NEET`,
-    ],
-    path: `/states/${state.slug}/${district.slug}/tehsil/${tehsil.slug}`,
+    title,
+    description,
+    keywords,
+    path,
   })
 }
 

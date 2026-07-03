@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return generateSEOMetadata({
     title: district.seo?.metaTitle || `${district.name}, ${state.name} NEET Counselling ${new Date().getFullYear()} — District Guide`,
     description: district.seo?.metaDescription || `Complete NEET counselling guide for ${district.name}, ${state.name}. Find medical colleges, cutoff marks, fee structure, and counselling process for ${district.name} students.`,
-    keywords: district.seo?.keywords || [
+    keywords: district.seo?.keywords?.length ? district.seo.keywords : [
       `${district.name} NEET counselling`,
       `${district.name} medical colleges`,
       `NEET cutoff ${district.name}`,
