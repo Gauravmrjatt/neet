@@ -447,9 +447,7 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
                     />
                   ))}
 
-                  {!premium && (
-                    <UnlockPremiumPanel total={sorted.length} />
-                  )}
+               
                 </>
               ) : (
                 <tr>
@@ -461,7 +459,9 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
             </tbody>
           </table>
         </div>
-
+   {!premium && (
+                    <UnlockPremiumPanel total={sorted.length} />
+                  )}
         {/* Pagination */}
         {sorted.length > PER_PAGE && (
           <div className="flex flex-col gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
