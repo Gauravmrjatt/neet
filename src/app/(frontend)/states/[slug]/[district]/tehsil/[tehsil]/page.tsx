@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { getStateBySlug } from '@/lib/queries'
 import { getDistrictBySlug, getCollegesByDistrict } from '@/lib/queries/districts'
 import { getTehsilBySlug, getCollegesByTehsil, getTehsilsByDistrict } from '@/lib/queries/tehsils'
+import { getSiteSettings } from '@/lib/queries/globals'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateBreadcrumbSchema, generateArticleSchema, generateFAQSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -88,10 +89,11 @@ export default async function TehsilHubPage({ params }: PageProps) {
   const tehsil: any = await getTehsilBySlug(tehsilSlug, districtSlug, slug)
   if (!tehsil) notFound()
 
-  const [tehsilColleges, districtColleges, tehsilsInDistrict] = await Promise.all([
+  const [tehsilColleges, districtColleges, tehsilsInDistrict, settings] = await Promise.all([
     getCollegesByTehsil(tehsil.id),
     getCollegesByDistrict(district.id),
     getTehsilsByDistrict(district.id),
+    getSiteSettings().catch(() => null),
   ])
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
@@ -364,6 +366,23 @@ export default async function TehsilHubPage({ params }: PageProps) {
                   </div>
                 </CardContent>
               </Card>
+
+              {settings?.phone && (
+                <Card>
+                  <CardContent className="p-5">
+                    <h3 className="font-bold text-primary-navy mb-3 text-sm">Helpline Numbers</h3>
+                    <div className="space-y-2">
+                      {settings.phone.split(/[,;]+/).map((num: string) => num.trim()).filter(Boolean).map((num: string, i: number) => (
+                        <div key={i}>
+                          <a href={`tel:${num.replace(/[^0-9+]/g, '')}`} className="text-sm font-semibold text-primary-navy hover:underline">
+                            {num}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {tehsilsInDistrict.docs.length > 1 && (
                 <Card>

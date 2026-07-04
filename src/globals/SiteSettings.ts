@@ -39,7 +39,7 @@ export const SiteSettings: GlobalConfig = {
       name: 'phone',
       type: 'text',
       admin: {
-        description: 'Phone number for call button (e.g., +91-9876543210)',
+        description: 'Phone numbers, comma-separated for multiple (e.g., +91-9509698208, +91-9261878208)',
       },
     },
     {

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getStateBySlug, getCounsellingByState, getCollegesByState } from '@/lib/queries'
 import { getDistrictsWithCollegeCount } from '@/lib/queries/districts'
+import { getSiteSettings } from '@/lib/queries/globals'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateBreadcrumbSchema, generateItemListSchema, generateFAQSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -71,9 +72,10 @@ export default async function StateDistrictPage({ params }: PageProps) {
   const state: any = await getStateBySlug(slug)
   if (!state) notFound()
 
-  const [districts, colleges] = await Promise.all([
+  const [districts, colleges, settings] = await Promise.all([
     getDistrictsWithCollegeCount(slug),
     getCollegesByState(slug),
+    getSiteSettings().catch(() => null),
   ])
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
@@ -190,6 +192,23 @@ export default async function StateDistrictPage({ params }: PageProps) {
                   </div>
                 </CardContent>
               </Card>
+
+              {settings?.phone && (
+                <Card>
+                  <CardContent className="p-5">
+                    <h3 className="font-bold text-primary-navy mb-3 text-sm">Helpline Numbers</h3>
+                    <div className="space-y-2">
+                      {settings.phone.split(/[,;]+/).map((num: string) => num.trim()).filter(Boolean).map((num: string, i: number) => (
+                        <div key={i}>
+                          <a href={`tel:${num.replace(/[^0-9+]/g, '')}`} className="text-sm font-semibold text-primary-navy hover:underline">
+                            {num}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               <Link
                 href={`/counselling/state/${state.slug}`}

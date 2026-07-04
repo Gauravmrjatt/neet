@@ -192,7 +192,11 @@ export function ContactForm({ contactEmail, phone, address, socialMedia }: Conta
               </div>
               <div>
                 <h3 className="font-semibold text-primary-navy">Phone</h3>
-                <a href={`tel:${phone}`} className="text-sm text-muted-foreground hover:text-primary-navy transition-colors">{phone}</a>
+                {phone.split(/[,;]+/).map((num) => num.trim()).filter(Boolean).map((num, i) => (
+                  <div key={i}>
+                    <a href={`tel:${num.replace(/[^0-9+]/g, '')}`} className="text-sm text-muted-foreground hover:text-primary-navy transition-colors">{num}</a>
+                  </div>
+                ))}
               </div>
             </div>
           )}

@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { getStateBySlug } from '@/lib/queries'
 import { getDistrictBySlug, getCollegesByDistrict, getCutoffsByDistrict, getNearbyDistricts } from '@/lib/queries/districts'
 import { getTehsilsByDistrict } from '@/lib/queries/tehsils'
+import { getSiteSettings } from '@/lib/queries/globals'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateBreadcrumbSchema, generateArticleSchema, generateFAQSchema } from '@/lib/structured-data'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -104,11 +105,12 @@ export default async function DistrictHubPage({ params }: PageProps) {
   const district: any = await getDistrictBySlug(districtSlug, slug)
   if (!district) notFound()
 
-  const [colleges, cutoffs, nearbyDistricts, tehsils] = await Promise.all([
+  const [colleges, cutoffs, nearbyDistricts, tehsils, settings] = await Promise.all([
     getCollegesByDistrict(district.id),
     getCutoffsByDistrict(district.id),
     getNearbyDistricts(district.id),
     getTehsilsByDistrict(district.id),
+    getSiteSettings().catch(() => null),
   ])
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
@@ -241,6 +243,22 @@ export default async function DistrictHubPage({ params }: PageProps) {
                 govtCount={govtCount}
                 privateCount={privateCount}
               />
+              {settings?.phone && (
+                <Card>
+                  <CardContent className="p-5">
+                    <h3 className="font-bold text-primary-navy mb-3 text-sm">Helpline Numbers</h3>
+                    <div className="space-y-2">
+                      {settings.phone.split(/[,;]+/).map((num: string) => num.trim()).filter(Boolean).map((num: string, i: number) => (
+                        <div key={i}>
+                          <a href={`tel:${num.replace(/[^0-9+]/g, '')}`} className="text-sm font-semibold text-primary-navy hover:underline">
+                            {num}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               {tehsils.docs.length > 0 && (
                 <Card>
                   <CardContent className="p-5 space-y-3">

@@ -177,9 +177,13 @@ export function HelpdeskSearch({
                 </div>
                 <div>
                   <p className="text-xs font-medium text-muted-foreground">Phone</p>
-                  <a href={`tel:${phone.replace(/[^0-9+]/g, '')}`} className="text-sm font-semibold text-primary-navy hover:underline">
-                    {phone}
-                  </a>
+                  {phone.split(/[,;]+/).map((num) => num.trim()).filter(Boolean).map((num, i) => (
+                    <div key={i}>
+                      <a href={`tel:${num.replace(/[^0-9+]/g, '')}`} className="text-sm font-semibold text-primary-navy hover:underline">
+                        {num}
+                      </a>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

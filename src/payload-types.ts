@@ -3249,7 +3249,7 @@ export interface SiteSetting {
   siteDescription?: string | null;
   contactEmail?: string | null;
   /**
-   * Phone number for call button (e.g., +91-9876543210)
+   * Phone numbers, comma-separated for multiple (e.g., +91-9509698208, +91-9261878208)
    */
   phone?: string | null;
   /**
