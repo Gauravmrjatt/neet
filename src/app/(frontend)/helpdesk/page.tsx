@@ -13,7 +13,14 @@ import { getLexicalText } from '@/lib/lexical'
 
 export const revalidate = 3600
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: Promise<{ q?: string; page?: string }>
+}): Promise<Metadata> {
+  const params = searchParams ? await searchParams : undefined
+  const currentPage = parseInt(params?.page || '1', 10)
+  const hasQuery = !!params?.q
   const pageSeo = await getPageSeoByPath('/helpdesk')
   return generateSEOMetadata({
     title: pageSeo?.metaTitle || 'Helpdesk — NEET Counselling Support & FAQs',
@@ -21,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     path: '/helpdesk',
     ogImage: pageSeo?.ogImage || undefined,
     keywords: pageSeo?.keywords || undefined,
-    noIndex: pageSeo?.noIndex || undefined,
+    noIndex: pageSeo?.noIndex || currentPage > 1 || hasQuery,
   })
 }
 

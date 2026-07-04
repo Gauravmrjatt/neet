@@ -13,7 +13,13 @@ import { Media } from '@/payload-types'
 
 export const revalidate = 3600
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string; page?: string }>
+}): Promise<Metadata> {
+  const { category, page: pageParam } = await searchParams
+  const currentPage = parseInt(pageParam || '1', 10)
   const pageSeo = await getPageSeoByPath('/videos')
   return generateSEOMetadata({
     title: pageSeo?.metaTitle || 'NEET Counselling Videos — Expert Guidance & Tutorials 2026',
@@ -21,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     path: '/videos',
     ogImage: pageSeo?.ogImage || undefined,
     keywords: pageSeo?.keywords || undefined,
-    noIndex: pageSeo?.noIndex || undefined,
+    noIndex: pageSeo?.noIndex || currentPage > 1 || !!category,
   })
 }
 

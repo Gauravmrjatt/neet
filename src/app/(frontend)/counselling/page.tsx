@@ -14,7 +14,13 @@ import { Pagination } from '@/components/shared/Pagination'
 
 export const revalidate = 3600
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; category?: string }>
+}): Promise<Metadata> {
+  const { page: pageParam, category } = await searchParams
+  const currentPage = parseInt(pageParam || '1', 10)
   const pageSeo = await getPageSeoByPath('/counselling')
   return generateSEOMetadata({
     title: pageSeo?.metaTitle || 'NEET Counselling 2026 — Complete Guide & Expert Tips',
@@ -22,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     path: '/counselling',
     ogImage: pageSeo?.ogImage || undefined,
     keywords: pageSeo?.keywords || undefined,
-    noIndex: pageSeo?.noIndex || undefined,
+    noIndex: pageSeo?.noIndex || currentPage > 1 || !!category,
   })
 }
 

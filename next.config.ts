@@ -8,6 +8,16 @@ const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.neetcounselors.com' }],
+        destination: 'https://neetcounselors.com/:path*',
+        permanent: true,
+      },
+    ]
+  },
   experimental: {
     staticGenerationMaxConcurrency: 2,
     staticGenerationRetryCount: 1,

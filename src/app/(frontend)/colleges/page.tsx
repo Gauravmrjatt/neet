@@ -14,7 +14,13 @@ import { Pagination } from '@/components/shared/Pagination'
 
 export const revalidate = 3600
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; type?: string; state?: string }>
+}): Promise<Metadata> {
+  const { page: pageParam, type, state: stateSlug } = await searchParams
+  const currentPage = parseInt(pageParam || '1', 10)
   const pageSeo = await getPageSeoByPath('/colleges')
   return generateSEOMetadata({
     title: pageSeo?.metaTitle || 'Medical Colleges in India — MBBS Fees & Cutoffs 2026',
@@ -22,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     path: '/colleges',
     ogImage: pageSeo?.ogImage || undefined,
     keywords: pageSeo?.keywords || undefined,
-    noIndex: pageSeo?.noIndex || undefined,
+    noIndex: pageSeo?.noIndex || currentPage > 1 || !!type || !!stateSlug,
   })
 }
 
