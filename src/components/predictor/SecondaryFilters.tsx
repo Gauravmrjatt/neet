@@ -12,13 +12,14 @@ interface SecondaryFiltersProps {
   onFilterChange: (filtered: PredictionResult[]) => void
 }
 
-type FilterTab = 'state' | 'course' | 'quota' | 'collegeType'
+type FilterTab = 'state' | 'course' | 'quota' | 'collegeType' | 'round'
 
 interface FilterState {
   state: string[]
   course: string[]
   quota: string[]
   collegeType: string[]
+  round: string[]
 }
 
 const TABS: { id: FilterTab; label: string }[] = [
@@ -26,6 +27,7 @@ const TABS: { id: FilterTab; label: string }[] = [
   { id: 'course', label: 'Course' },
   { id: 'quota', label: 'Quota' },
   { id: 'collegeType', label: 'College Type' },
+  { id: 'round', label: 'Round' },
 ]
 
 export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersProps) {
@@ -35,6 +37,7 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
     course: [],
     quota: [],
     collegeType: [],
+    round: [],
   })
   const [stateSearch, setStateSearch] = useState('')
   const [isOpen, setIsOpen] = useState(false)
@@ -45,12 +48,14 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
     const courseSet = new Set<string>()
     const quotaSet = new Set<string>()
     const collegeTypeSet = new Set<string>()
+    const roundSet = new Set<string>()
 
     for (const r of results) {
       if (r.state) stateSet.add(r.state)
       if (r.course) courseSet.add(r.course)
       if (r.quota) quotaSet.add(r.quota)
       if (r.collegeType) collegeTypeSet.add(r.collegeType)
+      if (r.expectedRound) roundSet.add(r.expectedRound)
     }
 
     return {
@@ -62,6 +67,10 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
         return a.localeCompare(b)
       }),
       collegeTypes: Array.from(collegeTypeSet).sort(),
+      rounds: Array.from(roundSet).sort((a: string, b: string) => {
+        const order = ['R1', 'R2', 'R3', 'R4', 'R5', 'MOPUP']
+        return order.indexOf(a) - order.indexOf(b)
+      }),
     }
   }, [results])
 
@@ -86,6 +95,7 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
       if (selectedFilters.course.length > 0 && !selectedFilters.course.includes(r.course)) return false
       if (selectedFilters.quota.length > 0 && !selectedFilters.quota.includes(r.quota)) return false
       if (selectedFilters.collegeType.length > 0 && !selectedFilters.collegeType.includes(r.collegeType)) return false
+      if (selectedFilters.round.length > 0 && !selectedFilters.round.includes(r.expectedRound)) return false
       return true
     })
 
@@ -105,7 +115,8 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
       const options = tab === 'state' ? filterOptions.states
         : tab === 'course' ? filterOptions.courses
         : tab === 'quota' ? filterOptions.quotas
-        : filterOptions.collegeTypes
+        : tab === 'collegeType' ? filterOptions.collegeTypes
+        : filterOptions.rounds
       const current = prev[tab]
       const allSelected = current.length === options.length
       return { ...prev, [tab]: allSelected ? [] : [...options] }
@@ -118,6 +129,7 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
       course: [],
       quota: [],
       collegeType: [],
+      round: [],
     })
   }, [])
 
@@ -186,7 +198,8 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
               const count = tab.id === 'state' ? pendingFilters.state.length
                 : tab.id === 'course' ? pendingFilters.course.length
                 : tab.id === 'quota' ? pendingFilters.quota.length
-                : pendingFilters.collegeType.length
+                : tab.id === 'collegeType' ? pendingFilters.collegeType.length
+                : pendingFilters.round.length
               return (
                 <button
                   key={tab.id}
@@ -292,6 +305,25 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
                 </div>
                 <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
                   {renderCheckboxItems(filterOptions.collegeTypes, pendingFilters.collegeType, 'collegeType')}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'round' && (
+              <div>
+                <div className="mb-3 flex justify-end">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleAll('round')}
+                    className="text-xs"
+                  >
+                    {pendingFilters.round.length === filterOptions.rounds.length ? 'Deselect All' : 'Select All'}
+                  </Button>
+                </div>
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                  {renderCheckboxItems(filterOptions.rounds, pendingFilters.round, 'round')}
                 </div>
               </div>
             )}

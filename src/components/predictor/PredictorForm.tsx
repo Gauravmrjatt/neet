@@ -2,7 +2,10 @@
 
 import React, { useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
-import { Loader2, AlertTriangle, Stethoscope, Leaf, PawPrint, GraduationCap, Hash } from 'lucide-react'
+import {
+  Loader2, AlertTriangle, Stethoscope, Leaf, PawPrint,
+  GraduationCap, Hash, Target, ChevronDown, Info,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -25,10 +28,10 @@ type FormStatus = 'idle' | 'loading' | 'error'
 
 type CourseGroup = 'mcc' | 'ayush' | 'vet'
 
-const COURSE_GROUPS: { id: CourseGroup; label: string; icon: React.ElementType; courses: string[] }[] = [
-  { id: 'mcc', label: 'MBBS & BDS', icon: Stethoscope, courses: ['MBBS', 'BDS', 'B.Sc. Nursing'] },
-  { id: 'ayush', label: 'AYUSH', icon: Leaf, courses: ['BAMS', 'BUMS', 'BSMS'] },
-  { id: 'vet', label: 'Veterinary', icon: PawPrint, courses: ['BVSc & AH'] },
+const COURSE_GROUPS: { id: CourseGroup; label: string; shortLabel: string; icon: React.ElementType; courses: string[] }[] = [
+  { id: 'mcc', label: 'MBBS & BDS', shortLabel: 'MBBS', icon: Stethoscope, courses: ['MBBS', 'BDS', 'B.Sc. Nursing'] },
+  { id: 'ayush', label: 'AYUSH', shortLabel: 'AYUSH', icon: Leaf, courses: ['BAMS', 'BUMS', 'BSMS'] },
+  { id: 'vet', label: 'Veterinary', shortLabel: 'Vet', icon: PawPrint, courses: ['BVSc & AH'] },
 ]
 
 type InputMode = 'rank' | 'score'
@@ -184,17 +187,12 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
     setCreditsRemaining(null)
   }, [])
 
-  const selectClasses = useMemo(
-    () => 'flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-    [],
-  )
-
   if (creditsRemaining !== null && creditsRemaining <= 0 && !response) {
     return (
       <div className="rounded-2xl border border-border bg-card shadow-lg">
         <div className="flex flex-col items-center gap-4 px-6 py-12 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-3xl">
-            ⏳
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-50">
+            <AlertTriangle className="h-7 w-7 text-amber-500" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-primary-navy">
@@ -215,7 +213,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
             <Button
               variant="outline"
               onClick={handleReset}
-              className="border-primary-navy/30 text-primary-navy hover:bg-primary-navy/5"
+              className="border-primary-navy/20 text-primary-navy hover:bg-primary-navy/5"
             >
               Try Again
             </Button>
@@ -241,33 +239,45 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card shadow-lg">
-      <div className="flex flex-col gap-3 border-b border-border bg-primary-navy/[0.04] px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="rounded-2xl border border-border bg-card shadow-lg overflow-hidden">
+      {/* Header */}
+      <div className="border-b border-border bg-gradient-to-br from-primary-navy/[0.03] to-transparent px-6 py-5">
         <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-button-gold/20 text-lg">
-            🎯
-          </span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-navy/10">
+            <Target className="h-5 w-5 text-primary-navy" />
+          </div>
           <div>
-            <h2 className="text-balance text-lg font-bold text-primary-navy">
+            <h2 className="text-lg font-bold text-primary-navy">
               NEET College Predictor
             </h2>
             <p className="text-xs text-muted-foreground">
-              Enter your rank or score to predict college admission chances.
+              Enter your rank or score to find the best college options.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="px-6 pt-5">
+      {/* Course Group Tabs */}
+      <div className="border-b border-border bg-muted/20 px-6 pt-4 pb-0">
         <Tabs value={courseGroup} onValueChange={(v) => setCourseGroup(v as CourseGroup)}>
-          <TabsList className="w-full">
+          <TabsList className="h-auto w-full gap-0 bg-transparent p-0">
             {COURSE_GROUPS.map((group) => {
               const Icon = group.icon
+              const isActive = courseGroup === group.id
               return (
-                <TabsTrigger key={group.id} value={group.id} className="flex-1 gap-1.5 text-xs sm:text-sm">
+                <TabsTrigger
+                  key={group.id}
+                  value={group.id}
+                  className={cn(
+                    'flex flex-1 items-center justify-center gap-2 rounded-t-lg rounded-b-none border-b-2 px-4 py-3 text-xs font-medium transition-all sm:text-sm',
+                    isActive
+                      ? 'border-primary-navy bg-card text-primary-navy shadow-sm'
+                      : 'border-transparent text-muted-foreground hover:text-foreground',
+                  )}
+                >
                   <Icon className="h-4 w-4 shrink-0" />
                   <span className="hidden sm:inline">{group.label}</span>
-                  <span className="sm:hidden">{group.label.replace(' & BDS', '')}</span>
+                  <span className="sm:hidden">{group.shortLabel}</span>
                 </TabsTrigger>
               )
             })}
@@ -275,13 +285,14 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
         </Tabs>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 pt-4">
-        <div className="mb-4 flex gap-2 rounded-lg border border-border bg-muted/30 p-1">
+      <form onSubmit={handleSubmit} className="p-6">
+        {/* Input Mode Toggle */}
+        <div className="mb-5 flex gap-1.5 rounded-lg border border-border bg-muted/30 p-1">
           <button
             type="button"
             onClick={() => setInputMode('rank')}
             className={cn(
-              'flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors',
+              'flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-all',
               inputMode === 'rank'
                 ? 'bg-card text-primary-navy shadow-sm'
                 : 'text-muted-foreground hover:text-foreground',
@@ -294,7 +305,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
             type="button"
             onClick={() => setInputMode('score')}
             className={cn(
-              'flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors',
+              'flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-all',
               inputMode === 'score'
                 ? 'bg-card text-primary-navy shadow-sm'
                 : 'text-muted-foreground hover:text-foreground',
@@ -305,135 +316,169 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
           </button>
         </div>
 
-        <div className="mb-6">
+        {/* Rank / Score Input */}
+        <div className="mb-5">
           {inputMode === 'rank' ? (
             <div>
               <Label htmlFor="rank" className="text-sm font-semibold text-primary-navy">
                 NEET All India Rank <span className="text-destructive">*</span>
               </Label>
-              <Input
-                id="rank"
-                type="number"
-                min="1"
-                max="2000000"
-                placeholder="Enter your AIR (e.g. 50000)"
-                value={rank}
-                onChange={(e) => setRank(e.target.value)}
-                className="mt-1 h-10 text-sm"
-                required={inputMode === 'rank'}
-                disabled={status === 'loading'}
-              />
+              <div className="relative mt-1.5">
+                <Input
+                  id="rank"
+                  type="number"
+                  min="1"
+                  max="2000000"
+                  placeholder="e.g. 50000"
+                  value={rank}
+                  onChange={(e) => setRank(e.target.value)}
+                  className="h-11 pl-4 pr-12 text-base tabular-nums"
+                  required={inputMode === 'rank'}
+                  disabled={status === 'loading'}
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                  AIR
+                </span>
+              </div>
             </div>
           ) : (
             <div>
               <Label htmlFor="score" className="text-sm font-semibold text-primary-navy">
                 NEET Score (out of 720) <span className="text-destructive">*</span>
               </Label>
-              <Input
-                id="score"
-                type="number"
-                min="1"
-                max="720"
-                placeholder="Enter your score (e.g. 600)"
-                value={score}
-                onChange={(e) => setScore(e.target.value)}
-                className="mt-1 h-10 text-sm"
-                required={inputMode === 'score'}
-                disabled={status === 'loading'}
-              />
+              <div className="relative mt-1.5">
+                <Input
+                  id="score"
+                  type="number"
+                  min="1"
+                  max="720"
+                  placeholder="e.g. 600"
+                  value={score}
+                  onChange={(e) => setScore(e.target.value)}
+                  className="h-11 pl-4 pr-16 text-base tabular-nums"
+                  required={inputMode === 'score'}
+                  disabled={status === 'loading'}
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                  / 720
+                </span>
+              </div>
             </div>
           )}
         </div>
 
-        <div className="mb-6">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Filters
-          </p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Filters Section */}
+        <div className="mb-5">
+          <div className="mb-3 flex items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Filters
+            </span>
+            <div className="group relative">
+              <Info className="h-3.5 w-3.5 cursor-help text-muted-foreground/50 transition-colors hover:text-muted-foreground" />
+              <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-border bg-popover p-3 text-xs text-muted-foreground shadow-md opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100">
+                Category is required. State, course, and quota are optional filters to narrow your results.
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <div>
-              <Label htmlFor="category" className="text-xs font-semibold text-primary-navy">
+              <Label htmlFor="category" className="text-xs font-medium text-muted-foreground">
                 Category <span className="text-destructive">*</span>
               </Label>
-              <select
-                id="category"
-                aria-label="Your category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className={cn(selectClasses, 'mt-1')}
-                disabled={status === 'loading'}
-                required
-              >
-                <option value="">Select Category</option>
-                {availableCategories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
+              <div className="relative mt-1">
+                <select
+                  id="category"
+                  aria-label="Your category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="flex h-10 w-full appearance-none rounded-lg border border-border bg-background px-3 pr-8 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-navy/20 focus-visible:border-primary-navy/40 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={status === 'loading'}
+                  required
+                >
+                  <option value="">Select Category</option>
+                  {availableCategories.map((cat) => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              </div>
             </div>
 
             <div>
-              <Label htmlFor="course" className="text-xs font-semibold text-primary-navy">
+              <Label htmlFor="course" className="text-xs font-medium text-muted-foreground">
                 Course
               </Label>
-              <select
-                id="course"
-                aria-label="Course"
-                value={course}
-                onChange={(e) => setCourse(e.target.value)}
-                className={cn(selectClasses, 'mt-1.5')}
-                disabled={status === 'loading'}
-              >
-                <option value="">All Courses</option>
-                {availableCourses.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
+              <div className="relative mt-1">
+                <select
+                  id="course"
+                  aria-label="Course"
+                  value={course}
+                  onChange={(e) => setCourse(e.target.value)}
+                  className="flex h-10 w-full appearance-none rounded-lg border border-border bg-background px-3 pr-8 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-navy/20 focus-visible:border-primary-navy/40 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={status === 'loading'}
+                >
+                  <option value="">All Courses</option>
+                  {availableCourses.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              </div>
             </div>
 
             <div>
-              <Label htmlFor="quota" className="text-xs font-semibold text-primary-navy">
+              <Label htmlFor="quota" className="text-xs font-medium text-muted-foreground">
                 Quota
               </Label>
-              <select
-                id="quota"
-                aria-label="Quota"
-                value={quota}
-                onChange={(e) => setQuota(e.target.value)}
-                className={cn(selectClasses, 'mt-1.5')}
-                disabled={status === 'loading'}
-              >
-                <option value="">All Quotas</option>
-                {availableQuotas.map((q) => (
-                  <option key={q} value={q}>{q}</option>
-                ))}
-              </select>
+              <div className="relative mt-1">
+                <select
+                  id="quota"
+                  aria-label="Quota"
+                  value={quota}
+                  onChange={(e) => setQuota(e.target.value)}
+                  className="flex h-10 w-full appearance-none rounded-lg border border-border bg-background px-3 pr-8 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-navy/20 focus-visible:border-primary-navy/40 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={status === 'loading'}
+                >
+                  <option value="">All Quotas</option>
+                  {availableQuotas.map((q) => (
+                    <option key={q} value={q}>{q}</option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              </div>
             </div>
 
             {courseGroup === 'mcc' && (
               <div>
-                <Label htmlFor="state" className="text-xs font-semibold text-primary-navy">
+                <Label htmlFor="state" className="text-xs font-medium text-muted-foreground">
                   State
                 </Label>
-                <select
-                  id="state"
-                  aria-label="State"
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  className={cn(selectClasses, 'mt-1.5')}
-                  disabled={status === 'loading'}
-                >
-                  <option value="">All States</option>
-                  {availableStates.map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
+                <div className="relative mt-1">
+                  <select
+                    id="state"
+                    aria-label="State"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    className="flex h-10 w-full appearance-none rounded-lg border border-border bg-background px-3 pr-8 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-navy/20 focus-visible:border-primary-navy/40 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={status === 'loading'}
+                  >
+                    <option value="">All States</option>
+                    {availableStates.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                </div>
               </div>
             )}
           </div>
         </div>
 
+        {/* Error */}
         {error && (
           <div
-            className="mb-4 flex items-start gap-2.5 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+            className="mb-4 flex items-start gap-2.5 rounded-lg border border-destructive/20 bg-destructive/5 p-3.5 text-sm text-destructive"
             role="alert"
           >
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -441,19 +486,23 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
           </div>
         )}
 
+        {/* Submit */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <Button
             type="submit"
             disabled={status === 'loading'}
-            className="h-12 w-full bg-button-gold text-sm font-bold text-primary-navy hover:bg-button-gold-hover active:scale-[0.96] sm:w-auto sm:px-10"
+            className="h-12 w-full bg-button-gold text-sm font-bold text-primary-navy shadow-sm hover:bg-button-gold-hover hover:shadow active:scale-[0.97] sm:w-auto sm:px-10"
           >
             {status === 'loading' ? (
               <span className="flex items-center justify-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                Analyzing your admission chances...
+                Analyzing your chances...
               </span>
             ) : (
-              'Predict My College'
+              <span className="flex items-center justify-center gap-2">
+                <Target className="h-4 w-4" />
+                Predict My College
+              </span>
             )}
           </Button>
           {creditsRemaining !== null && creditsRemaining > 0 && (
