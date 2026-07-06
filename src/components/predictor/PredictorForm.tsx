@@ -142,7 +142,7 @@ export function PredictorForm({ filterOptions }: PredictorFormProps) {
       }
 
       try {
-        const body: Record<string, unknown> = { category }
+        const body: Record<string, unknown> = { category, courseGroup }
         if (inputMode === 'rank') {
           body.rank = parseInt(rank, 10)
         } else {

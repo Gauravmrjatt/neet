@@ -79,6 +79,7 @@ export async function POST(request: Request) {
     const quota = sanitize(body.quota)
     const state = sanitize(body.state)
     const course = sanitize(body.course)
+    const courseGroup = sanitize(body.courseGroup)
 
     const filtered: PredictRequest = { category }
     if (hasRank) filtered.rank = Math.floor(body.rank!)
@@ -86,6 +87,7 @@ export async function POST(request: Request) {
     if (quota) filtered.quota = quota
     if (state) filtered.state = state
     if (course) filtered.course = course
+    if (courseGroup) filtered.courseGroup = courseGroup
 
     const { results, summary } = predict(filtered)
 

@@ -37,6 +37,7 @@ export interface PredictRequest {
   quota?: string
   state?: string
   course?: string
+  courseGroup?: string
 }
 
 export interface PredictResponse {

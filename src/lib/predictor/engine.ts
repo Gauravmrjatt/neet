@@ -16,6 +16,12 @@ const DATA_MAP: Record<string, AllotmentRecord[]> = {
   'BVSc & AH': vetData as AllotmentRecord[],
 }
 
+const GROUP_DEFAULT: Record<string, AllotmentRecord[]> = {
+  mcc: mccData as AllotmentRecord[],
+  ayush: ayushData as AllotmentRecord[],
+  vet: vetData as AllotmentRecord[],
+}
+
 const CATEGORY_ALIAS: Record<string, string> = {
   'general': 'GN',
   'gn': 'GN',
@@ -55,8 +61,9 @@ function normalizeValue(val: string, aliasMap: Record<string, string>): string {
   return aliasMap[lower] || lower
 }
 
-function getDataset(course?: string): AllotmentRecord[] {
+function getDataset(course?: string, courseGroup?: string): AllotmentRecord[] {
   if (course && DATA_MAP[course]) return DATA_MAP[course]
+  if (courseGroup && GROUP_DEFAULT[courseGroup]) return GROUP_DEFAULT[courseGroup]
   return mccData as AllotmentRecord[]
 }
 
@@ -64,8 +71,8 @@ export function predict(request: PredictRequest): {
   results: PredictionResult[]
   summary: { safe: number; likely: number; risky: number }
 } {
-  const { rank, score, category, quota, state, course } = request
-  const dataset = getDataset(course)
+  const { rank, score, category, quota, state, course, courseGroup } = request
+  const dataset = getDataset(course, courseGroup)
 
   let filtered: AllotmentRecord[] = [...dataset]
 
