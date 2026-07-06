@@ -1,6 +1,5 @@
 import { getHeader, getSiteSettings } from '@/lib/queries/globals'
 import { MediaImage } from '@/components/shared/MediaImage'
-import { CallButton } from '@/components/shared/CallButton'
 import { MobileMenu } from '@/components/layout/MobileMenu'
 import Link from 'next/link'
 
@@ -10,8 +9,11 @@ export async function Header() {
   const [settings, headerData] = await Promise.all([getSiteSettings(), getHeader()])
 
   const phone = (settings as any)?.phone || ''
+  const rawSiteName = (settings as any)?.siteName || ''
   const hindiTitle = (settings as any)?.siteNameHindi || 'नीट काउंसलिंग'
-  const englishTitle = (settings as any)?.siteName || 'NEET Counselling'
+  const englishTitle = (rawSiteName.length <= 40 && !rawSiteName.includes('NATIONAL ELIGIBILITY'))
+    ? rawSiteName
+    : 'NEET Counselling'
   const tagline =
     (settings as any)?.siteDescription ||
     headerData?.tagline ||

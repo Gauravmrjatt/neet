@@ -42,7 +42,6 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       metaTitle: blog.seo.metaTitle || undefined,
       metaDescription: blog.seo.metaDescription || undefined,
       ogImage: blog.seo.ogImage && typeof blog.seo.ogImage === 'object' ? { url: (blog.seo.ogImage as Media).url || undefined } : undefined,
-      keywords: blog.seo.keywords?.map((k: any) => k.keyword).filter(Boolean) as string[] | undefined,
     } : undefined,
     title: blog.title,
     excerpt: blog.excerpt || undefined,

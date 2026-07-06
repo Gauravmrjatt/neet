@@ -125,7 +125,6 @@ const ResultRow = React.memo(function ResultRow({
           {result.expectedRound}
         </Badge>
       </td>
-      <td className="hidden px-4 py-3.5 text-sm tabular-nums text-muted-foreground sm:table-cell">{result.year}</td>
     </tr>
   )
 })
@@ -429,11 +428,6 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
                   </button>
                 </th>
                 <th className="hidden px-4 py-3 sm:table-cell">Round</th>
-                <th className="hidden px-4 py-3 sm:table-cell">
-                  <button type="button" onClick={() => handleSort('year')} className="inline-flex items-center hover:text-foreground transition-colors">
-                    Year <SortIcon field="year" />
-                  </button>
-                </th>
               </tr>
             </thead>
             <tbody>
@@ -451,7 +445,7 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
                 </>
               ) : (
                 <tr>
-                  <td colSpan={10} className="px-4 py-12 text-center text-sm text-muted-foreground">
+                  <td colSpan={9} className="px-4 py-12 text-center text-sm text-muted-foreground">
                     No colleges match your current filters. Try adjusting your filter selections.
                   </td>
                 </tr>

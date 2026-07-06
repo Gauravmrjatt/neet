@@ -115,6 +115,19 @@ export function predict(request: PredictRequest): {
     filtered = filtered.filter((r) => r.closingRank >= rank)
   }
 
+  // Deduplicate by (institute, course, quota) — prefer most recent year, then highest closingRank
+  const bestMap = new Map<string, AllotmentRecord>()
+  for (const r of filtered) {
+    const key = `${r.institute}||${r.course}||${r.quota}`
+    const existing = bestMap.get(key)
+    if (!existing) {
+      bestMap.set(key, r)
+    } else if (r.year > existing.year || (r.year === existing.year && r.closingRank > existing.closingRank)) {
+      bestMap.set(key, r)
+    }
+  }
+  filtered = Array.from(bestMap.values())
+
   const results: PredictionResult[] = filtered
     .map((r) => ({
       institute: r.institute,

@@ -17,13 +17,17 @@ export async function generateMetadata({
   noIndex = false,
   path = '',
 }: SEOData & { path?: string; title?: string; description?: string }): Promise<Metadata> {
+  void keywords
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
-  let siteName = 'NEET Counselling'
+  const BRAND_NAME = 'NEET Counselling'
+  let siteName = BRAND_NAME
   let siteDescription = 'Expert NEET and JOSAA counselling services'
 
   try {
     const settings = await getSiteSettings()
-    if (settings?.siteName) siteName = settings.siteName
+    if (settings?.siteName && settings.siteName.length <= 40 && !settings.siteName.includes('NATIONAL ELIGIBILITY')) {
+      siteName = settings.siteName
+    }
     if (settings?.siteDescription) siteDescription = settings.siteDescription
   } catch {}
 
@@ -37,7 +41,6 @@ export async function generateMetadata({
   const metadata: Metadata = {
     title: title || siteName,
     description: description || siteDescription,
-    keywords: keywords && keywords.length > 0 ? keywords.join(', ') : undefined,
     robots: noIndex ? 'noindex, nofollow' : 'index, follow',
     openGraph: {
       title: title || siteName,
@@ -56,6 +59,10 @@ export async function generateMetadata({
     },
     alternates: {
       canonical: `${siteUrl}${path}`,
+      languages: {
+        'en-IN': `${siteUrl}${path}`,
+        'hi': `${siteUrl}${path}`,
+      },
     },
   }
 
@@ -75,7 +82,6 @@ export async function generateBlogMetadata(blog: {
     title: blog.seo?.metaTitle || blog.title,
     description: blog.seo?.metaDescription || blog.excerpt,
     ogImage: blog.seo?.ogImage || blog.featuredImage,
-    keywords: blog.seo?.keywords,
     noIndex: blog.seo?.noIndex,
     path: `/blog/${blog.slug}`,
   })
@@ -103,7 +109,6 @@ export async function generateVideoMetadata(video: {
     title: video.seo?.metaTitle || video.title,
     description: video.seo?.metaDescription || video.description?.substring(0, 160),
     ogImage: video.seo?.ogImage || video.thumbnail,
-    keywords: video.seo?.keywords,
     noIndex: video.seo?.noIndex,
     path: `/videos/${video.slug}`,
   })
@@ -118,7 +123,6 @@ export async function generatePageMetadata(page: {
     title: page.seo?.metaTitle || page.title,
     description: page.seo?.metaDescription,
     ogImage: page.seo?.ogImage,
-    keywords: page.seo?.keywords,
     noIndex: page.seo?.noIndex,
     path: `/${page.slug}`,
   })

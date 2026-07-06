@@ -28,10 +28,9 @@ export async function generateMetadata(): Promise<Metadata> {
     seo = await getHomePageSEO()
   } catch {}
   return generateSEOMetadata({
-    title: seo?.metaTitle || '2026 — College Predictor & Expert Guidance',
-    description: seo?.metaDescription || 'Expert NEET counselling for 2026 MBBS, BDS, AYUSH & Veterinary admissions. Predict your college by rank, get personalized guidance from experienced counsellors, and secure your medical seat.',
+    title: seo?.metaTitle || 'NEET Counselling 2026 — College Predictor, Cutoff & Expert Guidance',
+    description: seo?.metaDescription || 'Get expert NEET Counselling 2026 guidance with college predictor by rank, AIQ & state quota support, MBBS/BDS cutoff analysis, and personalised counselling. Trusted by 13L+ aspirants.',
     ogImage: seo?.ogImage,
-    keywords: seo?.keywords?.map((k: any) => k.keyword).filter(Boolean) as string[] | undefined,
   })
 }
 

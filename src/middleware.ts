@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const cookieProtectedRoutes = ['/admin/custom']
+const cookieProtectedRoutes = ['/admin/custom', '/live-counselling']
 
 const DEBUG_AUTH =
   process.env.DEBUG_AUTH === 'true' || process.env.NODE_ENV !== 'production'
@@ -99,5 +99,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/live-counselling/:path*'],
 }

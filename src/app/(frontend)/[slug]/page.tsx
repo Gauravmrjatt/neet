@@ -4,12 +4,16 @@ import type { Metadata } from 'next'
 import { getPageBySlug } from '@/lib/queries'
 import { generatePageMetadata } from '@/lib/seo'
 import { BlockRenderer } from '@/components/blocks'
+import { JsonLd } from '@/components/shared/JsonLd'
+import { generateBreadcrumbSchema } from '@/lib/structured-data'
 
 export const revalidate = 3600
 
 type PageProps = {
   params: Promise<{ slug: string }>
 }
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://neetcounselors.com'
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
@@ -24,9 +28,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           ogImage: page.seo.ogImage
             ? { url: (page.seo.ogImage as any)?.url || undefined }
             : undefined,
-          keywords: page.seo.keywords?.map((k: any) => k.keyword).filter(Boolean) as
-            | string[]
-            | undefined,
           noIndex: page.seo.noIndex ?? undefined,
         }
       : undefined,
@@ -43,8 +44,14 @@ export default async function CmsPage({ params }: PageProps) {
     notFound()
   }
 
+  const breadcrumbItems = [
+    { name: 'Home', url: siteUrl },
+    { name: page.title || page.slug, url: `${siteUrl}/${page.slug}` },
+  ]
+
   return (
     <main>
+      <JsonLd data={generateBreadcrumbSchema(breadcrumbItems)} />
       {page.content && page.content.length > 0 && <BlockRenderer blocks={page.content} />}
     </main>
   )
