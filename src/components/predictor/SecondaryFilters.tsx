@@ -68,8 +68,9 @@ export function SecondaryFilters({ results, onFilterChange }: SecondaryFiltersPr
       }),
       collegeTypes: Array.from(collegeTypeSet).sort(),
       rounds: Array.from(roundSet).sort((a: string, b: string) => {
-        const order = ['R1', 'R2', 'R3', 'R4', 'R5', 'MOPUP']
-        return order.indexOf(a) - order.indexOf(b)
+        const na = parseInt(a.replace('R', ''), 10)
+        const nb = parseInt(b.replace('R', ''), 10)
+        return na - nb
       }),
     }
   }, [results])

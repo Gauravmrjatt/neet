@@ -37,16 +37,6 @@ const COLLEGE_TYPE_STYLES: Record<string, string> = {
   'Private-University-Minority': 'bg-rose-50 text-rose-700 ring-1 ring-rose-200/60',
 }
 
-const ROUND_OPTIONS = [
-  { value: '', label: 'All Rounds' },
-  { value: 'R1', label: 'R1' },
-  { value: 'R2', label: 'R2' },
-  { value: 'R3', label: 'R3' },
-  { value: 'R4', label: 'R4' },
-  { value: 'R5', label: 'R5' },
-  { value: 'MOPUP', label: 'Mopup' },
-]
-
 const PER_PAGE = 25
 
 type SortField = 'closingRank' | 'openingRank' | 'score' | 'institute' | 'year'
@@ -164,6 +154,16 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
   const [sortField, setSortField] = useState<SortField>('closingRank')
   const [sortDir, setSortDir] = useState<SortDir>('asc')
   const [displayResults, setDisplayResults] = useState<PredictionResult[]>(results)
+
+  const roundOptions = useMemo(() => {
+    const rounds = Array.from(new Set(results.map((r) => r.expectedRound).filter(Boolean)))
+    rounds.sort((a, b) => {
+      const na = parseInt(a.replace('R', ''), 10)
+      const nb = parseInt(b.replace('R', ''), 10)
+      return na - nb
+    })
+    return [{ value: '', label: 'All Rounds' }, ...rounds.map((r) => ({ value: r, label: r }))]
+  }, [results])
 
   const handleFilterChange = useCallback((filtered: PredictionResult[]) => {
     setDisplayResults(filtered)
@@ -339,7 +339,7 @@ export const PredictorResults = React.memo(function PredictorResults({ response,
       {/* Round Filter Pills */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-medium text-muted-foreground mr-1">Round:</span>
-        {ROUND_OPTIONS.map((opt) => (
+        {roundOptions.map((opt) => (
           <button
             key={opt.value}
             onClick={() => { setSelectedRound(opt.value); setCurrentPage(1) }}
