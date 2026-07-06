@@ -79,12 +79,23 @@ function SubscriptionCard({ subscription, walletRemaining }: { subscription: Sub
         )}
 
         {/* Counselor */}
-        {counselor && (
+        {counselor ? (
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary-navy/70">
               Your Counselor
             </p>
             <CounselorCard counselor={counselor} />
+          </div>
+        ) : status === 'pending' && (
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary-navy/70">
+              Your Counselor
+            </p>
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-center">
+              <p className="text-sm font-medium text-amber-800">
+                Your counsellor is being assigned, please wait...
+              </p>
+            </div>
           </div>
         )}
 

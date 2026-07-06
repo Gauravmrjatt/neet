@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronDown } from 'lucide-react'
@@ -13,12 +13,40 @@ interface NavDropdownProps {
 
 export function NavDropdown({ label, children }: NavDropdownProps) {
   const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
+  const [position, setPosition] = useState({ top: 0, left: 0 })
+
+  const updatePosition = useCallback(() => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      const dropdownWidth = 200
+      const left = Math.min(rect.left, window.innerWidth - dropdownWidth - 8)
+      setPosition({ top: rect.bottom + 4, left })
+    }
+  }, [])
+
+  useEffect(() => {
+    if (open) {
+      updatePosition()
+      window.addEventListener('scroll', updatePosition, { passive: true })
+      window.addEventListener('resize', updatePosition)
+    }
+    return () => {
+      window.removeEventListener('scroll', updatePosition)
+      window.removeEventListener('resize', updatePosition)
+    }
+  }, [open, updatePosition])
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setOpen(false)
       }
     }
@@ -32,16 +60,14 @@ export function NavDropdown({ label, children }: NavDropdownProps) {
   )
 
   return (
-    <div
-      ref={ref}
-      className="relative group"
-    >
+    <div className="inline-flex">
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setOpen(!open)}
         onMouseEnter={() => setOpen(true)}
         className={cn(
-          'group relative inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3.5 py-1.5',
+          'relative inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3.5 py-1.5',
           'text-xs font-semibold tracking-wide sm:text-sm',
           'transition-all duration-200 ease-out',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-navbar-bg',
@@ -59,37 +85,37 @@ export function NavDropdown({ label, children }: NavDropdownProps) {
         />
       </button>
 
-      <div
-        className={cn(
-          'absolute left-0 top-full z-50 min-w-[200px]',
-          'rounded-xl border border-border bg-popover p-1.5 shadow-lg',
-          'invisible opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100',
-          open && 'visible opacity-100',
-        )}
-        onMouseEnter={() => setOpen(true)}
-      >
-        {children.map((child) => {
-          const isChildActive =
-            child.link === '/'
-              ? pathname === '/'
-              : pathname.startsWith(child.link)
-          return (
-            <Link
-              key={child.link}
-              href={child.link}
-              onClick={() => setOpen(false)}
-              className={cn(
-                'flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                isChildActive
-                  ? 'bg-button-gold/10 text-primary'
-                  : 'text-foreground hover:bg-navbar-hover hover:text-primary',
-              )}
-            >
-              {child.label}
-            </Link>
-          )
-        })}
-      </div>
+      {open && (
+        <div
+          ref={dropdownRef}
+          style={{ position: 'fixed', top: position.top, left: position.left }}
+          className="z-50 min-w-[200px] rounded-xl border border-border bg-popover p-1.5 shadow-lg"
+          onMouseEnter={() => setOpen(true)}
+          onMouseLeave={() => setOpen(false)}
+        >
+          {children.map((child) => {
+            const isChildActive =
+              child.link === '/'
+                ? pathname === '/'
+                : pathname.startsWith(child.link)
+            return (
+              <Link
+                key={child.link}
+                href={child.link}
+                onClick={() => setOpen(false)}
+                className={cn(
+                  'flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  isChildActive
+                    ? 'bg-button-gold/10 text-primary'
+                    : 'text-foreground hover:bg-navbar-hover hover:text-primary',
+                )}
+              >
+                {child.label}
+              </Link>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
