@@ -18,7 +18,7 @@ export function RichTextBlock({ heading, body, content }: RichTextBlockProps) {
       <Container className="max-w-4xl">
         {heading && <h2 className="mb-6 text-3xl font-bold">{heading}</h2>}
         <div className="prose prose-lg max-w-none">
-          <RichText content={richTextContent} maxHeadingLevel={2} />
+          <RichText content={richTextContent} />
         </div>
       </Container>
     </Section>
