@@ -52,6 +52,8 @@ export default async function CityCounsellorsPage({ params }: PageProps) {
     slug: c.slug,
     designation: c.designation,
     image: c.image,
+    email: c.email,
+    phone: c.phone,
     specializations: c.specializations,
     experience: c.experience,
   }))

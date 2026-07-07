@@ -9,6 +9,8 @@ interface CounselorData {
   slug: string
   designation: string
   image?: (string | null) | Media
+  email?: string | null
+  phone?: string | null
   specializations?: { specialization?: { slug?: string | null; name?: string | null } | string | null; id?: string | null }[] | null
   experience?: number | null
 }
@@ -89,6 +91,12 @@ export function CounselorFilter({ counselors, specializations }: CounselorFilter
                   <p className="mt-1 text-xs text-primary-navy/70 font-medium">
                     {counselor.experience} years experience
                   </p>
+                )}
+                {counselor.email && (
+                  <p className="mt-1 text-xs text-muted-foreground">{counselor.email}</p>
+                )}
+                {counselor.phone && (
+                  <p className="text-xs text-muted-foreground">{counselor.phone}</p>
                 )}
                 {counselor.specializations && counselor.specializations.length > 0 && (
                   <div className="mt-3 flex flex-wrap justify-center gap-1.5">

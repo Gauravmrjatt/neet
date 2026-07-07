@@ -5,6 +5,7 @@ export const Users: CollectionConfig = {
   slug: 'users',
   admin: {
     useAsTitle: 'name',
+    listSearchableFields: ['name', 'email', 'phone'],
   },
   auth: true,
   access: {

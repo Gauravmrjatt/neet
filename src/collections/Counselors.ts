@@ -23,15 +23,6 @@ export const Counselors: CollectionConfig = {
     delete: isAdminOrEditor,
   },
   hooks: {
-    afterRead: [
-      ({ doc, req: { user } }) => {
-        if (user?.role !== 'admin' && user?.role !== 'editor' && doc) {
-          delete doc.email
-          delete doc.phone
-        }
-        return doc
-      },
-    ],
     afterChange: [
       async ({ doc }) => {
         try {

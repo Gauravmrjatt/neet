@@ -9,6 +9,8 @@ interface CounsellorData {
   slug?: string
   designation?: string
   image?: (string | null) | Media
+  email?: string | null
+  phone?: string | null
   specializations?: { specialization?: { slug?: string | null; name?: string | null } | string | null; id?: string | null }[] | null
 }
 
@@ -53,6 +55,12 @@ export function CounsellorBlock({ title, subtitle, counsellors }: CounsellorBloc
                 <h3 className="mt-4 text-lg font-semibold">{counsellor.name}</h3>
                 {counsellor.designation && (
                   <p className="text-sm text-muted-foreground">{counsellor.designation}</p>
+                )}
+                {counsellor.email && (
+                  <p className="mt-1 text-xs text-muted-foreground">{counsellor.email}</p>
+                )}
+                {counsellor.phone && (
+                  <p className="text-xs text-muted-foreground">{counsellor.phone}</p>
                 )}
                 {counsellor.specializations && counsellor.specializations.length > 0 && (
                   <div className="mt-3 flex flex-wrap justify-center gap-2">
