@@ -35,13 +35,17 @@ export const getCounsellingPosts = cache(async ({
     if (stateId) where.state = { equals: stateId }
   }
 
-  return payload.find({
-    collection: 'counselling',
-    where,
-    limit,
-    page,
-    sort,
-  })
+  try {
+    return await payload.find({
+      collection: 'counselling',
+      where,
+      limit,
+      page,
+      sort,
+    })
+  } catch {
+    return { docs: [], totalDocs: 0, totalPages: 0, page }
+  }
 })
 
 export const getCounsellingPostBySlug = cache(async (slug: string) => {
