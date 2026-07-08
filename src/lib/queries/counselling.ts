@@ -12,7 +12,7 @@ async function resolveStateId(slug: string): Promise<string | null> {
   return result.docs[0]?.id || null
 }
 
-export const getCounsellingPosts = cache(async ({
+export async function getCounsellingPosts({
   limit = 12,
   page = 1,
   category,
@@ -26,7 +26,7 @@ export const getCounsellingPosts = cache(async ({
   state?: string
   status?: 'draft' | 'published'
   sort?: string
-} = {}) => {
+} = {}) {
   const payload = await getPayloadClient()
   const where: Record<string, any> = { status: { equals: status } }
   if (category) where.category = { equals: category }
@@ -46,7 +46,7 @@ export const getCounsellingPosts = cache(async ({
   } catch {
     return { docs: [], totalDocs: 0, totalPages: 0, page }
   }
-})
+}
 
 export const getCounsellingPostBySlug = cache(async (slug: string) => {
   const payload = await getPayloadClient()

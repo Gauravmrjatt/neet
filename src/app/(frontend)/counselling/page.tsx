@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { getCounsellingPosts } from '@/lib/queries'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { generateBreadcrumbSchema } from '@/lib/structured-data'
@@ -37,13 +38,21 @@ export default async function CounsellingPage({
 }: {
   searchParams: Promise<{ page?: string; category?: string }>
 }) {
-  const { page: pageParam, category } = await searchParams
-  const currentPage = parseInt(pageParam || '1', 10)
-  const { docs: posts, totalPages } = await getCounsellingPosts({
-    page: currentPage,
-    limit: 12,
-    category: category || undefined,
-  })
+  let posts: any[] = []
+  let totalPages = 0
+  let currentPage = 1
+
+  try {
+    const params = await searchParams
+    currentPage = parseInt(params.page || '1', 10)
+    const result = await getCounsellingPosts({
+      page: currentPage,
+      limit: 12,
+      category: params.category || undefined,
+    })
+    posts = result.docs || []
+    totalPages = result.totalPages || 0
+  } catch {}
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'
   const pageSeo = await getPageSeoByPath('/counselling')
@@ -68,7 +77,9 @@ export default async function CounsellingPage({
       </Section>
       <Section tone="cream" className="relative pt-0">
         <Container>
-          <CounsellingFilter />
+          <Suspense fallback={<div className="flex flex-wrap gap-2 mb-8"><div className="h-9 w-24 rounded-full bg-muted animate-pulse" /><div className="h-9 w-28 rounded-full bg-muted animate-pulse" /><div className="h-9 w-24 rounded-full bg-muted animate-pulse" /></div>}>
+            <CounsellingFilter />
+          </Suspense>
           {posts.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {posts.map((post: any) => (
