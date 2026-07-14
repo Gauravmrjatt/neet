@@ -21,13 +21,9 @@ export const PageHero = memo(function PageHero({ title, subtitle, badge }: PageH
             {badge}
           </span>
         )}
-        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
-          {title}
-        </h1>
+        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">{title}</h1>
         {subtitle && (
-          <p className="mx-auto mt-4 max-w-2xl text-base sm:text-lg text-white/70">
-            {subtitle}
-          </p>
+          <p className="mx-auto mt-4 max-w-2xl text-base sm:text-lg text-white/70">{subtitle}</p>
         )}
       </Container>
     </section>
