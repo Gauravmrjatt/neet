@@ -55,7 +55,8 @@ export async function POST(request: Request) {
       slug = `${slug}-${Date.now()}`
     }
 
-    const editorConfig = await editorConfigFactory.default({
+    const editorConfig = await editorConfigFactory.fromEditor({
+      editor: payload.config.editor as any,
       config: payload.config,
     })
 
