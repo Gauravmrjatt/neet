@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { convertHTMLToLexical } from '@payloadcms/richtext-lexical'
-import { editorConfigFactory } from '@payloadcms/richtext-lexical'
+import { convertHTMLToLexical, editorConfigFactory, EXPERIMENTAL_TableFeature, defaultEditorFeatures } from '@payloadcms/richtext-lexical'
 import { JSDOM } from 'jsdom'
 
 function slugify(text: string): string {
@@ -55,9 +54,12 @@ export async function POST(request: Request) {
       slug = `${slug}-${Date.now()}`
     }
 
-    const editorConfig = await editorConfigFactory.fromEditor({
-      editor: payload.config.editor as any,
+    const editorConfig = await editorConfigFactory.fromFeatures({
       config: payload.config,
+      features: [
+        ...defaultEditorFeatures,
+        EXPERIMENTAL_TableFeature(),
+      ],
     })
 
     const cleanHtml = stripImgTags(htmlContent)
