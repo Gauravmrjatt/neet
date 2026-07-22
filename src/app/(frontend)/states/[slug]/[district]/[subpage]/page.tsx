@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: content.seo.metaTitle,
       description: content.seo.metaDescription || undefined,
       path: `/states/${state.slug}/${district.slug}/${subpage}`,
-      noIndex: content.seo.noIndex || undefined,
+      noIndex: true,
     })
   }
 
@@ -74,6 +74,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: tpl.metaTitle,
       description: tpl.metaDescription,
       path: `/states/${state.slug}/${district.slug}/${subpage}`,
+      noIndex: true,
     })
   }
 
@@ -81,6 +82,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${SUBPAGE_LABELS[subpage]} for ${district.name}, ${state.name} ${new Date().getFullYear()}`,
     description: `Learn about ${SUBPAGE_LABELS[subpage].toLowerCase()} for NEET counselling in ${district.name}, ${state.name}.`,
     path: `/states/${state.slug}/${district.slug}/${subpage}`,
+    noIndex: true,
   })
 }
 

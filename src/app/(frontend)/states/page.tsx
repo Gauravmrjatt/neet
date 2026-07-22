@@ -17,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: 'State-Wise NEET Counselling 2026 — District Guides for All States',
     description: 'Find NEET counselling information for every state and district in India. Get district-specific cutoff, fees, college lists, and counselling process guides.',
     path: '/states',
+    noIndex: true,
   })
 }
 

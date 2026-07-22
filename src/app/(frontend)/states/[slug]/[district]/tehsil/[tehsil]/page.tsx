@@ -75,6 +75,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description,
     keywords,
     path,
+    noIndex: true,
   })
 }
 

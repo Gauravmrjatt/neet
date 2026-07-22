@@ -64,6 +64,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       `state counselling ${state.name}`,
     ],
     path: `/states/${state.slug}/${district.slug}`,
+    noIndex: true,
   })
 }
 
