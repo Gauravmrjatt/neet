@@ -215,5 +215,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }).filter((x): x is NonNullable<typeof x> => x != null)
 
-  return [...staticPages, ...newStaticPages, ...predictorSlugPages, ...blogPages, ...cmsPages, ...videoPages, ...counsellingPages, ...statePages, ...collegePages, ...cityPages, ...stateDistrictPages, ...districtHubPages, ...districtSubpages, ...tehsilPages]
+  return [...staticPages, ...newStaticPages, ...predictorSlugPages, ...blogPages, ...cmsPages, ...videoPages, ...counsellingPages, ...statePages, ...collegePages, ...cityPages]
 }
