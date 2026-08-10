@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor } from '../access/roles'
+import { can, canPublish } from '../access/permissions'
 
 const DISTRICT_PAGE_TYPES = [
   { label: 'NEET Counselling', value: 'neet-counselling' },
@@ -29,6 +29,14 @@ export const DistrictContent: CollectionConfig = {
     defaultColumns: ['district', 'type', 'status', 'generatedAt'],
   },
   hooks: {
+    beforeChange: [
+      async ({ data, req }) => {
+        if (!data || !req.user) return data
+        if (await canPublish(req)) return data
+        data.status = 'draft'
+        return data
+      },
+    ],
     afterChange: [
       async ({ doc }) => {
         try {
@@ -45,9 +53,9 @@ export const DistrictContent: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    create: can('district-content').create,
+    update: can('district-content').update,
+    delete: can('district-content').delete,
   },
   fields: [
     {
@@ -129,6 +137,10 @@ export const DistrictContent: CollectionConfig = {
       ],
       defaultValue: 'published',
       required: true,
+      access: {
+        read: async ({ req }) => canPublish(req),
+        update: async ({ req }) => canPublish(req),
+      },
       admin: {
         position: 'sidebar',
       },

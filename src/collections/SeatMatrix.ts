@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const SeatMatrix: CollectionConfig = {
   slug: 'seat-matrix',
@@ -10,9 +10,9 @@ export const SeatMatrix: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    create: can('seat-matrix').create,
+    update: can('seat-matrix').update,
+    delete: can('seat-matrix').delete,
   },
   fields: [
     {

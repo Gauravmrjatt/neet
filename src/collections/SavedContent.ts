@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor, publishedOrAdmin } from '../access/roles'
+import { can, publishedOrAdmin } from '../access/permissions'
 
 export const SavedContent: CollectionConfig = {
   slug: 'saved-content',
@@ -9,10 +9,10 @@ export const SavedContent: CollectionConfig = {
     description: 'Reusable content blocks that can be inserted into pages, blogs, and guides',
   },
   access: {
-    read: publishedOrAdmin,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    read: publishedOrAdmin('saved-content'),
+    create: can('saved-content').create,
+    update: can('saved-content').update,
+    delete: can('saved-content').delete,
   },
   hooks: {
     afterChange: [

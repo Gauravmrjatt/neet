@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor, anyone } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const PricingCards: CollectionConfig = {
   slug: 'pricing-cards',
@@ -8,9 +9,9 @@ export const PricingCards: CollectionConfig = {
   },
   access: {
     read: anyone,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    create: can('pricing-cards').create,
+    update: can('pricing-cards').update,
+    delete: can('pricing-cards').delete,
   },
   fields: [
     {

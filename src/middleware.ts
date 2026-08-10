@@ -81,7 +81,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
 
-    if (role !== 'admin') {
+    if (role !== 'admin' && role !== 'editor') {
       authLog('decision', { pathname, role, action: 'redirect', to: '/my-plan' })
       return NextResponse.redirect(new URL('/my-plan', request.url))
     }

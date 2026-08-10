@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor, publishedOrAdmin } from '../access/roles'
+import { can, publishedOrAdmin, canPublish } from '../access/permissions'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -10,6 +10,15 @@ export const Pages: CollectionConfig = {
     drafts: true,
   },
   hooks: {
+    beforeChange: [
+      async ({ data, req }) => {
+        if (!data || !req.user) return data
+        if (await canPublish(req)) return data
+        data.status = 'draft'
+        if (data._status === 'published') data._status = 'draft'
+        return data
+      },
+    ],
     afterChange: [
       async ({ doc }) => {
         try {
@@ -22,10 +31,10 @@ export const Pages: CollectionConfig = {
     ],
   },
   access: {
-    read: publishedOrAdmin,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    read: publishedOrAdmin('pages'),
+    create: can('pages').create,
+    update: can('pages').update,
+    delete: can('pages').delete,
   },
   fields: [
     {
@@ -207,6 +216,10 @@ export const Pages: CollectionConfig = {
       ],
       defaultValue: 'draft',
       required: true,
+      access: {
+        read: async ({ req }) => canPublish(req),
+        update: async ({ req }) => canPublish(req),
+      },
       admin: {
         position: 'sidebar',
       },

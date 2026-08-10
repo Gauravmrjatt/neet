@@ -1,10 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor } from '../access/roles'
-
-const canReadLiveCounselling = ({ req: { user } }: { req: { user: any } }) => {
-  if (user?.role === 'admin' || user?.role === 'editor') return true
-  return true
-}
+import { can, hasPermission } from '../access/permissions'
 
 export const LiveCounselling: CollectionConfig = {
   slug: 'live-counselling',
@@ -12,15 +7,21 @@ export const LiveCounselling: CollectionConfig = {
     useAsTitle: 'title',
   },
   access: {
-    read: canReadLiveCounselling,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    read: async ({ req }) => {
+      if (req.user) {
+        return hasPermission(req, 'live-counselling', 'read')
+      }
+      return true
+    },
+    create: can('live-counselling').create,
+    update: can('live-counselling').update,
+    delete: can('live-counselling').delete,
   },
   hooks: {
     afterRead: [
-      ({ doc, req: { user } }) => {
-        if (user?.role !== 'admin' && user?.role !== 'editor' && doc) {
+      async ({ doc, req }) => {
+        const canReadUrl = req.user ? await hasPermission(req, 'live-counselling', 'read') : false
+        if (!canReadUrl && doc) {
           delete doc.meetingUrl
         }
         return doc

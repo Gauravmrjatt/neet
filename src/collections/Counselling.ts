@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor, publishedOrAdmin } from '../access/roles'
+import { can, publishedOrAdmin, canPublish } from '../access/permissions'
 
 function formatSlug(val: string): string {
   return val
@@ -27,6 +27,13 @@ export const Counselling: CollectionConfig = {
           data.slug = formatSlug(data.slug)
         }
       },
+      async ({ data, req }) => {
+        if (!data || !req.user) return data
+        if (await canPublish(req)) return data
+        data.status = 'draft'
+        if (data._status === 'published') data._status = 'draft'
+        return data
+      },
     ],
     afterChange: [
       async ({ doc }) => {
@@ -40,10 +47,10 @@ export const Counselling: CollectionConfig = {
     ],
   },
   access: {
-    read: publishedOrAdmin,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    read: publishedOrAdmin('counselling'),
+    create: can('counselling').create,
+    update: can('counselling').update,
+    delete: can('counselling').delete,
   },
   fields: [
     {
@@ -319,6 +326,10 @@ export const Counselling: CollectionConfig = {
       ],
       defaultValue: 'draft',
       required: true,
+      access: {
+        read: async ({ req }) => canPublish(req),
+        update: async ({ req }) => canPublish(req),
+      },
       admin: {
         position: 'sidebar',
       },

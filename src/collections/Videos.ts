@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor, publishedOrAdmin } from '../access/roles'
+import { can, publishedOrAdmin, canPublish } from '../access/permissions'
 
 function formatSlug(val: string): string {
   return val
@@ -26,6 +26,13 @@ export const Videos: CollectionConfig = {
           data.slug = formatSlug(data.slug)
         }
       },
+      async ({ data, req }) => {
+        if (!data || !req.user) return data
+        if (await canPublish(req)) return data
+        data.status = 'draft'
+        if (data._status === 'published') data._status = 'draft'
+        return data
+      },
     ],
     afterChange: [
       async ({ doc }) => {
@@ -39,10 +46,10 @@ export const Videos: CollectionConfig = {
     ],
   },
   access: {
-    read: publishedOrAdmin,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    read: publishedOrAdmin('videos'),
+    create: can('videos').create,
+    update: can('videos').update,
+    delete: can('videos').delete,
   },
   fields: [
     {
@@ -108,6 +115,10 @@ export const Videos: CollectionConfig = {
       ],
       defaultValue: 'draft',
       required: true,
+      access: {
+        read: async ({ req }) => canPublish(req),
+        update: async ({ req }) => canPublish(req),
+      },
       admin: {
         position: 'sidebar',
       },

@@ -1,12 +1,13 @@
 import type { CollectionConfig } from 'payload'
-import { anyone, isAdmin, isAdminOrEditor } from '../access/roles'
+import { anyone, isAdmin } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
     read: anyone,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
+    create: can('media').create,
+    update: can('media').update,
     delete: isAdmin,
   },
   upload: true,

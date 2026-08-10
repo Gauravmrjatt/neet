@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor } from '../access/roles'
+import { can } from '../access/permissions'
 
 function formatSlug(val: string): string {
   return val
@@ -38,9 +38,9 @@ export const States: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    create: can('states').create,
+    update: can('states').update,
+    delete: can('states').delete,
   },
   fields: [
     {

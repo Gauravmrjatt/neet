@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const CutoffRecords: CollectionConfig = {
   slug: 'cutoff-records',
@@ -10,9 +10,9 @@ export const CutoffRecords: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    create: can('cutoff-records').create,
+    update: can('cutoff-records').update,
+    delete: can('cutoff-records').delete,
   },
   fields: [
     {

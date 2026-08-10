@@ -1,5 +1,7 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, FieldAccess } from 'payload'
 import { isAdmin, isAdminOrSelf, anyone } from '../access/roles'
+
+const isAdminField: FieldAccess = ({ req: { user } }) => user?.role === 'admin'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -53,6 +55,87 @@ export const Users: CollectionConfig = {
       admin: {
         position: 'sidebar',
       },
+    },
+    {
+      name: 'permissions',
+      type: 'group',
+      label: 'Content Permissions',
+      admin: {
+        description:
+          'Leave empty to keep legacy role behavior (editor = full content access + publish). Once any collection access is added, the user is limited to exactly what is granted here.',
+      },
+      access: {
+        read: isAdminField,
+        create: isAdminField,
+        update: isAdminField,
+      },
+      fields: [
+        {
+          name: 'publish',
+          type: 'checkbox',
+          label: 'Can publish / set status to published',
+          defaultValue: false,
+        },
+        {
+          name: 'collections',
+          type: 'array',
+          label: 'Collection Access',
+          admin: {
+            components: {
+              RowLabel: '/components/admin/PermissionRowLabel#PermissionRowLabel',
+            },
+          },
+          fields: [
+            {
+              name: 'slug',
+              type: 'select',
+              required: true,
+              options: [
+                { label: 'Blogs', value: 'blogs' },
+                { label: 'Pages', value: 'pages' },
+                { label: 'Videos', value: 'videos' },
+                { label: 'Counselling', value: 'counselling' },
+                { label: 'Counselors', value: 'counselors' },
+                { label: 'Helpdesk', value: 'helpdesk' },
+                { label: 'Live Counselling', value: 'live-counselling' },
+                { label: 'Pricing Cards', value: 'pricing-cards' },
+                { label: 'Media', value: 'media' },
+                { label: 'Colleges', value: 'colleges' },
+                { label: 'Cutoff Records', value: 'cutoff-records' },
+                { label: 'Seat Matrix', value: 'seat-matrix' },
+                { label: 'Specializations', value: 'specializations' },
+                { label: 'States', value: 'states' },
+                { label: 'Districts', value: 'districts' },
+                { label: 'District Content', value: 'district-content' },
+                { label: 'Tehsils', value: 'tehsils' },
+                { label: 'Bonds', value: 'bonds' },
+                { label: 'Stipends', value: 'stipends' },
+                { label: 'Saved Content', value: 'saved-content' },
+              ],
+            },
+            {
+              name: 'create',
+              type: 'checkbox',
+              label: 'Add',
+            },
+            {
+              name: 'read',
+              type: 'checkbox',
+              label: 'Read',
+            },
+            {
+              name: 'update',
+              type: 'checkbox',
+              label: 'Edit',
+            },
+            {
+              name: 'delete',
+              type: 'checkbox',
+              label: 'Delete',
+            },
+          ],
+        },
+      ],
     },
     {
       name: 'avatar',

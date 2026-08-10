@@ -196,6 +196,42 @@ export interface User {
   name?: string | null;
   phone?: string | null;
   role: 'admin' | 'editor' | 'user';
+  /**
+   * Leave empty to keep legacy role behavior (editor = full content access + publish). Once any collection access is added, the user is limited to exactly what is granted here.
+   */
+  permissions?: {
+    publish?: boolean | null;
+    collections?:
+      | {
+          slug:
+            | 'blogs'
+            | 'pages'
+            | 'videos'
+            | 'counselling'
+            | 'counselors'
+            | 'helpdesk'
+            | 'live-counselling'
+            | 'pricing-cards'
+            | 'media'
+            | 'colleges'
+            | 'cutoff-records'
+            | 'seat-matrix'
+            | 'specializations'
+            | 'states'
+            | 'districts'
+            | 'district-content'
+            | 'tehsils'
+            | 'bonds'
+            | 'stipends'
+            | 'saved-content';
+          create?: boolean | null;
+          read?: boolean | null;
+          update?: boolean | null;
+          delete?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   avatar?: (string | null) | Media;
   /**
    * Lifetime total prediction credits added via purchases
@@ -2028,6 +2064,21 @@ export interface UsersSelect<T extends boolean = true> {
   name?: T;
   phone?: T;
   role?: T;
+  permissions?:
+    | T
+    | {
+        publish?: T;
+        collections?:
+          | T
+          | {
+              slug?: T;
+              create?: T;
+              read?: T;
+              update?: T;
+              delete?: T;
+              id?: T;
+            };
+      };
   avatar?: T;
   predictionCredits?: T;
   predictionCreditsRemaining?: T;

@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrEditor } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const Specializations: CollectionConfig = {
   slug: 'specializations',
@@ -8,9 +8,9 @@ export const Specializations: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    create: can('specializations').create,
+    update: can('specializations').update,
+    delete: can('specializations').delete,
   },
   fields: [
     {
