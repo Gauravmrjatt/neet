@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
-import { isAdminOrEditor, anyone } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 const iconOptions = [
   { label: 'Award', value: 'Award' },
@@ -27,7 +28,7 @@ export const AboutPage: GlobalConfig = {
   },
   access: {
     read: anyone,
-    update: isAdminOrEditor,
+    update: can('about-page').update,
   },
   admin: {
     description: 'Content for the /about page',

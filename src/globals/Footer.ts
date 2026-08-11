@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
-import { isAdmin, anyone } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 function validateUrl(value: string | null | undefined) {
   if (!value || typeof value !== 'string') return true
@@ -22,7 +23,7 @@ export const Footer: GlobalConfig = {
   },
   access: {
     read: anyone,
-    update: isAdmin,
+    update: can('footer').update,
   },
   fields: [
     {

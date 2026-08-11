@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
-import { anyone, isAdmin } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const WhyChooseUs: GlobalConfig = {
   slug: 'why-choose-us',
@@ -13,7 +14,7 @@ export const WhyChooseUs: GlobalConfig = {
   },
   access: {
     read: anyone,
-    update: isAdmin,
+    update: can('why-choose-us').update,
   },
   fields: [
     {

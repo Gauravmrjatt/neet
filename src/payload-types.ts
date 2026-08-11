@@ -223,7 +223,22 @@ export interface User {
             | 'tehsils'
             | 'bonds'
             | 'stipends'
-            | 'saved-content';
+            | 'saved-content'
+            | 'subscriptions'
+            | 'transactions'
+            | 'contact-submissions'
+            | 'header'
+            | 'footer'
+            | 'site-settings'
+            | 'home-page-seo'
+            | 'news-ticker'
+            | 'about-page'
+            | 'predictor-page'
+            | 'pricing-page'
+            | 'why-choose-us'
+            | 'video-categories'
+            | 'testimonials'
+            | 'page-seo';
           create?: boolean | null;
           read?: boolean | null;
           update?: boolean | null;

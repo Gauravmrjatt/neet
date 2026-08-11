@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
-import { isAdmin, anyone } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const HomePageSEO: GlobalConfig = {
   slug: 'home-page-seo',
@@ -13,7 +14,7 @@ export const HomePageSEO: GlobalConfig = {
   },
   access: {
     read: anyone,
-    update: isAdmin,
+    update: can('home-page-seo').update,
   },
   fields: [
     {

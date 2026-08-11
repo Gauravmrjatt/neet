@@ -1,11 +1,12 @@
 import type { GlobalConfig } from 'payload'
-import { isAdmin, anyone } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const VideoCategories: GlobalConfig = {
   slug: 'video-categories',
   access: {
     read: anyone,
-    update: isAdmin,
+    update: can('video-categories').update,
   },
   fields: [
     {

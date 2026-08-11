@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
-import { isAdminOrEditor, anyone } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const PredictorPage: GlobalConfig = {
   slug: 'predictor-page',
@@ -13,7 +14,7 @@ export const PredictorPage: GlobalConfig = {
   },
   access: {
     read: anyone,
-    update: isAdminOrEditor,
+    update: can('predictor-page').update,
   },
   admin: {
     description: 'Content for the /predictor page',

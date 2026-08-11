@@ -22,6 +22,41 @@ export type PermissionedUser = {
 }
 
 /**
+ * Collections that were historically gated by `isAdminOrEditor`.
+ * The legacy 'editor' fallback only applies to these — sensitive
+ * collections (users, subscriptions, transactions, contact-submissions)
+ * never fall back so old editors cannot silently gain access to them.
+ */
+export const LEGACY_CONTENT_SLUGS = [
+  'blogs',
+  'pages',
+  'videos',
+  'counselling',
+  'counselors',
+  'helpdesk',
+  'live-counselling',
+  'pricing-cards',
+  'media',
+  'colleges',
+  'cutoff-records',
+  'seat-matrix',
+  'specializations',
+  'states',
+  'districts',
+  'district-content',
+  'tehsils',
+  'bonds',
+  'stipends',
+  'saved-content',
+]
+
+/**
+ * Globals that were historically gated by `isAdminOrEditor` on update.
+ * Same legacy-editor fallback semantics as LEGACY_CONTENT_SLUGS.
+ */
+export const LEGACY_GLOBAL_SLUGS = ['about-page', 'predictor-page', 'page-seo', 'pricing-page']
+
+/**
  * A user is considered "explicitly configured" once the permissions
  * group contains a collections array (even an empty one). Explicitly
  * configured users are granted exactly what is listed — no legacy
@@ -68,7 +103,11 @@ export function userHasPermission(
     )
   }
   // Legacy fallback: pre-existing 'editor' users keep full content access
-  return user.role === 'editor'
+  // to the collections/globals they could manage before, and nothing else.
+  return (
+    user.role === 'editor' &&
+    (LEGACY_CONTENT_SLUGS.includes(collectionSlug) || LEGACY_GLOBAL_SLUGS.includes(collectionSlug))
+  )
 }
 
 export function userCanPublish(user: PermissionedUser | null): boolean {
@@ -131,4 +170,26 @@ export const statusFilteredOrAdmin = (
       equals: statusValue,
     },
   }
+}
+
+/**
+ * Returns the subset of the given slugs the current user is allowed to
+ * perform `operation` on. Fetches the user from the DB once (single
+ * query) and evaluates against every slug, so it is safe to use for
+ * admin nav filtering. Admins always get the full list.
+ */
+export async function getPermittedSlugs(
+  req: PayloadRequest,
+  slugs: string[],
+  operation: PermissionOperation,
+): Promise<string[]> {
+  const user = await freshUser(req)
+  return slugs.filter((slug) => userHasPermission(user, slug, operation))
+}
+
+export async function getReadableCollectionSlugs(
+  req: PayloadRequest,
+  slugs: string[],
+): Promise<string[]> {
+  return getPermittedSlugs(req, slugs, 'read')
 }

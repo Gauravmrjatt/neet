@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
-import { isAdminOrEditor, anyone } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 const iconOptions = [
   { label: 'Award', value: 'Award' },
@@ -30,7 +31,7 @@ export const PricingPage: GlobalConfig = {
   },
   access: {
     read: anyone,
-    update: isAdminOrEditor,
+    update: can('pricing-page').update,
   },
   admin: {
     description: 'Content for the /pricing page',

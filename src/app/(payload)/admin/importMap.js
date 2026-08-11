@@ -1,3 +1,4 @@
+import { PermissionRowLabel as PermissionRowLabel_2aad346eb5e12c6ee690c795b76ce94c } from '../../../components/admin/PermissionRowLabel'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -25,10 +26,12 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { CommaSeparatedArray as CommaSeparatedArray_2eddec068aea4a032989a63154647f5e } from '../../../components/admin/CommaSeparatedArray'
 import { VideoCategorySelect as VideoCategorySelect_30092777e3df1478827bafcb3dd82534 } from '../../../components/admin/VideoCategorySelect'
 import { PageJsonImporter as PageJsonImporter_afba2da8ea527f283e93655f6863c41a } from '../../../components/admin/PageJsonImporter'
+import { PayloadNav as PayloadNav_965175d01b56876a09418037afb35340 } from '../../../components/admin/Nav'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
 export const importMap = {
+  "/components/admin/PermissionRowLabel#PermissionRowLabel": PermissionRowLabel_2aad346eb5e12c6ee690c795b76ce94c,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#LexicalDiffComponent": LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -56,5 +59,6 @@ export const importMap = {
   "/components/admin/CommaSeparatedArray#CommaSeparatedArray": CommaSeparatedArray_2eddec068aea4a032989a63154647f5e,
   "/components/admin/VideoCategorySelect#VideoCategorySelect": VideoCategorySelect_30092777e3df1478827bafcb3dd82534,
   "/components/admin/PageJsonImporter#PageJsonImporter": PageJsonImporter_afba2da8ea527f283e93655f6863c41a,
+  "/components/admin/Nav#PayloadNav": PayloadNav_965175d01b56876a09418037afb35340,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

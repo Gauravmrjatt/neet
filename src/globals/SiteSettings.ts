@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
-import { isAdmin, anyone } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -13,7 +14,7 @@ export const SiteSettings: GlobalConfig = {
   },
   access: {
     read: anyone,
-    update: isAdmin,
+    update: can('site-settings').update,
   },
   fields: [
     {

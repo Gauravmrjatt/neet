@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
-import { isAdmin, anyone } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const NewsTicker: GlobalConfig = {
   slug: 'news-ticker',
@@ -13,7 +14,7 @@ export const NewsTicker: GlobalConfig = {
   },
   access: {
     read: anyone,
-    update: isAdmin,
+    update: can('news-ticker').update,
   },
   fields: [
     {

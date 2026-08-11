@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin } from '../access/roles'
+import { can, hasPermission } from '../access/permissions'
 
 export const Transactions: CollectionConfig = {
   slug: 'transactions',
@@ -9,14 +9,14 @@ export const Transactions: CollectionConfig = {
     description: 'Tracks Razorpay payment transactions',
   },
   access: {
-    read: ({ req: { user } }) => {
-      if (!user) return false
-      if (user.role === 'admin' || user.role === 'editor') return true
-      return { user: { equals: user.id } }
+    read: async ({ req }) => {
+      if (!req.user) return false
+      if (await hasPermission(req, 'transactions', 'read')) return true
+      return { user: { equals: req.user.id } }
     },
     create: () => false,
-    update: isAdmin,
-    delete: isAdmin,
+    update: can('transactions').update,
+    delete: can('transactions').delete,
   },
   fields: [
     {

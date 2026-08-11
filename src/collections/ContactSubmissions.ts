@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
-import { anyone, isAdmin } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 export const ContactSubmissions: CollectionConfig = {
   slug: 'contact-submissions',
@@ -7,10 +8,10 @@ export const ContactSubmissions: CollectionConfig = {
     useAsTitle: 'name',
   },
   access: {
-    read: isAdmin,
+    read: can('contact-submissions').read,
     create: anyone,
-    update: isAdmin,
-    delete: isAdmin,
+    update: can('contact-submissions').update,
+    delete: can('contact-submissions').delete,
   },
   fields: [
     {

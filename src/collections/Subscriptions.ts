@@ -1,12 +1,12 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin } from '../access/roles'
+import { can, hasPermission } from '../access/permissions'
 
-const canRead = ({ req: { user } }: { req: { user: any } }) => {
-  if (!user) return false
-  if (user.role === 'admin' || user.role === 'editor') return true
+const canRead = async ({ req }: { req: any }) => {
+  if (!req.user) return false
+  if (await hasPermission(req, 'subscriptions', 'read')) return true
   return {
     user: {
-      equals: user.id,
+      equals: req.user.id,
     },
   }
 }
@@ -25,8 +25,8 @@ export const Subscriptions: CollectionConfig = {
   access: {
     read: canRead,
     create: canCreate,
-    update: isAdmin,
-    delete: isAdmin,
+    update: can('subscriptions').update,
+    delete: can('subscriptions').delete,
   },
   hooks: {
     beforeChange: [

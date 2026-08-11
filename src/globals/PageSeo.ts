@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
-import { isAdminOrEditor, anyone } from '../access/roles'
+import { anyone } from '../access/roles'
+import { can } from '../access/permissions'
 
 const PAGE_OPTIONS = [
   { label: 'Blog Listing', value: '/blog' },
@@ -28,7 +29,7 @@ export const PageSeo: GlobalConfig = {
   },
   access: {
     read: anyone,
-    update: isAdminOrEditor,
+    update: can('page-seo').update,
   },
   admin: {
     description: 'SEO metadata for listing/index pages that do not have their own collection or global. Set breadcrumb labels and meta tags for each route.',
