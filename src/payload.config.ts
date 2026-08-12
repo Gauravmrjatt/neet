@@ -54,6 +54,11 @@ export default buildConfig({
     },
     components: {
       Nav: '/components/admin/Nav#PayloadNav',
+      views: {
+        dashboard: {
+          Component: '/components/admin/Dashboard#PermissionAwareDashboard',
+        },
+      },
     },
   },
   collections: [

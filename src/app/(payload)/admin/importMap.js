@@ -27,6 +27,7 @@ import { CommaSeparatedArray as CommaSeparatedArray_2eddec068aea4a032989a6315464
 import { VideoCategorySelect as VideoCategorySelect_30092777e3df1478827bafcb3dd82534 } from '../../../components/admin/VideoCategorySelect'
 import { PageJsonImporter as PageJsonImporter_afba2da8ea527f283e93655f6863c41a } from '../../../components/admin/PageJsonImporter'
 import { PayloadNav as PayloadNav_965175d01b56876a09418037afb35340 } from '../../../components/admin/Nav'
+import { PermissionAwareDashboard as PermissionAwareDashboard_16b88e9b8c48e393fa86591406efd08f } from '../../../components/admin/Dashboard'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -60,5 +61,6 @@ export const importMap = {
   "/components/admin/VideoCategorySelect#VideoCategorySelect": VideoCategorySelect_30092777e3df1478827bafcb3dd82534,
   "/components/admin/PageJsonImporter#PageJsonImporter": PageJsonImporter_afba2da8ea527f283e93655f6863c41a,
   "/components/admin/Nav#PayloadNav": PayloadNav_965175d01b56876a09418037afb35340,
+  "/components/admin/Dashboard#PermissionAwareDashboard": PermissionAwareDashboard_16b88e9b8c48e393fa86591406efd08f,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
