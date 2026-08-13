@@ -1,10 +1,11 @@
 import type { CollectionConfig } from 'payload'
-import { can, hasPermission } from '../access/permissions'
+import { can, hasPermission, hiddenForCollection } from '../access/permissions'
 
 export const LiveCounselling: CollectionConfig = {
   slug: 'live-counselling',
   admin: {
     useAsTitle: 'title',
+    ...hiddenForCollection('live-counselling'),
   },
   access: {
     read: async ({ req }) => {

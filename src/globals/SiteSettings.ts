@@ -1,9 +1,12 @@
 import type { GlobalConfig } from 'payload'
 import { anyone } from '../access/roles'
-import { can } from '../access/permissions'
+import { can, hiddenForGlobal } from '../access/permissions'
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
+  admin: {
+    ...hiddenForGlobal('site-settings'),
+  },
   hooks: {
     afterChange: [
       async () => {

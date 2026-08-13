@@ -1,11 +1,12 @@
 import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/roles'
-import { can } from '../access/permissions'
+import { can, hiddenForCollection } from '../access/permissions'
 
 export const PricingCards: CollectionConfig = {
   slug: 'pricing-cards',
   admin: {
     useAsTitle: 'planName',
+    ...hiddenForCollection('pricing-cards'),
   },
   access: {
     read: anyone,

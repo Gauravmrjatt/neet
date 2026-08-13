@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { anyone } from '../access/roles'
-import { can } from '../access/permissions'
+import { can, hiddenForGlobal } from '../access/permissions'
 
 const PAGE_OPTIONS = [
   { label: 'Blog Listing', value: '/blog' },
@@ -33,6 +33,7 @@ export const PageSeo: GlobalConfig = {
   },
   admin: {
     description: 'SEO metadata for listing/index pages that do not have their own collection or global. Set breadcrumb labels and meta tags for each route.',
+    ...hiddenForGlobal('page-seo'),
   },
   fields: [
     {

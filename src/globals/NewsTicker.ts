@@ -1,9 +1,12 @@
 import type { GlobalConfig } from 'payload'
 import { anyone } from '../access/roles'
-import { can } from '../access/permissions'
+import { can, hiddenForGlobal } from '../access/permissions'
 
 export const NewsTicker: GlobalConfig = {
   slug: 'news-ticker',
+  admin: {
+    ...hiddenForGlobal('news-ticker'),
+  },
   hooks: {
     afterChange: [
       async () => {

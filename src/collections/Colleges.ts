@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { can } from '../access/permissions'
+import { can, hiddenForCollection } from '../access/permissions'
 
 function formatSlug(val: string): string {
   return val
@@ -16,6 +16,7 @@ export const Colleges: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     group: 'Content',
+    ...hiddenForCollection('colleges'),
   },
   hooks: {
     beforeChange: [

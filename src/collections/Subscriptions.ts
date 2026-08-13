@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { can, hasPermission } from '../access/permissions'
+import { can, hasPermission, hiddenForCollection } from '../access/permissions'
 
 const canRead = async ({ req }: { req: any }) => {
   if (!req.user) return false
@@ -19,6 +19,7 @@ export const Subscriptions: CollectionConfig = {
   slug: 'subscriptions',
   admin: {
     useAsTitle: 'id',
+    ...hiddenForCollection('subscriptions'),
     defaultColumns: ['user', 'plan', 'status', 'transaction', 'assignedCounselor', 'assignedPage'],
     description: 'Tracks user plan purchases and admin assignments',
   },

@@ -1,11 +1,12 @@
 import type { CollectionConfig } from 'payload'
-import { can } from '../access/permissions'
+import { can, hiddenForCollection } from '../access/permissions'
 
 export const CutoffRecords: CollectionConfig = {
   slug: 'cutoff-records',
   admin: {
     useAsTitle: 'id',
     group: 'Content',
+    ...hiddenForCollection('cutoff-records'),
     defaultColumns: ['college', 'course', 'year', 'round', 'quota', 'category', 'closingRank'],
   },
   access: {

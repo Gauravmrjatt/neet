@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { anyone } from '../access/roles'
-import { can } from '../access/permissions'
+import { can, hiddenForGlobal } from '../access/permissions'
 
 const iconOptions = [
   { label: 'Award', value: 'Award' },
@@ -32,6 +32,7 @@ export const AboutPage: GlobalConfig = {
   },
   admin: {
     description: 'Content for the /about page',
+    ...hiddenForGlobal('about-page'),
   },
   fields: [
     {

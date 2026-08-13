@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { anyone } from '../access/roles'
-import { can } from '../access/permissions'
+import { can, hiddenForGlobal } from '../access/permissions'
 
 function validateUrl(value: string | null | undefined) {
   if (!value || typeof value !== 'string') return true
@@ -13,6 +13,9 @@ function validateUrl(value: string | null | undefined) {
 
 export const Header: GlobalConfig = {
   slug: 'header',
+  admin: {
+    ...hiddenForGlobal('header'),
+  },
   hooks: {
     afterChange: [
       async () => {

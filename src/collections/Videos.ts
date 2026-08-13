@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { can, publishedOrAdmin, canPublish } from '../access/permissions'
+import { can, publishedOrAdmin, canPublish, hiddenForCollection } from '../access/permissions'
 
 function formatSlug(val: string): string {
   return val
@@ -15,6 +15,7 @@ export const Videos: CollectionConfig = {
   slug: 'videos',
   admin: {
     useAsTitle: 'title',
+    ...hiddenForCollection('videos'),
   },
   versions: {
     drafts: true,

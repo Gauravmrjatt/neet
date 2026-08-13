@@ -1,5 +1,6 @@
 import type { CollectionConfig, FieldAccess } from 'payload'
 import { isAdmin, isAdminOrSelf, anyone } from '../access/roles'
+import { hiddenForCollection } from '../access/permissions'
 
 const isAdminField: FieldAccess = ({ req: { user } }) => user?.role === 'admin'
 
@@ -8,6 +9,7 @@ export const Users: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     listSearchableFields: ['name', 'email', 'phone'],
+    ...hiddenForCollection('users'),
   },
   auth: true,
   access: {
@@ -60,6 +62,7 @@ export const Users: CollectionConfig = {
       name: 'permissions',
       type: 'group',
       label: 'Content Permissions',
+      saveToJWT: true,
       admin: {
         description:
           'Leave empty to keep legacy role behavior (editor = full content access + publish). Once any collection access is added, the user is limited to exactly what is granted here.',

@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { can, canPublish } from '../access/permissions'
+import { can, canPublish, hiddenForCollection } from '../access/permissions'
 
 const DISTRICT_PAGE_TYPES = [
   { label: 'NEET Counselling', value: 'neet-counselling' },
@@ -26,6 +26,7 @@ export const DistrictContent: CollectionConfig = {
   admin: {
     useAsTitle: 'type',
     group: 'Content',
+    ...hiddenForCollection('district-content'),
     defaultColumns: ['district', 'type', 'status', 'generatedAt'],
   },
   hooks: {

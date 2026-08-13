@@ -1,10 +1,11 @@
 import type { CollectionConfig } from 'payload'
-import { can, statusFilteredOrAdmin } from '../access/permissions'
+import { can, statusFilteredOrAdmin, hiddenForCollection } from '../access/permissions'
 
 export const Helpdesk: CollectionConfig = {
   slug: 'helpdesk',
   admin: {
     useAsTitle: 'question',
+    ...hiddenForCollection('helpdesk'),
   },
   hooks: {
     afterChange: [

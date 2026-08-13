@@ -1,10 +1,11 @@
 import type { CollectionConfig } from 'payload'
-import { can } from '../access/permissions'
+import { can, hiddenForCollection } from '../access/permissions'
 
 export const Specializations: CollectionConfig = {
   slug: 'specializations',
   admin: {
     useAsTitle: 'name',
+    ...hiddenForCollection('specializations'),
   },
   access: {
     read: () => true,

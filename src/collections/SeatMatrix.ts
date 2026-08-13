@@ -1,11 +1,12 @@
 import type { CollectionConfig } from 'payload'
-import { can } from '../access/permissions'
+import { can, hiddenForCollection } from '../access/permissions'
 
 export const SeatMatrix: CollectionConfig = {
   slug: 'seat-matrix',
   admin: {
     useAsTitle: 'id',
     group: 'Content',
+    ...hiddenForCollection('seat-matrix'),
     defaultColumns: ['college', 'course', 'year', 'totalSeats'],
   },
   access: {

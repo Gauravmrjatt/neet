@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { anyone } from '../access/roles'
-import { can } from '../access/permissions'
+import { can, hiddenForGlobal } from '../access/permissions'
 
 export const PredictorPage: GlobalConfig = {
   slug: 'predictor-page',
@@ -18,6 +18,7 @@ export const PredictorPage: GlobalConfig = {
   },
   admin: {
     description: 'Content for the /predictor page',
+    ...hiddenForGlobal('predictor-page'),
   },
   fields: [
     {

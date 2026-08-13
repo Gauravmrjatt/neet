@@ -1,11 +1,12 @@
 import type { CollectionConfig } from 'payload'
-import { can } from '../access/permissions'
+import { can, hiddenForCollection } from '../access/permissions'
 
 export const Bonds: CollectionConfig = {
   slug: 'bonds',
   admin: {
     useAsTitle: 'id',
     group: 'Content',
+    ...hiddenForCollection('bonds'),
     defaultColumns: ['college', 'course', 'bondAmount', 'bondYears'],
   },
   access: {

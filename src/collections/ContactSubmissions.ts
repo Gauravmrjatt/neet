@@ -1,11 +1,12 @@
 import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/roles'
-import { can } from '../access/permissions'
+import { can, hiddenForCollection } from '../access/permissions'
 
 export const ContactSubmissions: CollectionConfig = {
   slug: 'contact-submissions',
   admin: {
     useAsTitle: 'name',
+    ...hiddenForCollection('contact-submissions'),
   },
   access: {
     read: can('contact-submissions').read,

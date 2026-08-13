@@ -1,10 +1,11 @@
 import type { CollectionConfig } from 'payload'
-import { can, statusFilteredOrAdmin } from '../access/permissions'
+import { can, statusFilteredOrAdmin, hiddenForCollection } from '../access/permissions'
 
 export const Counselors: CollectionConfig = {
   slug: 'counselors',
   admin: {
     useAsTitle: 'name',
+    ...hiddenForCollection('counselors'),
   },
   access: {
     read: statusFilteredOrAdmin('counselors', 'active', false),

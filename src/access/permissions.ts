@@ -1,4 +1,4 @@
-import type { Access, PayloadRequest } from 'payload'
+import type { Access, CollectionConfig, GlobalConfig, PayloadRequest } from 'payload'
 
 export type PermissionOperation = 'create' | 'read' | 'update' | 'delete'
 
@@ -193,3 +193,27 @@ export async function getReadableCollectionSlugs(
 ): Promise<string[]> {
   return getPermittedSlugs(req, slugs, 'read')
 }
+
+/**
+ * `admin.hidden` gates Payload's server-side `visibleEntities`, which the
+ * admin UI consumes for nav, dashboard cards, and list/edit pages 404
+ * guards. It is evaluated with the JWT-decoded user only (no DB access),
+ * so permissions must be saved to the JWT (`saveToJWT`) for this to see
+ * the grants. Data-layer access (`hasPermission`) stays DB-fresh and
+ * remains the real security boundary; hidden only controls what the UI
+ * renders. Users must re-login for changed grants to affect these
+ * hidden-based surfaces (the nav/dashboard overrides are DB-fresh).
+ *
+ * The `hidden` key is not part of the public authoring types in this
+ * Payload version, so these return a spreadable object instead of a
+ * typed property (spread members bypass excess-property checks).
+ */
+export const hiddenForCollection = (slug: string) => ({
+  hidden: ({ user }: { user?: PermissionedUser | null }) =>
+    !userHasPermission(user ?? null, slug, 'read'),
+})
+
+export const hiddenForGlobal = (slug: string) => ({
+  hidden: ({ user }: { user?: PermissionedUser | null }) =>
+    !userHasPermission(user ?? null, slug, 'update'),
+})

@@ -1,10 +1,11 @@
 import type { CollectionConfig } from 'payload'
-import { can, hasPermission } from '../access/permissions'
+import { can, hasPermission, hiddenForCollection } from '../access/permissions'
 
 export const Transactions: CollectionConfig = {
   slug: 'transactions',
   admin: {
     useAsTitle: 'id',
+    ...hiddenForCollection('transactions'),
     defaultColumns: ['user', 'plan', 'amount', 'status', 'razorpayOrderId', 'createdAt'],
     description: 'Tracks Razorpay payment transactions',
   },

@@ -1,10 +1,11 @@
 import type { CollectionConfig } from 'payload'
-import { can, publishedOrAdmin, canPublish } from '../access/permissions'
+import { can, publishedOrAdmin, canPublish, hiddenForCollection } from '../access/permissions'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
+    ...hiddenForCollection('pages'),
   },
   versions: {
     drafts: true,

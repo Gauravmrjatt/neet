@@ -1,11 +1,12 @@
 import type { CollectionConfig } from 'payload'
-import { can } from '../access/permissions'
+import { can, hiddenForCollection } from '../access/permissions'
 
 export const Stipends: CollectionConfig = {
   slug: 'stipends',
   admin: {
     useAsTitle: 'id',
     group: 'Content',
+    ...hiddenForCollection('stipends'),
     defaultColumns: ['college', 'course', 'internYear', 'amount'],
   },
   access: {

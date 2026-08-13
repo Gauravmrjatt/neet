@@ -1,9 +1,13 @@
 import type { CollectionConfig } from 'payload'
 import { anyone, isAdmin } from '../access/roles'
-import { can } from '../access/permissions'
+import { can, hiddenForCollection } from '../access/permissions'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  admin: {
+    useAsTitle: 'filename',
+    ...hiddenForCollection('media'),
+  },
   access: {
     read: anyone,
     create: can('media').create,

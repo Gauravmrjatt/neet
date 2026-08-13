@@ -1,11 +1,12 @@
 import type { CollectionConfig } from 'payload'
-import { can, publishedOrAdmin } from '../access/permissions'
+import { can, publishedOrAdmin, hiddenForCollection } from '../access/permissions'
 
 export const SavedContent: CollectionConfig = {
   slug: 'saved-content',
   admin: {
     useAsTitle: 'title',
     group: 'Content',
+    ...hiddenForCollection('saved-content'),
     description: 'Reusable content blocks that can be inserted into pages, blogs, and guides',
   },
   access: {
