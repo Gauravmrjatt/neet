@@ -44,6 +44,7 @@ export const JsonImporter: React.FC<{ configKey: string }> = ({ configKey }) => 
   const [selectValue, setSelectValue] = useState('')
   const [options, setOptions] = useState<SelectOption[]>([])
   const [optionsError, setOptionsError] = useState(false)
+  const [saveAsDraft, setSaveAsDraft] = useState(true)
 
   useEffect(() => {
     if (!config.requireSelect) return
@@ -130,6 +131,11 @@ export const JsonImporter: React.FC<{ configKey: string }> = ({ configKey }) => 
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '')
+    }
+
+    if (saveAsDraft) {
+      data.status = 'draft'
+      if (config.hasDrafts) data._status = 'draft'
     }
 
     if (data.seo?.keywords && Array.isArray(data.seo.keywords)) {
@@ -255,6 +261,28 @@ export const JsonImporter: React.FC<{ configKey: string }> = ({ configKey }) => 
             rows={8}
             style={{ ...inputStyles, resize: 'vertical', marginBottom: '0.75rem' }}
           />
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '0.75rem',
+              fontSize: '0.85rem',
+              color: 'var(--theme-text)',
+            }}
+          >
+            <input
+              id="save-as-draft"
+              type="checkbox"
+              checked={saveAsDraft}
+              onChange={(e) => setSaveAsDraft(e.target.checked)}
+              style={{ margin: 0 }}
+            />
+            <label htmlFor="save-as-draft" style={{ cursor: 'pointer' }}>
+              Save as draft
+            </label>
+          </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <button

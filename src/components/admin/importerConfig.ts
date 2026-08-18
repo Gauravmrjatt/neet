@@ -11,6 +11,7 @@ export type ImporterConfig = {
   jsonExample: string
   requiredFields: string[]
   h1BlockTypes: string[]
+  hasDrafts: boolean
   requireSelect?: ImporterSelect
 }
 
@@ -67,7 +68,7 @@ const PAGES_PROMPT = buildPrompt({
   entityNoun: 'page',
   basicFields: `- title (text, required) — the H1/page title
 - slug (text, required, unique) — auto-generate from title: lowercase, hyphens, no special chars
-- status (select: "draft" or "published") — always "published"`,
+- status (select: "draft" or "published") — set "published" (the import panel can save as draft instead)`,
   blocks: `1. **hero** (use at most once — it is the page's only H1)
    - heading (text, required) — the H1; must include the primary keyword
    - subheading (textarea)
@@ -141,7 +142,7 @@ const BLOGS_PROMPT = buildPrompt({
   entityNoun: 'blog post',
   basicFields: `- title (text, required) — the article title, rendered as the single H1
 - slug (text, required, unique) — auto-generate from title: lowercase, hyphens, no special chars
-- status (select: "draft" or "published") — always "published"
+- status (select: "draft" or "published") — set "published" (the import panel can save as draft instead)
 - excerpt (textarea) — 1-2 sentence summary for cards and search results
 - content (richText) — skip; set to empty string ""
 - categories — array of objects: [{"category": "..."}, {"category": "..."}] (e.g. "NEET Counselling", "Cutoff", "Choice Filling")`,
@@ -220,7 +221,7 @@ const COUNSELLING_PROMPT = buildPrompt({
   entityNoun: 'counselling guide',
   basicFields: `- title (text, required) — the guide title, rendered as the single H1
 - slug (text, required, unique) — auto-generate from title: lowercase, hyphens, no special chars
-- status (select: "draft" or "published") — always "published"
+- status (select: "draft" or "published") — set "published" (the import panel can save as draft instead)
 - excerpt (textarea) — 1-2 sentence summary
 - content (richText) — skip; set to empty string ""
 - category (select, required) — one of: "ug-counselling" (NEET UG Counselling), "pg-counselling" (NEET PG Counselling), "state-counselling" (State Counselling), "abroad" (MBBS Abroad), "guide" (Guides & Tips)`,
@@ -300,7 +301,7 @@ const DISTRICT_CONTENT_PROMPT = buildPrompt({
   entityNoun: 'district content entry',
   basicFields: `- district (relationship to districts) — REQUIRED but cannot be generated: leave it out of the JSON and choose the district in the import panel dropdown
 - type (select, required) — one of: "neet-counselling", "mbbs-admission", "government-medical-colleges", "private-medical-colleges", "cutoff", "fees", "documents-required", "choice-filling", "seat-matrix", "mcc-counselling", "state-counselling", "expected-cutoff", "all-medical-colleges", "important-dates", "faq", "news", "updates"
-- status (select: "draft" or "published") — always "published"`,
+- status (select: "draft" or "published") — set "published" (the import panel can save as draft instead)`,
   blocks: `1. **contentBlock** — rich text content section
    - heading (text) — render as H2
    - body (skip — set to empty string "")
@@ -369,6 +370,7 @@ export const IMPORTER_CONFIGS: Record<string, ImporterConfig> = {
     jsonExample: exampleFromPrompt(PAGES_PROMPT),
     requiredFields: ['title'],
     h1BlockTypes: ['hero'],
+    hasDrafts: true,
   },
   blogs: {
     apiSlug: 'blogs',
@@ -377,6 +379,7 @@ export const IMPORTER_CONFIGS: Record<string, ImporterConfig> = {
     jsonExample: exampleFromPrompt(BLOGS_PROMPT),
     requiredFields: ['title'],
     h1BlockTypes: [],
+    hasDrafts: true,
   },
   counselling: {
     apiSlug: 'counselling',
@@ -385,6 +388,7 @@ export const IMPORTER_CONFIGS: Record<string, ImporterConfig> = {
     jsonExample: exampleFromPrompt(COUNSELLING_PROMPT),
     requiredFields: ['title'],
     h1BlockTypes: [],
+    hasDrafts: true,
   },
   'district-content': {
     apiSlug: 'district-content',
@@ -393,6 +397,7 @@ export const IMPORTER_CONFIGS: Record<string, ImporterConfig> = {
     jsonExample: exampleFromPrompt(DISTRICT_CONTENT_PROMPT),
     requiredFields: ['type'],
     h1BlockTypes: [],
+    hasDrafts: false,
     requireSelect: {
       field: 'district',
       apiPath: '/api/districts?limit=1000&sort=name',
