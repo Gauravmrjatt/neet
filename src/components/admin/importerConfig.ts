@@ -8,6 +8,7 @@ export type ImporterConfig = {
   apiSlug: string
   entityNoun: string
   prompt: string
+  jsonExample: string
   requiredFields: string[]
   h1BlockTypes: string[]
   requireSelect?: ImporterSelect
@@ -365,6 +366,7 @@ export const IMPORTER_CONFIGS: Record<string, ImporterConfig> = {
     apiSlug: 'pages',
     entityNoun: 'page',
     prompt: PAGES_PROMPT,
+    jsonExample: exampleFromPrompt(PAGES_PROMPT),
     requiredFields: ['title'],
     h1BlockTypes: ['hero'],
   },
@@ -372,6 +374,7 @@ export const IMPORTER_CONFIGS: Record<string, ImporterConfig> = {
     apiSlug: 'blogs',
     entityNoun: 'blog post',
     prompt: BLOGS_PROMPT,
+    jsonExample: exampleFromPrompt(BLOGS_PROMPT),
     requiredFields: ['title'],
     h1BlockTypes: [],
   },
@@ -379,6 +382,7 @@ export const IMPORTER_CONFIGS: Record<string, ImporterConfig> = {
     apiSlug: 'counselling',
     entityNoun: 'counselling guide',
     prompt: COUNSELLING_PROMPT,
+    jsonExample: exampleFromPrompt(COUNSELLING_PROMPT),
     requiredFields: ['title'],
     h1BlockTypes: [],
   },
@@ -386,6 +390,7 @@ export const IMPORTER_CONFIGS: Record<string, ImporterConfig> = {
     apiSlug: 'district-content',
     entityNoun: 'district content entry',
     prompt: DISTRICT_CONTENT_PROMPT,
+    jsonExample: exampleFromPrompt(DISTRICT_CONTENT_PROMPT),
     requiredFields: ['type'],
     h1BlockTypes: [],
     requireSelect: {
@@ -394,4 +399,13 @@ export const IMPORTER_CONFIGS: Record<string, ImporterConfig> = {
       label: 'District',
     },
   },
+}
+
+function exampleFromPrompt(prompt: string): string {
+  const startMarker = 'Example shape:\n\n'
+  const endMarker = '\n\nDo NOT include any explanation'
+  const start = prompt.indexOf(startMarker)
+  const end = prompt.indexOf(endMarker, start)
+  if (start === -1 || end === -1) return ''
+  return prompt.slice(start + startMarker.length, end).trimEnd()
 }

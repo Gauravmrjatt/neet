@@ -31,12 +31,12 @@ const buttonStyles: React.CSSProperties = {
   fontSize: '0.85rem',
   color: '#fff',
   background: 'var(--theme-elevation-500)',
+  whiteSpace: 'nowrap',
 }
 
 export const JsonImporter: React.FC<{ configKey: string }> = ({ configKey }) => {
   const config: ImporterConfig = IMPORTER_CONFIGS[configKey]
 
-  const [topic, setTopic] = useState('')
   const [copied, setCopied] = useState(false)
   const [jsonText, setJsonText] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -44,10 +44,6 @@ export const JsonImporter: React.FC<{ configKey: string }> = ({ configKey }) => 
   const [selectValue, setSelectValue] = useState('')
   const [options, setOptions] = useState<SelectOption[]>([])
   const [optionsError, setOptionsError] = useState(false)
-
-  const filledPrompt = topic.trim()
-    ? config.prompt.replace('[PASTE YOUR TOPIC HERE]', topic.trim())
-    : config.prompt
 
   useEffect(() => {
     if (!config.requireSelect) return
@@ -66,13 +62,13 @@ export const JsonImporter: React.FC<{ configKey: string }> = ({ configKey }) => 
     }
   }, [config.requireSelect])
 
-  const copyToClipboard = async () => {
+  const copyStructure = async () => {
     try {
-      await navigator.clipboard.writeText(filledPrompt)
+      await navigator.clipboard.writeText(config.jsonExample)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      const el = document.getElementById('ai-prompt-preview') as HTMLTextAreaElement | null
+      const el = document.getElementById('json-structure-preview') as HTMLTextAreaElement | null
       if (el) {
         el.focus()
         el.select()
@@ -200,135 +196,96 @@ export const JsonImporter: React.FC<{ configKey: string }> = ({ configKey }) => 
             userSelect: 'none',
           }}
         >
-          AI Content Generator ({sectionLabel})
+          Copy JSON Structure ({sectionLabel})
         </summary>
         <div style={{ padding: '1rem' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              flexWrap: 'wrap',
-              marginBottom: '0.75rem',
-            }}
-          >
-            <input
-              type="text"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              placeholder="Enter your topic (e.g. NEET counselling 2025 for Punjab students)"
-              style={{ ...inputStyles, fontFamily: 'var(--font-body)', flex: '1 1 320px' }}
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+            <textarea
+              id="json-structure-preview"
+              readOnly
+              value={config.jsonExample}
+              rows={7}
+              style={{ ...inputStyles, resize: 'vertical', flex: '1 1 auto' }}
             />
-            <button onClick={copyToClipboard} type="button" style={buttonStyles}>
-              {copied ? 'Copied ✓' : 'Copy Prompt'}
+            <button onClick={copyStructure} type="button" style={buttonStyles}>
+              {copied ? 'Copied ✓' : 'Copy JSON Structure'}
             </button>
           </div>
           <p
             style={{
-              margin: '0 0 0.75rem',
+              margin: '0.75rem 0',
               fontSize: '0.85rem',
               color: 'var(--theme-elevation-600)',
             }}
           >
-            Copy the prompt and paste it into your AI tool (ChatGPT, Claude, Gemini…). The topic is
-            inserted automatically. Then paste the AI&apos;s JSON output into the Import section
-            below.
+            Use the JSON structure above as reference, or paste a {config.entityNoun} JSON blob
+            below to auto-create it. {config.requiredFields.join(', ')} is required. Slug is
+            auto-generated from title if omitted. SEO keywords can be a flat array — they will be
+            converted automatically.
           </p>
+
+          {config.requireSelect && (
+            <div style={{ marginBottom: '0.75rem' }}>
+              <select
+                value={selectValue}
+                onChange={(e) => setSelectValue(e.target.value)}
+                disabled={options.length === 0}
+                style={{ ...inputStyles, fontFamily: 'var(--font-body)' }}
+              >
+                <option value="">
+                  {optionsError
+                    ? `Could not load ${config.requireSelect.label}s`
+                    : options.length === 0
+                      ? `Loading ${config.requireSelect.label}s…`
+                      : `Select ${config.requireSelect.label}…`}
+                </option>
+                {options.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {o.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <textarea
-            id="ai-prompt-preview"
-            readOnly
-            value={filledPrompt}
+            value={jsonText}
+            onChange={(e) => setJsonText(e.target.value)}
+            placeholder={`{\n  "title": "My ${sectionLabel}",\n  "slug": "my-${config.apiSlug}",\n  "status": "published",\n  "blocks": [...],\n  "seo": { ... }\n}`}
             rows={8}
-            style={{ ...inputStyles, resize: 'vertical' }}
+            style={{ ...inputStyles, resize: 'vertical', marginBottom: '0.75rem' }}
           />
 
-          <div
-            style={{
-              marginTop: '1rem',
-              paddingTop: '1rem',
-              borderTop: '1px dashed var(--theme-elevation-200)',
-            }}
-          >
-            <p
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <button
+              onClick={handleImport}
+              disabled={!jsonText.trim() || status === 'loading'}
+              type="button"
               style={{
-                margin: '0 0 0.75rem',
-                fontSize: '0.85rem',
-                color: 'var(--theme-elevation-600)',
+                ...buttonStyles,
+                background:
+                  !jsonText.trim() || status === 'loading'
+                    ? 'var(--theme-elevation-200)'
+                    : 'var(--theme-success-500)',
+                color:
+                  !jsonText.trim() || status === 'loading' ? 'var(--theme-elevation-400)' : '#fff',
+                cursor: !jsonText.trim() || status === 'loading' ? 'not-allowed' : 'pointer',
               }}
             >
-              Paste the AI-generated JSON below to auto-create the {config.entityNoun}. Title{' '}
-              {config.requiredFields.join(', ')} is required. Slug is auto-generated from title if
-              omitted. SEO keywords can be a flat array — they will be converted automatically.
-            </p>
+              {status === 'loading' ? 'Creating…' : `Create ${sectionLabel}`}
+            </button>
 
-            {config.requireSelect && (
-              <div style={{ marginBottom: '0.75rem' }}>
-                <select
-                  value={selectValue}
-                  onChange={(e) => setSelectValue(e.target.value)}
-                  disabled={options.length === 0}
-                  style={{ ...inputStyles, fontFamily: 'var(--font-body)' }}
-                >
-                  <option value="">
-                    {optionsError
-                      ? `Could not load ${config.requireSelect.label}s`
-                      : options.length === 0
-                        ? `Loading ${config.requireSelect.label}s…`
-                        : `Select ${config.requireSelect.label}…`}
-                  </option>
-                  {options.map((o) => (
-                    <option key={o.id} value={o.id}>
-                      {o.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            {status === 'error' && (
+              <span style={{ color: 'var(--theme-error-500)', fontSize: '0.85rem' }}>
+                {message}
+              </span>
             )}
 
-            <textarea
-              value={jsonText}
-              onChange={(e) => setJsonText(e.target.value)}
-              placeholder={`{\n  "title": "My ${sectionLabel}",\n  "slug": "my-${config.apiSlug}",\n  "status": "published",\n  "blocks": [...],\n  "seo": { ... }\n}`}
-              rows={8}
-              style={{ ...inputStyles, resize: 'vertical', marginBottom: '0.75rem' }}
-            />
-
-            <div
-              style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}
-            >
-              <button
-                onClick={handleImport}
-                disabled={!jsonText.trim() || status === 'loading'}
-                type="button"
-                style={{
-                  ...buttonStyles,
-                  background:
-                    !jsonText.trim() || status === 'loading'
-                      ? 'var(--theme-elevation-200)'
-                      : 'var(--theme-success-500)',
-                  color:
-                    !jsonText.trim() || status === 'loading'
-                      ? 'var(--theme-elevation-400)'
-                      : '#fff',
-                  cursor:
-                    !jsonText.trim() || status === 'loading' ? 'not-allowed' : 'pointer',
-                }}
-              >
-                {status === 'loading' ? 'Creating…' : `Create ${sectionLabel}`}
-              </button>
-
-              {status === 'error' && (
-                <span style={{ color: 'var(--theme-error-500)', fontSize: '0.85rem' }}>
-                  {message}
-                </span>
-              )}
-
-              {status === 'success' && (
-                <span style={{ color: 'var(--theme-success-500)', fontSize: '0.85rem' }}>
-                  {message}
-                </span>
-              )}
-            </div>
+            {status === 'success' && (
+              <span style={{ color: 'var(--theme-success-500)', fontSize: '0.85rem' }}>
+                {message}
+              </span>
+            )}
           </div>
         </div>
       </details>
