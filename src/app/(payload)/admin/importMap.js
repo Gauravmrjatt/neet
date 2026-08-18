@@ -1,4 +1,5 @@
 import { PermissionRowLabel as PermissionRowLabel_2aad346eb5e12c6ee690c795b76ce94c } from '../../../components/admin/PermissionRowLabel'
+import { BlogJsonImporter as BlogJsonImporter_09e1065364459a2cb93c294de6e4204a } from '../../../components/admin/BlogJsonImporter'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -26,6 +27,8 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { CommaSeparatedArray as CommaSeparatedArray_2eddec068aea4a032989a63154647f5e } from '../../../components/admin/CommaSeparatedArray'
 import { VideoCategorySelect as VideoCategorySelect_30092777e3df1478827bafcb3dd82534 } from '../../../components/admin/VideoCategorySelect'
 import { PageJsonImporter as PageJsonImporter_afba2da8ea527f283e93655f6863c41a } from '../../../components/admin/PageJsonImporter'
+import { CounsellingJsonImporter as CounsellingJsonImporter_e9f19da7a05c2d32b3bc092a8eb6cf1d } from '../../../components/admin/CounsellingJsonImporter'
+import { DistrictContentJsonImporter as DistrictContentJsonImporter_2bd4e6df6af48fe319f6b47f94b15464 } from '../../../components/admin/DistrictContentJsonImporter'
 import { PayloadNav as PayloadNav_965175d01b56876a09418037afb35340 } from '../../../components/admin/Nav'
 import { PermissionAwareDashboard as PermissionAwareDashboard_16b88e9b8c48e393fa86591406efd08f } from '../../../components/admin/Dashboard'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
@@ -33,6 +36,7 @@ import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 /** @type import('payload').ImportMap */
 export const importMap = {
   "/components/admin/PermissionRowLabel#PermissionRowLabel": PermissionRowLabel_2aad346eb5e12c6ee690c795b76ce94c,
+  "/components/admin/BlogJsonImporter#BlogJsonImporter": BlogJsonImporter_09e1065364459a2cb93c294de6e4204a,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#LexicalDiffComponent": LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -60,6 +64,8 @@ export const importMap = {
   "/components/admin/CommaSeparatedArray#CommaSeparatedArray": CommaSeparatedArray_2eddec068aea4a032989a63154647f5e,
   "/components/admin/VideoCategorySelect#VideoCategorySelect": VideoCategorySelect_30092777e3df1478827bafcb3dd82534,
   "/components/admin/PageJsonImporter#PageJsonImporter": PageJsonImporter_afba2da8ea527f283e93655f6863c41a,
+  "/components/admin/CounsellingJsonImporter#CounsellingJsonImporter": CounsellingJsonImporter_e9f19da7a05c2d32b3bc092a8eb6cf1d,
+  "/components/admin/DistrictContentJsonImporter#DistrictContentJsonImporter": DistrictContentJsonImporter_2bd4e6df6af48fe319f6b47f94b15464,
   "/components/admin/Nav#PayloadNav": PayloadNav_965175d01b56876a09418037afb35340,
   "/components/admin/Dashboard#PermissionAwareDashboard": PermissionAwareDashboard_16b88e9b8c48e393fa86591406efd08f,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1

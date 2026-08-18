@@ -60,6 +60,15 @@ export const DistrictContent: CollectionConfig = {
   },
   fields: [
     {
+      name: 'jsonImport',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '/components/admin/DistrictContentJsonImporter#DistrictContentJsonImporter',
+        },
+      },
+    },
+    {
       name: 'district',
       type: 'relationship',
       relationTo: 'districts',

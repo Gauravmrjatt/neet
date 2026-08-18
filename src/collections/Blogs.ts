@@ -54,6 +54,15 @@ export const Blogs: CollectionConfig = {
   },
   fields: [
     {
+      name: 'jsonImport',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '/components/admin/BlogJsonImporter#BlogJsonImporter',
+        },
+      },
+    },
+    {
       name: 'title',
       type: 'text',
       required: true,

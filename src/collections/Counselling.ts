@@ -55,6 +55,15 @@ export const Counselling: CollectionConfig = {
   },
   fields: [
     {
+      name: 'jsonImport',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '/components/admin/CounsellingJsonImporter#CounsellingJsonImporter',
+        },
+      },
+    },
+    {
       name: 'title',
       type: 'text',
       required: true,
